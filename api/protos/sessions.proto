@@ -1,0 +1,63 @@
+syntax = "proto3";
+option go_package = "api_pb";
+package com.github.ProgrammingLab.prolab_accounts.api;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service SessionService {
+  rpc ListSessions (ListSessionsRequest) returns (ListSessionsResponse) {
+    option (google.api.http) = {
+      get: "/sessions"
+    };
+  }
+  rpc GetSession (GetSessionRequest) returns (Session) {
+    option (google.api.http) = {
+      get: "/sessions/{session_id}"
+    };
+  }
+  rpc CreateSession (CreateSessionRequest) returns (Session) {
+    option (google.api.http) = {
+      post: "/sessions"
+      body: "session"
+    };
+  }
+  rpc UpdateSession (UpdateSessionRequest) returns (Session) {
+    option (google.api.http) = {
+      patch: "/sessions/{session.session_id}"
+      body: "session"
+    };
+  }
+  rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/sessions/{session_id}"
+    };
+  }
+}
+
+message Session {
+  string session_id = 1;
+}
+
+message ListSessionsRequest {
+}
+
+message ListSessionsResponse {
+  repeated Session sessions = 1;
+}
+
+message GetSessionRequest {
+  string session_id = 1;
+}
+
+message CreateSessionRequest {
+  Session session = 1;
+}
+
+message UpdateSessionRequest {
+  Session session = 1;
+}
+
+message DeleteSessionRequest {
+  string session_id = 1;
+}
