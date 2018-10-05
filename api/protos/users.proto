@@ -4,6 +4,7 @@ package com.github.ProgrammingLab.prolab_accounts.api;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
 
 service UserService {
   rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
@@ -28,36 +29,36 @@ service UserService {
       body: "user"
     };
   }
-  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/users/{user_id}"
-    };
-  }
 }
 
 message User {
-  string user_id = 1;
+  uint32 user_id = 1;
+  string name = 2;
+  string email = 3;
+  string full_name = 4;
+  string avatar_url = 5;
 }
 
 message ListUsersRequest {
+  uint32 page_token = 1;
+  int32 page_size = 2;
 }
 
 message ListUsersResponse {
   repeated User users = 1;
+  uint32 next_page_token = 2;
 }
 
 message GetUserRequest {
-  string user_id = 1;
+  uint32 user_id = 1;
 }
 
 message CreateUserRequest {
   User user = 1;
+  string registeration_token = 2;
 }
 
 message UpdateUserRequest {
   User user = 1;
-}
-
-message DeleteUserRequest {
-  string user_id = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }
