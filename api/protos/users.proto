@@ -1,0 +1,75 @@
+syntax = "proto3";
+option go_package = "api_pb";
+package com.github.ProgrammingLab.prolab_accounts.api;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+
+service UserService {
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/users"
+    };
+  }
+  rpc GetUser (GetUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/users/{user_id}"
+    };
+  }
+  rpc CreateUser (CreateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/users"
+      body: "user"
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (User) {
+    option (google.api.http) = {
+      patch: "/users/{user.user_id}"
+      body: "user"
+    };
+  }
+  rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/users/{user.user_id}/password"
+    };
+  }
+}
+
+message User {
+  uint32 user_id = 1;
+  string name = 2;
+  string email = 3;
+  string full_name = 4;
+  string avatar_url = 5;
+}
+
+message ListUsersRequest {
+  uint32 page_token = 1;
+  int32 page_size = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  uint32 next_page_token = 2;
+}
+
+message GetUserRequest {
+  uint32 user_id = 1;
+}
+
+message CreateUserRequest {
+  User user = 1;
+  string registeration_token = 2;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdatePasswordRequest {
+  string password = 1;
+  string new_password = 2;
+  string new_password_repeat = 3;
+}
