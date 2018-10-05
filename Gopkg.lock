@@ -147,6 +147,7 @@
   packages = [
     "googleapis/api/annotations",
     "googleapis/rpc/status",
+    "protobuf/field_mask",
   ]
   pruneopts = ""
   revision = "383e8b2c3b9e36c4076b235b32537292176bae20"
@@ -210,6 +211,7 @@
     "github.com/izumin5210/grapi/pkg/grapiserver",
     "golang.org/x/net/context",
     "google.golang.org/genproto/googleapis/api/annotations",
+    "google.golang.org/genproto/protobuf/field_mask",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/grpclog",
