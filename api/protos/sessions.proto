@@ -6,31 +6,19 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service SessionService {
-  rpc ListSessions (ListSessionsRequest) returns (ListSessionsResponse) {
-    option (google.api.http) = {
-      get: "/sessions"
-    };
-  }
   rpc GetSession (GetSessionRequest) returns (Session) {
     option (google.api.http) = {
-      get: "/sessions/{session_id}"
+      get: "/sessions"
     };
   }
   rpc CreateSession (CreateSessionRequest) returns (Session) {
     option (google.api.http) = {
       post: "/sessions"
-      body: "session"
-    };
-  }
-  rpc UpdateSession (UpdateSessionRequest) returns (Session) {
-    option (google.api.http) = {
-      patch: "/sessions/{session.session_id}"
-      body: "session"
     };
   }
   rpc DeleteSession (DeleteSessionRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete: "/sessions/{session_id}"
+      delete: "/sessions"
     };
   }
 }
@@ -39,25 +27,11 @@ message Session {
   string session_id = 1;
 }
 
-message ListSessionsRequest {
-}
-
-message ListSessionsResponse {
-  repeated Session sessions = 1;
-}
-
-message GetSessionRequest {
-  string session_id = 1;
-}
+message GetSessionRequest {}
 
 message CreateSessionRequest {
-  Session session = 1;
+  string name = 1;
+  string password = 2;
 }
 
-message UpdateSessionRequest {
-  Session session = 1;
-}
-
-message DeleteSessionRequest {
-  string session_id = 1;
-}
+message DeleteSessionRequest {}

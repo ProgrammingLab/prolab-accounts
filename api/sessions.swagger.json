@@ -17,12 +17,26 @@
   "paths": {
     "/sessions": {
       "get": {
-        "operationId": "ListSessions",
+        "operationId": "GetSession",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/apiListSessionsResponse"
+              "$ref": "#/definitions/apiSession"
+            }
+          }
+        },
+        "tags": [
+          "SessionService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteSession",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
             }
           }
         },
@@ -40,94 +54,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiSession"
-            }
-          }
-        ],
-        "tags": [
-          "SessionService"
-        ]
-      }
-    },
-    "/sessions/{session.session_id}": {
-      "patch": {
-        "operationId": "UpdateSession",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiSession"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "session.session_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiSession"
-            }
-          }
-        ],
-        "tags": [
-          "SessionService"
-        ]
-      }
-    },
-    "/sessions/{session_id}": {
-      "get": {
-        "operationId": "GetSession",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiSession"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "SessionService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteSession",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "tags": [
           "SessionService"
         ]
@@ -135,17 +61,6 @@
     }
   },
   "definitions": {
-    "apiListSessionsResponse": {
-      "type": "object",
-      "properties": {
-        "sessions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/apiSession"
-          }
-        }
-      }
-    },
     "apiSession": {
       "type": "object",
       "properties": {
