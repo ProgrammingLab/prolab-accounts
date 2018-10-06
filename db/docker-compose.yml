@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  ridgepole:
+    build: .
+    entrypoint: ["tail", "-f", "/dev/null"]
+    volumes:
+      - .:/db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    network_mode: "host"
