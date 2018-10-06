@@ -1,0 +1,163 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_profile.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user_profiles": {
+      "get": {
+        "operationId": "ListUserProfiles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiListUserProfilesResponse"
+            }
+          }
+        },
+        "tags": [
+          "UserProfileService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateUserProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        ],
+        "tags": [
+          "UserProfileService"
+        ]
+      }
+    },
+    "/user_profiles/{user_profile.user_profile_id}": {
+      "patch": {
+        "operationId": "UpdateUserProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_profile.user_profile_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        ],
+        "tags": [
+          "UserProfileService"
+        ]
+      }
+    },
+    "/user_profiles/{user_profile_id}": {
+      "get": {
+        "operationId": "GetUserProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_profile_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserProfileService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteUserProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_profile_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserProfileService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "apiListUserProfilesResponse": {
+      "type": "object",
+      "properties": {
+        "user_profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiUserProfile"
+          }
+        }
+      }
+    },
+    "apiUserProfile": {
+      "type": "object",
+      "properties": {
+        "user_profile_id": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    }
+  }
+}
