@@ -44,7 +44,7 @@ func request_UserProfileService_GetUserProfile_0(ctx context.Context, marshaler 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
 	}
 
-	protoReq.UserId, err = runtime.String(val)
+	protoReq.UserId, err = runtime.Uint32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
@@ -55,15 +55,11 @@ func request_UserProfileService_GetUserProfile_0(ctx context.Context, marshaler 
 
 }
 
-var (
-	filter_UserProfileService_CreateUserProfile_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_UserProfileService_CreateUserProfile_0(ctx context.Context, marshaler runtime.Marshaler, client UserProfileServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UserProfile
+	var protoReq CreateUserProfileRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_UserProfileService_CreateUserProfile_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Profile); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -73,29 +69,15 @@ func request_UserProfileService_CreateUserProfile_0(ctx context.Context, marshal
 }
 
 var (
-	filter_UserProfileService_UpdateUser_0 = &utilities.DoubleArray{Encoding: map[string]int{"profile": 0, "user_id": 1}, Base: []int{1, 1, 1, 0}, Check: []int{0, 1, 2, 3}}
+	filter_UserProfileService_UpdateUser_0 = &utilities.DoubleArray{Encoding: map[string]int{"profile": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_UserProfileService_UpdateUser_0(ctx context.Context, marshaler runtime.Marshaler, client UserProfileServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UpdataUesrProfileRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["profile.user_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "profile.user_id")
-	}
-
-	err = runtime.PopulateFieldFromPath(&protoReq, "profile.user_id", val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "profile.user_id", err)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Profile); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_UserProfileService_UpdateUser_0); err != nil {
@@ -236,11 +218,11 @@ func RegisterUserProfileServiceHandlerClient(ctx context.Context, mux *runtime.S
 }
 
 var (
-	pattern_UserProfileService_GetUserProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{1, 0, 4, 1, 5, 0, 2, 1}, []string{"user_id", "profile"}, ""))
+	pattern_UserProfileService_GetUserProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"users", "user_id", "profile"}, ""))
 
-	pattern_UserProfileService_CreateUserProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"profile"}, ""))
+	pattern_UserProfileService_CreateUserProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"users", "profile"}, ""))
 
-	pattern_UserProfileService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{1, 0, 4, 1, 5, 0, 2, 1}, []string{"profile.user_id", "profile"}, ""))
+	pattern_UserProfileService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"users", "profile"}, ""))
 )
 
 var (

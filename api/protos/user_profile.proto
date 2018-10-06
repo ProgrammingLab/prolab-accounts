@@ -8,32 +8,36 @@ import "google/protobuf/field_mask.proto";
 service UserProfileService{
   rpc GetUserProfile (GetUserProfileRequest) returns (UserProfile){
     option (google.api.http) = {
-        get: "/{user_id}/profile"
+        get: "/users/{user_id}/profile"
     };
   }
-  rpc CreateUserProfile (UserProfile) returns (UserProfile) {
+  rpc CreateUserProfile (CreateUserProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
-      post: "/{profile.user_id}/profile"
-      body: "user_profile"
+      post: "/users/profile"
+      body: "profile"
     };
   }
   rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
-      patch: "/{profile.user_id}/profile"
+      patch: "/users/profile"
       body: "profile"
     };
   }
 }
 
-message UserProfile{
-  string user_id = 1;
+message UserProfile{ 
+  uint32 user_id = 1;
   string twitter_id = 2;
   string github_id = 3;
-  string user_description = 4;
+  string description = 4;
 }
 
 message GetUserProfileRequest{
-  string user_id = 1;
+  uint32 user_id = 1;
+}
+
+message CreateUserProfileRequest {
+  UserProfile profile = 1;
 }
 
 message UpdataUesrProfileRequest{

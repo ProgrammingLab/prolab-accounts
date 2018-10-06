@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/profile": {
+    "/users/profile": {
       "post": {
         "operationId": "CreateUserProfile",
         "responses": {
@@ -26,12 +26,20 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
+          }
+        ],
         "tags": [
           "UserProfileService"
         ]
-      }
-    },
-    "/{profile.user_id}/profile": {
+      },
       "patch": {
         "operationId": "UpdateUser",
         "responses": {
@@ -44,10 +52,12 @@
         },
         "parameters": [
           {
-            "name": "profile.user_id",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/apiUserProfile"
+            }
           }
         ],
         "tags": [
@@ -55,7 +65,7 @@
         ]
       }
     },
-    "/{user_id}/profile": {
+    "/users/{user_id}/profile": {
       "get": {
         "operationId": "GetUserProfile",
         "responses": {
@@ -71,7 +81,8 @@
             "name": "user_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -85,7 +96,8 @@
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "twitter_id": {
           "type": "string"
@@ -93,7 +105,7 @@
         "github_id": {
           "type": "string"
         },
-        "user_description": {
+        "description": {
           "type": "string"
         }
       }
