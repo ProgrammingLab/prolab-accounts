@@ -13,12 +13,14 @@ service UserProfileService{
   }
   rpc CreateUserProfile (UserProfile) returns (UserProfile) {
     option (google.api.http) = {
-      post: "/profile"
+      post: "/{profile.user_id}/profile"
+      body: "user_profile"
     };
   }
   rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
       patch: "/{profile.user_id}/profile"
+      body: "profile"
     };
   }
 }
