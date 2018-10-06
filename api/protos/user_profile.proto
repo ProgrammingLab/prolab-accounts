@@ -3,61 +3,38 @@ option go_package = "api_pb";
 package com.github.ProgrammingLab.prolab_accounts.api;
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
 
-service UserProfileService {
-  rpc ListUserProfiles (ListUserProfilesRequest) returns (ListUserProfilesResponse) {
+service UserProfileService{
+  rpc GetUserProfile (GetUserProfileRequest) returns (UserProfile){
     option (google.api.http) = {
-      get: "/user_profiles"
+        get: "/{user_id}/profile"
     };
   }
-  rpc GetUserProfile (GetUserProfileRequest) returns (UserProfile) {
+  rpc CreateUserProfile (UserProfile) returns (UserProfile) {
     option (google.api.http) = {
-      get: "/user_profiles/{user_profile_id}"
+      post: "/profile"
     };
   }
-  rpc CreateUserProfile (CreateUserProfileRequest) returns (UserProfile) {
+  rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
-      post: "/user_profiles"
-      body: "user_profile"
-    };
-  }
-  rpc UpdateUserProfile (UpdateUserProfileRequest) returns (UserProfile) {
-    option (google.api.http) = {
-      patch: "/user_profiles/{user_profile.user_profile_id}"
-      body: "user_profile"
-    };
-  }
-  rpc DeleteUserProfile (DeleteUserProfileRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/user_profiles/{user_profile_id}"
+      patch: "/{profile.user_id}/profile"
     };
   }
 }
 
-message UserProfile {
-  string user_profile_id = 1;
+message UserProfile{
+  string user_id = 1;
+  string twitter_id = 2;
+  string github_id = 3;
+  string user_description = 4;
 }
 
-message ListUserProfilesRequest {
+message GetUserProfileRequest{
+  string user_id = 1;
 }
 
-message ListUserProfilesResponse {
-  repeated UserProfile user_profiles = 1;
-}
-
-message GetUserProfileRequest {
-  string user_profile_id = 1;
-}
-
-message CreateUserProfileRequest {
-  UserProfile user_profile = 1;
-}
-
-message UpdateUserProfileRequest {
-  UserProfile user_profile = 1;
-}
-
-message DeleteUserProfileRequest {
-  string user_profile_id = 1;
+message UpdataUesrProfileRequest{
+  UserProfile profile = 1;
+  google.protobuf.FieldMask update_mask = 2;
 }

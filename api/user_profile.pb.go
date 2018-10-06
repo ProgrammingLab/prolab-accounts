@@ -6,8 +6,8 @@ package api_pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import empty "github.com/golang/protobuf/ptypes/empty"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
+import field_mask "google.golang.org/genproto/protobuf/field_mask"
 
 import (
 	context "golang.org/x/net/context"
@@ -26,7 +26,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type UserProfile struct {
-	UserProfileId        string   `protobuf:"bytes,1,opt,name=user_profile_id,json=userProfileId,proto3" json:"user_profile_id,omitempty"`
+	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TwitterId            string   `protobuf:"bytes,2,opt,name=twitter_id,json=twitterId,proto3" json:"twitter_id,omitempty"`
+	GithubId             string   `protobuf:"bytes,3,opt,name=github_id,json=githubId,proto3" json:"github_id,omitempty"`
+	UserDescription      string   `protobuf:"bytes,4,opt,name=user_description,json=userDescription,proto3" json:"user_description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -36,7 +39,7 @@ func (m *UserProfile) Reset()         { *m = UserProfile{} }
 func (m *UserProfile) String() string { return proto.CompactTextString(m) }
 func (*UserProfile) ProtoMessage()    {}
 func (*UserProfile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{0}
+	return fileDescriptor_user_profile_806c1f2b32a3c6b9, []int{0}
 }
 func (m *UserProfile) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UserProfile.Unmarshal(m, b)
@@ -56,83 +59,36 @@ func (m *UserProfile) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_UserProfile proto.InternalMessageInfo
 
-func (m *UserProfile) GetUserProfileId() string {
+func (m *UserProfile) GetUserId() string {
 	if m != nil {
-		return m.UserProfileId
+		return m.UserId
 	}
 	return ""
 }
 
-type ListUserProfilesRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ListUserProfilesRequest) Reset()         { *m = ListUserProfilesRequest{} }
-func (m *ListUserProfilesRequest) String() string { return proto.CompactTextString(m) }
-func (*ListUserProfilesRequest) ProtoMessage()    {}
-func (*ListUserProfilesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{1}
-}
-func (m *ListUserProfilesRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListUserProfilesRequest.Unmarshal(m, b)
-}
-func (m *ListUserProfilesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListUserProfilesRequest.Marshal(b, m, deterministic)
-}
-func (dst *ListUserProfilesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListUserProfilesRequest.Merge(dst, src)
-}
-func (m *ListUserProfilesRequest) XXX_Size() int {
-	return xxx_messageInfo_ListUserProfilesRequest.Size(m)
-}
-func (m *ListUserProfilesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListUserProfilesRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ListUserProfilesRequest proto.InternalMessageInfo
-
-type ListUserProfilesResponse struct {
-	UserProfiles         []*UserProfile `protobuf:"bytes,1,rep,name=user_profiles,json=userProfiles,proto3" json:"user_profiles,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *ListUserProfilesResponse) Reset()         { *m = ListUserProfilesResponse{} }
-func (m *ListUserProfilesResponse) String() string { return proto.CompactTextString(m) }
-func (*ListUserProfilesResponse) ProtoMessage()    {}
-func (*ListUserProfilesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{2}
-}
-func (m *ListUserProfilesResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListUserProfilesResponse.Unmarshal(m, b)
-}
-func (m *ListUserProfilesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListUserProfilesResponse.Marshal(b, m, deterministic)
-}
-func (dst *ListUserProfilesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListUserProfilesResponse.Merge(dst, src)
-}
-func (m *ListUserProfilesResponse) XXX_Size() int {
-	return xxx_messageInfo_ListUserProfilesResponse.Size(m)
-}
-func (m *ListUserProfilesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListUserProfilesResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ListUserProfilesResponse proto.InternalMessageInfo
-
-func (m *ListUserProfilesResponse) GetUserProfiles() []*UserProfile {
+func (m *UserProfile) GetTwitterId() string {
 	if m != nil {
-		return m.UserProfiles
+		return m.TwitterId
 	}
-	return nil
+	return ""
+}
+
+func (m *UserProfile) GetGithubId() string {
+	if m != nil {
+		return m.GithubId
+	}
+	return ""
+}
+
+func (m *UserProfile) GetUserDescription() string {
+	if m != nil {
+		return m.UserDescription
+	}
+	return ""
 }
 
 type GetUserProfileRequest struct {
-	UserProfileId        string   `protobuf:"bytes,1,opt,name=user_profile_id,json=userProfileId,proto3" json:"user_profile_id,omitempty"`
+	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -142,7 +98,7 @@ func (m *GetUserProfileRequest) Reset()         { *m = GetUserProfileRequest{} }
 func (m *GetUserProfileRequest) String() string { return proto.CompactTextString(m) }
 func (*GetUserProfileRequest) ProtoMessage()    {}
 func (*GetUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{3}
+	return fileDescriptor_user_profile_806c1f2b32a3c6b9, []int{1}
 }
 func (m *GetUserProfileRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetUserProfileRequest.Unmarshal(m, b)
@@ -162,135 +118,63 @@ func (m *GetUserProfileRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetUserProfileRequest proto.InternalMessageInfo
 
-func (m *GetUserProfileRequest) GetUserProfileId() string {
+func (m *GetUserProfileRequest) GetUserId() string {
 	if m != nil {
-		return m.UserProfileId
+		return m.UserId
 	}
 	return ""
 }
 
-type CreateUserProfileRequest struct {
-	UserProfile          *UserProfile `protobuf:"bytes,1,opt,name=user_profile,json=userProfile,proto3" json:"user_profile,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+type UpdataUesrProfileRequest struct {
+	Profile              *UserProfile          `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	UpdateMask           *field_mask.FieldMask `protobuf:"bytes,2,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateUserProfileRequest) Reset()         { *m = CreateUserProfileRequest{} }
-func (m *CreateUserProfileRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateUserProfileRequest) ProtoMessage()    {}
-func (*CreateUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{4}
+func (m *UpdataUesrProfileRequest) Reset()         { *m = UpdataUesrProfileRequest{} }
+func (m *UpdataUesrProfileRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdataUesrProfileRequest) ProtoMessage()    {}
+func (*UpdataUesrProfileRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_user_profile_806c1f2b32a3c6b9, []int{2}
 }
-func (m *CreateUserProfileRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateUserProfileRequest.Unmarshal(m, b)
+func (m *UpdataUesrProfileRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdataUesrProfileRequest.Unmarshal(m, b)
 }
-func (m *CreateUserProfileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateUserProfileRequest.Marshal(b, m, deterministic)
+func (m *UpdataUesrProfileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdataUesrProfileRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateUserProfileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateUserProfileRequest.Merge(dst, src)
+func (dst *UpdataUesrProfileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdataUesrProfileRequest.Merge(dst, src)
 }
-func (m *CreateUserProfileRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateUserProfileRequest.Size(m)
+func (m *UpdataUesrProfileRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdataUesrProfileRequest.Size(m)
 }
-func (m *CreateUserProfileRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateUserProfileRequest.DiscardUnknown(m)
+func (m *UpdataUesrProfileRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdataUesrProfileRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateUserProfileRequest proto.InternalMessageInfo
+var xxx_messageInfo_UpdataUesrProfileRequest proto.InternalMessageInfo
 
-func (m *CreateUserProfileRequest) GetUserProfile() *UserProfile {
+func (m *UpdataUesrProfileRequest) GetProfile() *UserProfile {
 	if m != nil {
-		return m.UserProfile
+		return m.Profile
 	}
 	return nil
 }
 
-type UpdateUserProfileRequest struct {
-	UserProfile          *UserProfile `protobuf:"bytes,1,opt,name=user_profile,json=userProfile,proto3" json:"user_profile,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
-}
-
-func (m *UpdateUserProfileRequest) Reset()         { *m = UpdateUserProfileRequest{} }
-func (m *UpdateUserProfileRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateUserProfileRequest) ProtoMessage()    {}
-func (*UpdateUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{5}
-}
-func (m *UpdateUserProfileRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateUserProfileRequest.Unmarshal(m, b)
-}
-func (m *UpdateUserProfileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateUserProfileRequest.Marshal(b, m, deterministic)
-}
-func (dst *UpdateUserProfileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateUserProfileRequest.Merge(dst, src)
-}
-func (m *UpdateUserProfileRequest) XXX_Size() int {
-	return xxx_messageInfo_UpdateUserProfileRequest.Size(m)
-}
-func (m *UpdateUserProfileRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateUserProfileRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateUserProfileRequest proto.InternalMessageInfo
-
-func (m *UpdateUserProfileRequest) GetUserProfile() *UserProfile {
+func (m *UpdataUesrProfileRequest) GetUpdateMask() *field_mask.FieldMask {
 	if m != nil {
-		return m.UserProfile
+		return m.UpdateMask
 	}
 	return nil
-}
-
-type DeleteUserProfileRequest struct {
-	UserProfileId        string   `protobuf:"bytes,1,opt,name=user_profile_id,json=userProfileId,proto3" json:"user_profile_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DeleteUserProfileRequest) Reset()         { *m = DeleteUserProfileRequest{} }
-func (m *DeleteUserProfileRequest) String() string { return proto.CompactTextString(m) }
-func (*DeleteUserProfileRequest) ProtoMessage()    {}
-func (*DeleteUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_2fbabc04ae44b76e, []int{6}
-}
-func (m *DeleteUserProfileRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteUserProfileRequest.Unmarshal(m, b)
-}
-func (m *DeleteUserProfileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteUserProfileRequest.Marshal(b, m, deterministic)
-}
-func (dst *DeleteUserProfileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteUserProfileRequest.Merge(dst, src)
-}
-func (m *DeleteUserProfileRequest) XXX_Size() int {
-	return xxx_messageInfo_DeleteUserProfileRequest.Size(m)
-}
-func (m *DeleteUserProfileRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteUserProfileRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteUserProfileRequest proto.InternalMessageInfo
-
-func (m *DeleteUserProfileRequest) GetUserProfileId() string {
-	if m != nil {
-		return m.UserProfileId
-	}
-	return ""
 }
 
 func init() {
 	proto.RegisterType((*UserProfile)(nil), "com.github.ProgrammingLab.prolab_accounts.api.UserProfile")
-	proto.RegisterType((*ListUserProfilesRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.ListUserProfilesRequest")
-	proto.RegisterType((*ListUserProfilesResponse)(nil), "com.github.ProgrammingLab.prolab_accounts.api.ListUserProfilesResponse")
 	proto.RegisterType((*GetUserProfileRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.GetUserProfileRequest")
-	proto.RegisterType((*CreateUserProfileRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.CreateUserProfileRequest")
-	proto.RegisterType((*UpdateUserProfileRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.UpdateUserProfileRequest")
-	proto.RegisterType((*DeleteUserProfileRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.DeleteUserProfileRequest")
+	proto.RegisterType((*UpdataUesrProfileRequest)(nil), "com.github.ProgrammingLab.prolab_accounts.api.UpdataUesrProfileRequest")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -305,11 +189,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type UserProfileServiceClient interface {
-	ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error)
 	GetUserProfile(ctx context.Context, in *GetUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error)
-	CreateUserProfile(ctx context.Context, in *CreateUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error)
-	UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error)
-	DeleteUserProfile(ctx context.Context, in *DeleteUserProfileRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	CreateUserProfile(ctx context.Context, in *UserProfile, opts ...grpc.CallOption) (*UserProfile, error)
+	UpdateUser(ctx context.Context, in *UpdataUesrProfileRequest, opts ...grpc.CallOption) (*UserProfile, error)
 }
 
 type userProfileServiceClient struct {
@@ -318,15 +200,6 @@ type userProfileServiceClient struct {
 
 func NewUserProfileServiceClient(cc *grpc.ClientConn) UserProfileServiceClient {
 	return &userProfileServiceClient{cc}
-}
-
-func (c *userProfileServiceClient) ListUserProfiles(ctx context.Context, in *ListUserProfilesRequest, opts ...grpc.CallOption) (*ListUserProfilesResponse, error) {
-	out := new(ListUserProfilesResponse)
-	err := c.cc.Invoke(ctx, "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/ListUserProfiles", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *userProfileServiceClient) GetUserProfile(ctx context.Context, in *GetUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error) {
@@ -338,7 +211,7 @@ func (c *userProfileServiceClient) GetUserProfile(ctx context.Context, in *GetUs
 	return out, nil
 }
 
-func (c *userProfileServiceClient) CreateUserProfile(ctx context.Context, in *CreateUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error) {
+func (c *userProfileServiceClient) CreateUserProfile(ctx context.Context, in *UserProfile, opts ...grpc.CallOption) (*UserProfile, error) {
 	out := new(UserProfile)
 	err := c.cc.Invoke(ctx, "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/CreateUserProfile", in, out, opts...)
 	if err != nil {
@@ -347,18 +220,9 @@ func (c *userProfileServiceClient) CreateUserProfile(ctx context.Context, in *Cr
 	return out, nil
 }
 
-func (c *userProfileServiceClient) UpdateUserProfile(ctx context.Context, in *UpdateUserProfileRequest, opts ...grpc.CallOption) (*UserProfile, error) {
+func (c *userProfileServiceClient) UpdateUser(ctx context.Context, in *UpdataUesrProfileRequest, opts ...grpc.CallOption) (*UserProfile, error) {
 	out := new(UserProfile)
-	err := c.cc.Invoke(ctx, "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/UpdateUserProfile", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userProfileServiceClient) DeleteUserProfile(ctx context.Context, in *DeleteUserProfileRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/DeleteUserProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/UpdateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -367,33 +231,13 @@ func (c *userProfileServiceClient) DeleteUserProfile(ctx context.Context, in *De
 
 // UserProfileServiceServer is the server API for UserProfileService service.
 type UserProfileServiceServer interface {
-	ListUserProfiles(context.Context, *ListUserProfilesRequest) (*ListUserProfilesResponse, error)
 	GetUserProfile(context.Context, *GetUserProfileRequest) (*UserProfile, error)
-	CreateUserProfile(context.Context, *CreateUserProfileRequest) (*UserProfile, error)
-	UpdateUserProfile(context.Context, *UpdateUserProfileRequest) (*UserProfile, error)
-	DeleteUserProfile(context.Context, *DeleteUserProfileRequest) (*empty.Empty, error)
+	CreateUserProfile(context.Context, *UserProfile) (*UserProfile, error)
+	UpdateUser(context.Context, *UpdataUesrProfileRequest) (*UserProfile, error)
 }
 
 func RegisterUserProfileServiceServer(s *grpc.Server, srv UserProfileServiceServer) {
 	s.RegisterService(&_UserProfileService_serviceDesc, srv)
-}
-
-func _UserProfileService_ListUserProfiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUserProfilesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserProfileServiceServer).ListUserProfiles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/ListUserProfiles",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).ListUserProfiles(ctx, req.(*ListUserProfilesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _UserProfileService_GetUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -415,7 +259,7 @@ func _UserProfileService_GetUserProfile_Handler(srv interface{}, ctx context.Con
 }
 
 func _UserProfileService_CreateUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserProfileRequest)
+	in := new(UserProfile)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -427,43 +271,25 @@ func _UserProfileService_CreateUserProfile_Handler(srv interface{}, ctx context.
 		FullMethod: "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/CreateUserProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).CreateUserProfile(ctx, req.(*CreateUserProfileRequest))
+		return srv.(UserProfileServiceServer).CreateUserProfile(ctx, req.(*UserProfile))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserProfileService_UpdateUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserProfileRequest)
+func _UserProfileService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdataUesrProfileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserProfileServiceServer).UpdateUserProfile(ctx, in)
+		return srv.(UserProfileServiceServer).UpdateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/UpdateUserProfile",
+		FullMethod: "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/UpdateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).UpdateUserProfile(ctx, req.(*UpdateUserProfileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserProfileService_DeleteUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserProfileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserProfileServiceServer).DeleteUserProfile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/com.github.ProgrammingLab.prolab_accounts.api.UserProfileService/DeleteUserProfile",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserProfileServiceServer).DeleteUserProfile(ctx, req.(*DeleteUserProfileRequest))
+		return srv.(UserProfileServiceServer).UpdateUser(ctx, req.(*UpdataUesrProfileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -473,10 +299,6 @@ var _UserProfileService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*UserProfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListUserProfiles",
-			Handler:    _UserProfileService_ListUserProfiles_Handler,
-		},
-		{
 			MethodName: "GetUserProfile",
 			Handler:    _UserProfileService_GetUserProfile_Handler,
 		},
@@ -485,49 +307,43 @@ var _UserProfileService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _UserProfileService_CreateUserProfile_Handler,
 		},
 		{
-			MethodName: "UpdateUserProfile",
-			Handler:    _UserProfileService_UpdateUserProfile_Handler,
-		},
-		{
-			MethodName: "DeleteUserProfile",
-			Handler:    _UserProfileService_DeleteUserProfile_Handler,
+			MethodName: "UpdateUser",
+			Handler:    _UserProfileService_UpdateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "user_profile.proto",
 }
 
-func init() { proto.RegisterFile("user_profile.proto", fileDescriptor_user_profile_2fbabc04ae44b76e) }
+func init() { proto.RegisterFile("user_profile.proto", fileDescriptor_user_profile_806c1f2b32a3c6b9) }
 
-var fileDescriptor_user_profile_2fbabc04ae44b76e = []byte{
-	// 464 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x54, 0x4f, 0x6b, 0xd4, 0x40,
-	0x14, 0x67, 0x14, 0xaa, 0xbe, 0x6d, 0x6b, 0x77, 0xc0, 0x1a, 0xa3, 0xc8, 0x32, 0x88, 0x2c, 0x42,
-	0x27, 0xb0, 0xe2, 0xa5, 0x20, 0x42, 0x5b, 0x2d, 0x42, 0x0f, 0x65, 0xa5, 0x17, 0x41, 0xc2, 0x64,
-	0x77, 0x1a, 0x07, 0x92, 0xcc, 0x38, 0x33, 0x11, 0x4a, 0xf1, 0xe2, 0x57, 0xf0, 0xee, 0x17, 0x51,
-	0xfc, 0x12, 0x3d, 0x7b, 0xf3, 0x83, 0xc8, 0x26, 0x2d, 0x4e, 0x92, 0x8d, 0x6e, 0xc8, 0xc1, 0x63,
-	0x78, 0x99, 0xdf, 0x9f, 0xf7, 0x7e, 0xef, 0x01, 0xce, 0x0d, 0xd7, 0xa1, 0xd2, 0xf2, 0x54, 0x24,
-	0x9c, 0x2a, 0x2d, 0xad, 0xc4, 0x3b, 0x33, 0x99, 0xd2, 0x58, 0xd8, 0xf7, 0x79, 0x44, 0x8f, 0xb5,
-	0x8c, 0x35, 0x4b, 0x53, 0x91, 0xc5, 0x47, 0x2c, 0x5a, 0xfc, 0x90, 0xb0, 0x28, 0x64, 0xb3, 0x99,
-	0xcc, 0x33, 0x6b, 0x28, 0x53, 0xc2, 0x7f, 0x10, 0x4b, 0x19, 0x27, 0x3c, 0x60, 0x4a, 0x04, 0x2c,
-	0xcb, 0xa4, 0x65, 0x56, 0xc8, 0xcc, 0x94, 0x60, 0xfe, 0xfd, 0xcb, 0x6a, 0xf1, 0x15, 0xe5, 0xa7,
-	0x01, 0x4f, 0x95, 0x3d, 0x2b, 0x8b, 0xe4, 0x19, 0x0c, 0x4e, 0x0c, 0xd7, 0xc7, 0x25, 0x3d, 0x7e,
-	0x0c, 0xb7, 0x5d, 0x39, 0xa1, 0x98, 0x7b, 0x68, 0x84, 0xc6, 0xb7, 0xa6, 0x1b, 0xf9, 0x9f, 0xbf,
-	0x5e, 0xcf, 0xc9, 0x3d, 0xb8, 0x7b, 0x24, 0x8c, 0x75, 0x9e, 0x9a, 0x29, 0xff, 0x90, 0x73, 0x63,
-	0xc9, 0x39, 0x78, 0xcd, 0x92, 0x51, 0x32, 0x33, 0x1c, 0x87, 0xb0, 0xe1, 0xc2, 0x1b, 0x0f, 0x8d,
-	0xae, 0x8f, 0x07, 0x93, 0x5d, 0xda, 0xc9, 0x2f, 0x75, 0xb0, 0xa7, 0xeb, 0x8e, 0x30, 0x43, 0x5e,
-	0xc0, 0x9d, 0x43, 0xee, 0x72, 0x5f, 0xaa, 0x5a, 0xd9, 0xd8, 0x19, 0x78, 0xfb, 0x9a, 0x33, 0xcb,
-	0x97, 0x60, 0xbc, 0x83, 0x75, 0x17, 0xa3, 0x00, 0xe8, 0x27, 0x7e, 0xe0, 0x90, 0x2f, 0xa8, 0x4f,
-	0xd4, 0xfc, 0xbf, 0x50, 0xef, 0x81, 0x77, 0xc0, 0x13, 0xbe, 0x94, 0x7a, 0xc5, 0xce, 0x4d, 0x2e,
-	0x6e, 0x00, 0x76, 0x9e, 0xbf, 0xe1, 0xfa, 0xa3, 0x98, 0x71, 0xfc, 0x0d, 0xc1, 0x56, 0x3d, 0x0f,
-	0xf8, 0x55, 0x47, 0xe1, 0x2d, 0x59, 0xf3, 0x0f, 0x7b, 0xe3, 0x94, 0xc1, 0x24, 0xdb, 0x9f, 0x2f,
-	0x7e, 0x7d, 0xb9, 0xb6, 0x85, 0x37, 0x83, 0x4a, 0x3e, 0xf1, 0x77, 0x04, 0x9b, 0xd5, 0x40, 0xe1,
-	0x83, 0x8e, 0x9c, 0x4b, 0xf3, 0xe8, 0xf7, 0x18, 0x1d, 0x19, 0x17, 0x62, 0x09, 0x1e, 0x55, 0xc5,
-	0x06, 0xe7, 0xb5, 0x39, 0x7d, 0xc2, 0x3f, 0x10, 0x0c, 0x1b, 0x71, 0xc6, 0x5d, 0xbb, 0xd6, 0xb6,
-	0x10, 0xbd, 0x4c, 0x3c, 0x2a, 0x4c, 0x3c, 0x24, 0xb5, 0x8e, 0xef, 0x56, 0x72, 0x8e, 0x7f, 0x22,
-	0x18, 0x36, 0x96, 0xa2, 0xb3, 0x81, 0xb6, 0xb5, 0xea, 0x65, 0x60, 0xbf, 0x30, 0xf0, 0x7c, 0xb2,
-	0xf3, 0xb7, 0x29, 0xd0, 0xfa, 0x48, 0x6a, 0xfe, 0xbe, 0x22, 0x18, 0x36, 0x36, 0xaf, 0xb3, 0xbf,
-	0xb6, 0xdd, 0xf5, 0xb7, 0x69, 0x79, 0xfb, 0xe9, 0xd5, 0xed, 0xa7, 0x2f, 0x17, 0xb7, 0xff, 0x2a,
-	0x41, 0x4f, 0xfe, 0x99, 0xa0, 0xbd, 0x9b, 0x6f, 0xd7, 0x98, 0x12, 0xa1, 0x8a, 0xa2, 0xb5, 0x02,
-	0xe3, 0xe9, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0x87, 0xb1, 0xa0, 0x2d, 0xb0, 0x06, 0x00, 0x00,
+var fileDescriptor_user_profile_806c1f2b32a3c6b9 = []byte{
+	// 428 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x93, 0xb1, 0x8e, 0xd3, 0x30,
+	0x18, 0xc7, 0x95, 0xe3, 0xd4, 0x6b, 0xbf, 0x48, 0x70, 0x58, 0x20, 0xaa, 0x70, 0x48, 0xa7, 0x4c,
+	0x30, 0xe0, 0xa0, 0xb0, 0xc1, 0x06, 0x27, 0xaa, 0x4a, 0x20, 0x55, 0x85, 0x2e, 0x2c, 0x91, 0x93,
+	0xb8, 0xc1, 0x6a, 0x12, 0x1b, 0xdb, 0x81, 0xa1, 0x62, 0x61, 0x67, 0x62, 0xee, 0x23, 0xc0, 0xc6,
+	0x93, 0xf0, 0x0a, 0x3c, 0x08, 0xb2, 0x9d, 0x40, 0xa8, 0xe8, 0x50, 0x65, 0x8b, 0xbf, 0xef, 0xf3,
+	0xdf, 0x3f, 0xff, 0xe4, 0x00, 0x6a, 0x14, 0x95, 0x89, 0x90, 0x7c, 0xcd, 0x4a, 0x8a, 0x85, 0xe4,
+	0x9a, 0xa3, 0x87, 0x19, 0xaf, 0x70, 0xc1, 0xf4, 0xbb, 0x26, 0xc5, 0x0b, 0xc9, 0x0b, 0x49, 0xaa,
+	0x8a, 0xd5, 0xc5, 0x4b, 0x92, 0x9a, 0x81, 0x92, 0xa4, 0x09, 0xc9, 0x32, 0xde, 0xd4, 0x5a, 0x61,
+	0x22, 0x58, 0x70, 0x51, 0x70, 0x5e, 0x94, 0x34, 0x22, 0x82, 0x45, 0xa4, 0xae, 0xb9, 0x26, 0x9a,
+	0xf1, 0x5a, 0xb9, 0xb0, 0xe0, 0xb2, 0xed, 0xda, 0x55, 0xda, 0xac, 0xa3, 0x35, 0xa3, 0x65, 0x9e,
+	0x54, 0x44, 0x6d, 0xdc, 0x44, 0xf8, 0xc5, 0x03, 0x7f, 0xa5, 0xa8, 0x5c, 0x38, 0x08, 0x74, 0x07,
+	0xce, 0x2c, 0x14, 0xcb, 0xa7, 0xde, 0xa5, 0x77, 0x7f, 0xb2, 0x1c, 0x99, 0xe5, 0x3c, 0x47, 0xf7,
+	0x00, 0xf4, 0x47, 0xa6, 0xb5, 0xeb, 0x9d, 0xd8, 0xde, 0xa4, 0xad, 0xcc, 0x73, 0x74, 0x17, 0x26,
+	0x0e, 0xda, 0x74, 0xaf, 0xd9, 0xee, 0xd8, 0x15, 0xe6, 0x39, 0x7a, 0x00, 0xe7, 0x36, 0x34, 0xa7,
+	0x2a, 0x93, 0x4c, 0x18, 0xc2, 0xe9, 0xa9, 0x9d, 0xb9, 0x61, 0xea, 0x57, 0x7f, 0xcb, 0xe1, 0x23,
+	0xb8, 0x3d, 0xa3, 0xba, 0x47, 0xb4, 0xa4, 0xef, 0x1b, 0xaa, 0xf4, 0x41, 0xb0, 0xf0, 0x9b, 0x07,
+	0xd3, 0x95, 0xc8, 0x89, 0x26, 0x2b, 0xaa, 0xf6, 0x77, 0xbd, 0x81, 0xb3, 0x56, 0xaf, 0xdd, 0xe5,
+	0xc7, 0x4f, 0xf0, 0x51, 0x7e, 0x71, 0x9f, 0xa4, 0x8b, 0x42, 0x4f, 0xc1, 0x6f, 0xcc, 0x89, 0xd4,
+	0x9a, 0xb4, 0x32, 0xfc, 0x38, 0xc0, 0x4e, 0x36, 0xee, 0x64, 0xe3, 0x17, 0x46, 0xf6, 0x2b, 0xa2,
+	0x36, 0x4b, 0x70, 0xe3, 0xe6, 0x3b, 0xde, 0x9d, 0x02, 0xea, 0xa5, 0xbe, 0xa6, 0xf2, 0x03, 0xcb,
+	0x28, 0xfa, 0xee, 0xc1, 0xf5, 0x7f, 0x6f, 0x8e, 0xae, 0x8e, 0x64, 0xfd, 0xaf, 0xb8, 0x60, 0xc0,
+	0x8d, 0xc3, 0xe0, 0xf3, 0xcf, 0x5f, 0x5f, 0x4f, 0x6e, 0x21, 0x14, 0x6d, 0x5b, 0xf9, 0x9f, 0xa2,
+	0x4e, 0xc2, 0xce, 0x83, 0x9b, 0xcf, 0x25, 0x25, 0x9a, 0xf6, 0x99, 0x07, 0x9c, 0x36, 0x88, 0xf4,
+	0xdc, 0x92, 0x42, 0x38, 0xfe, 0xc3, 0xf7, 0xc3, 0x03, 0xb0, 0xef, 0xc2, 0xf2, 0xa1, 0xd9, 0xb1,
+	0xe1, 0x07, 0x9e, 0xd4, 0x20, 0xca, 0xd0, 0x52, 0x5e, 0xc4, 0x41, 0xb4, 0xed, 0xfe, 0xfa, 0x7d,
+	0xaf, 0xcf, 0xc6, 0x6f, 0x47, 0x44, 0xb0, 0x44, 0xa4, 0xe9, 0xc8, 0xbe, 0xa4, 0xc7, 0xbf, 0x03,
+	0x00, 0x00, 0xff, 0xff, 0xea, 0xcc, 0x75, 0x81, 0x27, 0x04, 0x00, 0x00,
 }
