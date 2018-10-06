@@ -28,6 +28,7 @@ type User struct {
 	Email          string      `boil:"email" json:"email" toml:"email" yaml:"email"`
 	FullName       string      `boil:"full_name" json:"full_name" toml:"full_name" yaml:"full_name"`
 	AvatarFilename null.String `boil:"avatar_filename" json:"avatar_filename,omitempty" toml:"avatar_filename" yaml:"avatar_filename,omitempty"`
+	PasswordDigest null.String `boil:"password_digest" json:"password_digest,omitempty" toml:"password_digest" yaml:"password_digest,omitempty"`
 	CreatedAt      time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -41,6 +42,7 @@ var UserColumns = struct {
 	Email          string
 	FullName       string
 	AvatarFilename string
+	PasswordDigest string
 	CreatedAt      string
 	UpdatedAt      string
 }{
@@ -49,6 +51,7 @@ var UserColumns = struct {
 	Email:          "email",
 	FullName:       "full_name",
 	AvatarFilename: "avatar_filename",
+	PasswordDigest: "password_digest",
 	CreatedAt:      "created_at",
 	UpdatedAt:      "updated_at",
 }
@@ -70,8 +73,8 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"name", "email", "full_name", "avatar_filename", "created_at", "updated_at"}
+	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "password_digest", "created_at", "updated_at"}
+	userColumnsWithoutDefault = []string{"name", "email", "full_name", "avatar_filename", "password_digest", "created_at", "updated_at"}
 	userColumnsWithDefault    = []string{"id"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
