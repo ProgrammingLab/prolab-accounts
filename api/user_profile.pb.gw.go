@@ -178,7 +178,7 @@ func RegisterUserProfileServiceHandlerClient(ctx context.Context, mux *runtime.S
 var (
 	pattern_UserProfileService_GetUserProfile_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"users", "user_id", "profile"}, ""))
 
-	pattern_UserProfileService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"users", "profile"}, ""))
+	pattern_UserProfileService_UpdateUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "profile"}, ""))
 )
 
 var (

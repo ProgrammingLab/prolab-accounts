@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/users/profile": {
+    "/user/profile": {
       "patch": {
         "operationId": "UpdateUser",
         "responses": {

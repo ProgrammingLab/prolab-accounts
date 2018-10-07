@@ -13,7 +13,7 @@ service UserProfileService{
   }
   rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
-      patch: "/users/profile"
+      patch: "/user/profile"
       body: "profile"
     };
   }
