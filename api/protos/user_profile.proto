@@ -1,0 +1,36 @@
+syntax = "proto3";
+option go_package = "api_pb";
+package com.github.ProgrammingLab.prolab_accounts.api;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+
+service UserProfileService{
+  rpc GetUserProfile (GetUserProfileRequest) returns (UserProfile){
+    option (google.api.http) = {
+        get: "/users/{user_id}/profile"
+    };
+  }
+  rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
+    option (google.api.http) = {
+      patch: "/user/profile"
+      body: "profile"
+    };
+  }
+}
+
+message UserProfile{ 
+  uint32 user_id = 1;
+  string twitter_id = 2;
+  string github_id = 3;
+  string description = 4;
+}
+
+message GetUserProfileRequest{
+  uint32 user_id = 1;
+}
+
+message UpdataUesrProfileRequest{
+  UserProfile profile = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
