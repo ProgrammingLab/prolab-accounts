@@ -16,30 +16,6 @@
   ],
   "paths": {
     "/users/profile": {
-      "post": {
-        "operationId": "CreateUserProfile",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/apiUserProfile"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/apiUserProfile"
-            }
-          }
-        ],
-        "tags": [
-          "UserProfileService"
-        ]
-      },
       "patch": {
         "operationId": "UpdateUser",
         "responses": {

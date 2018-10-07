@@ -11,12 +11,6 @@ service UserProfileService{
         get: "/users/{user_id}/profile"
     };
   }
-  rpc CreateUserProfile (CreateUserProfileRequest) returns (UserProfile) {
-    option (google.api.http) = {
-      post: "/users/profile"
-      body: "profile"
-    };
-  }
   rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
       patch: "/users/profile"
@@ -34,10 +28,6 @@ message UserProfile{
 
 message GetUserProfileRequest{
   uint32 user_id = 1;
-}
-
-message CreateUserProfileRequest {
-  UserProfile profile = 1;
 }
 
 message UpdataUesrProfileRequest{
