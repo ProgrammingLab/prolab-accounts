@@ -2,11 +2,35 @@
 
 
 [[projects]]
+  digest = "1:eb53021a8aa3f599d29c7102e65026242bdedce998a54837dc67f14b6a97c5fd"
+  name = "github.com/fsnotify/fsnotify"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  version = "v1.4.7"
+
+[[projects]]
   digest = "1:b13707423743d41665fd23f0c36b2f37bb49c30e94adb813319c44188a51ba22"
   name = "github.com/ghodss/yaml"
   packages = ["."]
   pruneopts = ""
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
+
+[[projects]]
+  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  pruneopts = ""
+  revision = "d523deb1b23d913de5bdada721a6071e71283618"
+  version = "v1.4.0"
+
+[[projects]]
+  digest = "1:10c7813de846fa10aad0ea9bca34a3c20815d51250e48ba1a3c3c7572184aea8"
+  name = "github.com/gofrs/uuid"
+  packages = ["."]
+  pruneopts = ""
+  revision = "370558f003bfe29580cd0f698d8640daccdcc45c"
+  version = "v3.1.1"
 
 [[projects]]
   digest = "1:107b233e45174dbab5b1324201d092ea9448e58243ab9f039e4c0f332e121e3a"
@@ -68,6 +92,25 @@
   version = "v1.5.0"
 
 [[projects]]
+  digest = "1:d14365c51dd1d34d5c79833ec91413bfbb166be978724f15701e17080dc06dec"
+  name = "github.com/hashicorp/hcl"
+  packages = [
+    ".",
+    "hcl/ast",
+    "hcl/parser",
+    "hcl/printer",
+    "hcl/scanner",
+    "hcl/strconv",
+    "hcl/token",
+    "json/parser",
+    "json/scanner",
+    "json/token",
+  ]
+  pruneopts = ""
+  revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:a371882b9a0485fc14a258415a594c39c6d6732d634c6754e0b9c71466d3233c"
   name = "github.com/izumin5210/grapi"
   packages = [
@@ -77,6 +120,38 @@
   pruneopts = ""
   revision = "b4236082121a78bfb78ae8c2c3c86fdc22156227"
   version = "v0.2.2"
+
+[[projects]]
+  digest = "1:2786f06eed161f2d37c797e9edfe40edeb836e9511dc1216cba6caac0f105079"
+  name = "github.com/kat-co/vala"
+  packages = ["."]
+  pruneopts = ""
+  revision = "bfe9b50e828ad56312e486cbf4165ff1ac3a9bae"
+  version = "v1"
+
+[[projects]]
+  digest = "1:961dc3b1d11f969370533390fdf203813162980c858e1dabe827b60940c909a5"
+  name = "github.com/magiconair/properties"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c2353362d570a7bfa228149c62842019201cfb71"
+  version = "v1.8.0"
+
+[[projects]]
+  digest = "1:bcc46a0fbd9e933087bef394871256b5c60269575bb661935874729c65bbbf60"
+  name = "github.com/mitchellh/mapstructure"
+  packages = ["."]
+  pruneopts = ""
+  revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
+  version = "v1.1.2"
+
+[[projects]]
+  digest = "1:894aef961c056b6d85d12bac890bf60c44e99b46292888bfa66caf529f804457"
+  name = "github.com/pelletier/go-toml"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:7365acd48986e205ccb8652cc746f09c8b7876030d53710ea6ef7d0bd0dcd7ca"
@@ -93,6 +168,85 @@
   pruneopts = ""
   revision = "e09e9389d85d8492d313d73d1469c029e710623f"
   version = "v0.1.4"
+
+[[projects]]
+  digest = "1:d0431c2fd72e39ee43ea7742322abbc200c3e704c9102c5c3c2e2e667095b0ca"
+  name = "github.com/spf13/afero"
+  packages = [
+    ".",
+    "mem",
+  ]
+  pruneopts = ""
+  revision = "d40851caa0d747393da1ffb28f7f9d8b4eeffebd"
+  version = "v1.1.2"
+
+[[projects]]
+  digest = "1:d0b38ba6da419a6d4380700218eeec8623841d44a856bb57369c172fbf692ab4"
+  name = "github.com/spf13/cast"
+  packages = ["."]
+  pruneopts = ""
+  revision = "8965335b8c7107321228e3e3702cab9832751bac"
+  version = "v1.2.0"
+
+[[projects]]
+  digest = "1:9ceffa4ab5f7195ecf18b3a7fff90c837a9ed5e22e66d18069e4bccfe1f52aa0"
+  name = "github.com/spf13/jwalterweatherman"
+  packages = ["."]
+  pruneopts = ""
+  revision = "4a4406e478ca629068e7768fc33f3f044173c0a6"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:cbaf13cdbfef0e4734ed8a7504f57fe893d471d62a35b982bf6fb3f036449a66"
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  pruneopts = ""
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
+
+[[projects]]
+  digest = "1:1ed7a19588d3b74fc6a45fe89f95aa980a34870342fb9c3183b19cad08b18a1e"
+  name = "github.com/spf13/viper"
+  packages = ["."]
+  pruneopts = ""
+  revision = "2c12c60302a5a0e62ee102ca9bc996277c2f64f5"
+  version = "v1.2.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:bb57d77118b8ecb69550dfcb4c5980ea5e6ba91bed4d80f82180449a679322f3"
+  name = "github.com/volatiletech/inflect"
+  packages = ["."]
+  pruneopts = ""
+  revision = "e7201282ae8da26cd97aed2e516f75c0bd91bb93"
+
+[[projects]]
+  digest = "1:3610e24260db9be91620fb8f3958c2048cc8856b10037112b2d279cb0b550c1b"
+  name = "github.com/volatiletech/null"
+  packages = [
+    ".",
+    "convert",
+  ]
+  pruneopts = ""
+  revision = "0681ee3b5e046ac8bfbbd3999e79d3905e96972f"
+  version = "v8.0.0"
+
+[[projects]]
+  digest = "1:deea063a4e679f2749c9e85fbaf6cf81028cd2f16f1a63877c11c594ae38f2f0"
+  name = "github.com/volatiletech/sqlboiler"
+  packages = [
+    "boil",
+    "drivers",
+    "drivers/sqlboiler-mysql/driver",
+    "importers",
+    "queries",
+    "queries/qm",
+    "randomize",
+    "strmangle",
+  ]
+  pruneopts = ""
+  revision = "1340e5544bc5880f10808da79ebb3ee80cf8abb1"
+  version = "v3.0.1"
 
 [[projects]]
   branch = "master"
@@ -140,6 +294,14 @@
   pruneopts = ""
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
+
+[[projects]]
+  digest = "1:8c432632a230496c35a15cfdf441436f04c90e724ad99c8463ef0c82bbe93edb"
+  name = "google.golang.org/appengine"
+  packages = ["cloudsql"]
+  pruneopts = ""
+  revision = "ae0ab99deb4dc413a2b4bd6c8bdd0eb67f1e4d06"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:3970150423e3f47a6d354b2868f7db632b665463755194aac1a30c4fb341be57"
@@ -201,6 +363,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/go-sql-driver/mysql",
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/protoc-gen-go",
     "github.com/golang/protobuf/ptypes/empty",
@@ -209,6 +372,17 @@
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
     "github.com/izumin5210/grapi/pkg/grapiserver",
+    "github.com/kat-co/vala",
+    "github.com/pkg/errors",
+    "github.com/spf13/viper",
+    "github.com/volatiletech/null",
+    "github.com/volatiletech/sqlboiler/boil",
+    "github.com/volatiletech/sqlboiler/drivers",
+    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql/driver",
+    "github.com/volatiletech/sqlboiler/queries",
+    "github.com/volatiletech/sqlboiler/queries/qm",
+    "github.com/volatiletech/sqlboiler/randomize",
+    "github.com/volatiletech/sqlboiler/strmangle",
     "golang.org/x/net/context",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/genproto/protobuf/field_mask",

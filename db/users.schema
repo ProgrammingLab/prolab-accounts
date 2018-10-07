@@ -1,0 +1,10 @@
+create_table :users, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  t.string :name, null: false
+  t.string :email, null: false
+  t.string :full_name, null: false
+  t.string :avatar_filename
+  t.string :password_digest
+  t.timestamps
+  t.index [:name], unique: true
+  t.index [:email], unique: true
+end
