@@ -23,15 +23,20 @@ service UserService {
       body: "user"
     };
   }
+  rpc GetCurrentUser (GetCurrentUserRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/user"
+    };
+  }
   rpc UpdateUser (UpdateUserRequest) returns (User) {
     option (google.api.http) = {
-      patch: "/users/{user.user_id}"
+      patch: "/user"
       body: "user"
     };
   }
   rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      patch: "/users/{user_id}/password"
+      patch: "/user/password"
     };
   }
 }
@@ -62,6 +67,8 @@ message CreateUserRequest {
   User user = 1;
   string registeration_token = 2;
 }
+
+message GetCurrentUserRequest {}
 
 message UpdateUserRequest {
   User user = 1;
