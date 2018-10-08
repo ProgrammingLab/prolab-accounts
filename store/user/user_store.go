@@ -1,16 +1,37 @@
 package userstore
 
 import (
+	"context"
 	"database/sql"
 
+	"github.com/pkg/errors"
+	"github.com/volatiletech/sqlboiler/queries/qm"
+
+	"github.com/ProgrammingLab/prolab-accounts/dao"
 	"github.com/ProgrammingLab/prolab-accounts/store"
 )
 
 type userStoreImpl struct {
-	db *sql.DB
+	ctx context.Context
+	db  *sql.DB
 }
 
 // NewUserStore returns new user store
-func NewUserStore(db *sql.DB) store.UserStore {
-	return &userStoreImpl{db: db}
+func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
+	return &userStoreImpl{
+		ctx: ctx,
+		db:  db,
+	}
+}
+
+func (s *userStoreImpl) FindUserByEmailOrName(name string) (*dao.User, error) {
+	u, err := dao.Users(qm.Where("email = ? or name = ?", name, name)).One(s.ctx, s.db)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.Wrap(err, "")
+	}
+
+	return u, nil
 }

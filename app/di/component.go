@@ -1,10 +1,11 @@
 package di
 
 import (
+	"context"
 	"database/sql"
 
-	// for database/sql
 	"github.com/go-redis/redis"
+	// for database/sql
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 
@@ -16,8 +17,8 @@ import (
 
 // StoreComponent is an interface of stores
 type StoreComponent interface {
-	UserStore() store.UserStore
-	SessionStore() store.SessionStore
+	UserStore(ctx context.Context) store.UserStore
+	SessionStore(ctx context.Context) store.SessionStore
 }
 
 // NewStoreComponent returns new store component
@@ -69,10 +70,10 @@ type storeComponentImpl struct {
 	client *redis.Client
 }
 
-func (s *storeComponentImpl) UserStore() store.UserStore {
-	return userstore.NewUserStore(s.db)
+func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
+	return userstore.NewUserStore(ctx, s.db)
 }
 
-func (s *storeComponentImpl) SessionStore() store.SessionStore {
+func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
 	return sessionstore.NewSessionStore(s.client)
 }
