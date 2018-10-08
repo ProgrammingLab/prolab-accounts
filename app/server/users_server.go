@@ -37,12 +37,17 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
+func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.GetCurrentUserRequest) (*api_pb.User, error) {
+	// TODO: Not yet implemented.
+	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+}
+
 func (s *userServiceServerImpl) UpdateUser(ctx context.Context, req *api_pb.UpdateUserRequest) (*api_pb.User, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *userServiceServerImpl) DeleteUser(ctx context.Context, req *api_pb.DeleteUserRequest) (*empty.Empty, error) {
+func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*empty.Empty, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }

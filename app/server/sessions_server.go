@@ -22,22 +22,12 @@ func NewSessionServiceServer() interface {
 type sessionServiceServerImpl struct {
 }
 
-func (s *sessionServiceServerImpl) ListSessions(ctx context.Context, req *api_pb.ListSessionsRequest) (*api_pb.ListSessionsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
 func (s *sessionServiceServerImpl) GetSession(ctx context.Context, req *api_pb.GetSessionRequest) (*api_pb.Session, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
 func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_pb.CreateSessionRequest) (*api_pb.Session, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *sessionServiceServerImpl) UpdateSession(ctx context.Context, req *api_pb.UpdateSessionRequest) (*api_pb.Session, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
