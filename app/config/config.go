@@ -8,7 +8,8 @@ import (
 
 // Config represents app config
 type Config struct {
-	DataSourceName string `envconfig:"data_source_name"`
+	DataSourceName string `envconfig:"data_source_name" required:"true" `
+	RedisAddr      string `envconfig:"redis_addr" required:"true"`
 }
 
 // LoadConfig loads config
