@@ -39,7 +39,7 @@ func (m *UserProfile) Reset()         { *m = UserProfile{} }
 func (m *UserProfile) String() string { return proto.CompactTextString(m) }
 func (*UserProfile) ProtoMessage()    {}
 func (*UserProfile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_06e6136b35990029, []int{0}
+	return fileDescriptor_user_profile_0d74b2fd7c8a9eb0, []int{0}
 }
 func (m *UserProfile) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UserProfile.Unmarshal(m, b)
@@ -98,7 +98,7 @@ func (m *GetUserProfileRequest) Reset()         { *m = GetUserProfileRequest{} }
 func (m *GetUserProfileRequest) String() string { return proto.CompactTextString(m) }
 func (*GetUserProfileRequest) ProtoMessage()    {}
 func (*GetUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_06e6136b35990029, []int{1}
+	return fileDescriptor_user_profile_0d74b2fd7c8a9eb0, []int{1}
 }
 func (m *GetUserProfileRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetUserProfileRequest.Unmarshal(m, b)
@@ -137,7 +137,7 @@ func (m *UpdateUserProfileRequest) Reset()         { *m = UpdateUserProfileReque
 func (m *UpdateUserProfileRequest) String() string { return proto.CompactTextString(m) }
 func (*UpdateUserProfileRequest) ProtoMessage()    {}
 func (*UpdateUserProfileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_profile_06e6136b35990029, []int{2}
+	return fileDescriptor_user_profile_0d74b2fd7c8a9eb0, []int{2}
 }
 func (m *UpdateUserProfileRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UpdateUserProfileRequest.Unmarshal(m, b)
@@ -282,9 +282,9 @@ var _UserProfileService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "user_profile.proto",
 }
 
-func init() { proto.RegisterFile("user_profile.proto", fileDescriptor_user_profile_06e6136b35990029) }
+func init() { proto.RegisterFile("user_profile.proto", fileDescriptor_user_profile_0d74b2fd7c8a9eb0) }
 
-var fileDescriptor_user_profile_06e6136b35990029 = []byte{
+var fileDescriptor_user_profile_0d74b2fd7c8a9eb0 = []byte{
 	// 405 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x91, 0x4d, 0x8a, 0xdb, 0x30,
 	0x14, 0xc7, 0x71, 0x52, 0xf2, 0x21, 0x93, 0x42, 0x05, 0xa5, 0xc6, 0xfd, 0xc0, 0x78, 0x95, 0x4d,

@@ -54,6 +54,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiCreateSessionRequest"
+            }
+          }
+        ],
         "tags": [
           "SessionService"
         ]
@@ -61,6 +71,17 @@
     }
   },
   "definitions": {
+    "apiCreateSessionRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "apiSession": {
       "type": "object",
       "properties": {
