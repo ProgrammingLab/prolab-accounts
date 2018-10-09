@@ -9,17 +9,21 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
 // NewUserServiceServer creates a new UserServiceServer instance.
-func NewUserServiceServer() interface {
+func NewUserServiceServer(store di.StoreComponent) interface {
 	api_pb.UserServiceServer
 	grapiserver.Server
 } {
-	return &userServiceServerImpl{}
+	return &userServiceServerImpl{
+		StoreComponent: store,
+	}
 }
 
 type userServiceServerImpl struct {
+	di.StoreComponent
 }
 
 func (s *userServiceServerImpl) ListUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {

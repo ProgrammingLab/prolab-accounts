@@ -75,5 +75,5 @@ func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
 }
 
 func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
-	return sessionstore.NewSessionStore(s.client)
+	return sessionstore.NewSessionStore(ctx, s.client)
 }

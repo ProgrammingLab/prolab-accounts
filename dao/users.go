@@ -28,7 +28,7 @@ type User struct {
 	Email          string      `boil:"email" json:"email" toml:"email" yaml:"email"`
 	FullName       string      `boil:"full_name" json:"full_name" toml:"full_name" yaml:"full_name"`
 	AvatarFilename null.String `boil:"avatar_filename" json:"avatar_filename,omitempty" toml:"avatar_filename" yaml:"avatar_filename,omitempty"`
-	PasswordDigest null.String `boil:"password_digest" json:"password_digest,omitempty" toml:"password_digest" yaml:"password_digest,omitempty"`
+	PasswordDigest string      `boil:"password_digest" json:"password_digest" toml:"password_digest" yaml:"password_digest"`
 	CreatedAt      time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 

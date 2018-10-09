@@ -3,9 +3,11 @@ package app
 import (
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/labstack/gommon/log"
+	"github.com/volatiletech/sqlboiler/boil"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/server"
 )
 
 // Run starts the grapiserver.
@@ -16,16 +18,19 @@ func Run() error {
 		return err
 	}
 
-	_, err = di.NewStoreComponent(cfg)
+	store, err := di.NewStoreComponent(cfg)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
 
+	boil.DebugMode = true
+
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithServers(
-		// TODO
+			server.NewSessionServiceServer(store),
+			server.NewUserServiceServer(store),
 		),
 	)
 	return s.Serve()
