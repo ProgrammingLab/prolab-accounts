@@ -3,6 +3,7 @@ package sessionstore
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -37,7 +38,7 @@ func (s *sessionStoreImpl) CreateSession(userID model.UserID) (*model.Session, e
 	}
 
 	key := fmt.Sprintf("session:%s", session.ID)
-	err = s.client.Set(key, session.UserID, SessionExpiration).Err()
+	err = s.client.Set(key, strconv.FormatInt(int64(userID), 10), SessionExpiration).Err()
 	if err != nil {
 		return nil, errors.Wrap(err, "")
 	}
