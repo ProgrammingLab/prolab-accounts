@@ -9,4 +9,5 @@ RUN apk --no-cache add build-base mysql-dev mysql-client && \
     ridgepole --version
 
 WORKDIR /db
-ENTRYPOINT echo "（´・ω・｀）"
+ENTRYPOINT [ "ridgepole" ]
+CMD [ "--version" ]
