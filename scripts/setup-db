@@ -1,16 +1,6 @@
 #!/bin/sh
 
-docker-compose -f db/docker-compose.yml up -d
-if [ $? -gt 0 ]; then
-    exit
-fi
-
-docker-compose -f db/docker-compose.yml exec ridgepole sh -c "bundle install -j2 && ridgepole --version"
-if [ $? -gt 0 ]; then
-    exit
-fi
-
-docker-compose -f db/docker-compose.yml exec ridgepole ridgepole -c env:DATABASE_URL --apply --dry-run
+docker-compose -f db/docker-compose.yml run --rm --entrypoint "ridgepole -c env:DATABASE_URL --apply --dry-run" ridgepole
 if [ $? -gt 0 ]; then
     exit
 fi
@@ -24,4 +14,4 @@ while true; do
     esac
 done
 
-docker-compose -f db/docker-compose.yml exec ridgepole ridgepole -c env:DATABASE_URL --apply
+docker-compose -f db/docker-compose.yml run --rm --entrypoint "ridgepole -c env:DATABASE_URL --apply" ridgepole
