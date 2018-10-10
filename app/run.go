@@ -24,7 +24,7 @@ func Run() error {
 		return err
 	}
 
-	boil.DebugMode = true
+	boil.DebugMode = cfg.DebugLog
 
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
