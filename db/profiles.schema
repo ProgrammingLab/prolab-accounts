@@ -2,8 +2,8 @@ create_table :profiles, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET
   t.string :description
   t.integer :grade
   t.integer :department, null: false
-  t.integer :role_id, null: false
+  t.references :role, null: false, foreign_key: true
   t.string :twitter_screen_name
   t.string :github_user_name
-  t.bigint :user_id
+  t.references :user, foreign_key: true
 end
