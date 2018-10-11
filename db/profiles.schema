@@ -1,6 +1,7 @@
 create_table :profiles, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
   t.string :description, null: false
   t.integer :grade, null: false
+  t.boolean :left, default: false, null: false
   t.integer :department, null: false
   t.references :role, null: false, foreign_key: true
   t.string :twitter_screen_name
