@@ -5,5 +5,4 @@ create_table :profiles, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET
   t.references :role, null: false, foreign_key: true
   t.string :twitter_screen_name
   t.string :github_user_name
-  t.references :user, foreign_key: true
 end
