@@ -12,6 +12,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 const (
@@ -28,12 +30,19 @@ var (
 	ErrInvalidAuthorizationMetadata = status.Error(codes.InvalidArgument, "Invalid authorization metadata")
 )
 
+type currentUserIDKey struct{}
+
+// GetCurrentUserID returns the current user's id from context
+func GetCurrentUserID(ctx context.Context) (id model.UserID, ok bool) {
+	v := ctx.Value(currentUserIDKey{})
+	id, ok = v.(model.UserID)
+	return
+}
+
 // Authorizator provide the authorization interceptor
 type Authorizator struct {
 	di.StoreComponent
 }
-
-type currentUserIDKey struct{}
 
 // NewAuthorizator returns new Authorizator
 func NewAuthorizator(store di.StoreComponent) *Authorizator {
@@ -62,7 +71,7 @@ func (a *Authorizator) authorization(ctx context.Context, req interface{}, info 
 	s, err := a.SessionStore(ctx).GetSession(sessionID)
 	if err != nil {
 		log.Error(err)
-		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
+		return nil, util.ErrUnauthenticated
 	}
 
 	newCtx := context.WithValue(ctx, currentUserIDKey{}, s.UserID)

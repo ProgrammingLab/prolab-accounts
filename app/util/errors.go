@@ -5,5 +5,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// ErrInternalServer represents internal server error
-var ErrInternalServer = status.Error(codes.Internal, "Internal server error")
+var (
+	// ErrInternalServer represents internal server error
+	ErrInternalServer = status.Error(codes.Internal, "Internal server error")
+	// ErrUnauthenticated represents unauthenticated error
+	ErrUnauthenticated = status.Error(codes.Unauthenticated, "Unauthenticated")
+)

@@ -8,6 +8,7 @@ import (
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/dao"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 	"github.com/ProgrammingLab/prolab-accounts/store"
 )
 
@@ -22,6 +23,18 @@ func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
 		ctx: ctx,
 		db:  db,
 	}
+}
+
+func (s *userStoreImpl) GetUser(userID model.UserID) (*dao.User, error) {
+	u, err := dao.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.Wrap(err, "")
+	}
+
+	return u, nil
 }
 
 func (s *userStoreImpl) FindUserByEmailOrName(name string) (*dao.User, error) {
