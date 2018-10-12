@@ -1,1 +1,3 @@
 require 'users.schema'
+require 'profiles.schema'
+require 'roles.schema'
