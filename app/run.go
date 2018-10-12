@@ -7,6 +7,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/server"
 )
 
@@ -26,8 +27,13 @@ func Run() error {
 
 	boil.DebugMode = cfg.DebugLog
 
+	authorizator := interceptor.NewAuthorizator(store)
+
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
+		grapiserver.WithGrpcServerUnaryInterceptors(
+			authorizator.UnaryServerInterceptor(),
+		),
 		grapiserver.WithServers(
 			server.NewSessionServiceServer(store),
 			server.NewUserServiceServer(store),

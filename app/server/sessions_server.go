@@ -13,6 +13,7 @@ import (
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
@@ -44,7 +45,7 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 			return nil, errLogin
 		}
 		log.Error(err)
-		return nil, ErrInternalServer
+		return nil, util.ErrInternalServer
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(u.PasswordDigest), []byte(req.GetPassword()))
@@ -55,7 +56,7 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 	session, err := s.SessionStore(ctx).CreateSession(model.UserID(u.ID))
 	if err != nil {
 		log.Error(err)
-		return nil, ErrInternalServer
+		return nil, util.ErrInternalServer
 	}
 
 	resp := &api_pb.Session{

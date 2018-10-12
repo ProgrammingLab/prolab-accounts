@@ -1,4 +1,4 @@
-package server
+package util
 
 import (
 	"google.golang.org/grpc/codes"
