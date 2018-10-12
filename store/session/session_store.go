@@ -37,11 +37,32 @@ func (s *sessionStoreImpl) CreateSession(userID model.UserID) (*model.Session, e
 		return nil, err
 	}
 
-	key := fmt.Sprintf("session:%s", session.ID)
+	key := redisKey(session.ID)
 	err = s.client.Set(key, strconv.FormatInt(int64(userID), 10), SessionExpiration).Err()
 	if err != nil {
 		return nil, errors.Wrap(err, "")
 	}
 
 	return session, nil
+}
+
+func (s *sessionStoreImpl) GetSession(sessionID string) (*model.Session, error) {
+	v, err := s.client.Get(redisKey(sessionID)).Result()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	id, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return &model.Session{
+		ID:     sessionID,
+		UserID: model.UserID(id),
+	}, nil
+}
+
+func redisKey(sessionID string) string {
+	return fmt.Sprintf("session:%s", sessionID)
 }
