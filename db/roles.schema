@@ -1,0 +1,3 @@
+create_table :roles, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+  t.string :name
+end
