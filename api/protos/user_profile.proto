@@ -11,7 +11,7 @@ service UserProfileService{
         get: "/users/{user_id}/profile"
     };
   }
-  rpc UpdateUser (UpdataUesrProfileRequest) returns (UserProfile) {
+  rpc UpdateUserProfile (UpdateUserProfileRequest) returns (UserProfile) {
     option (google.api.http) = {
       patch: "/user/profile"
       body: "profile"
@@ -19,18 +19,18 @@ service UserProfileService{
   }
 }
 
-message UserProfile{ 
+message UserProfile { 
   uint32 user_id = 1;
   string twitter_id = 2;
   string github_id = 3;
   string description = 4;
 }
 
-message GetUserProfileRequest{
+message GetUserProfileRequest {
   uint32 user_id = 1;
 }
 
-message UpdataUesrProfileRequest{
+message UpdateUserProfileRequest {
   UserProfile profile = 1;
   google.protobuf.FieldMask update_mask = 2;
 }

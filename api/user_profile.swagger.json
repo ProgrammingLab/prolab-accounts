@@ -17,7 +17,7 @@
   "paths": {
     "/user/profile": {
       "patch": {
-        "operationId": "UpdateUser",
+        "operationId": "UpdateUserProfile",
         "responses": {
           "200": {
             "description": "",
