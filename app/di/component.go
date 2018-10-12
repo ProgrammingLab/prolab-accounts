@@ -5,8 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/go-redis/redis"
-	// for database/sql
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // for database/sql
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
