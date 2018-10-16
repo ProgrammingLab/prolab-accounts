@@ -4,7 +4,7 @@ create_table :users, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=ut
   t.string :full_name, null: false
   t.string :avatar_filename
   t.string :password_digest, null: false
-  t.references :profile, foreign_key: true, null: false
+  t.references :profile, foreign_key: true
   t.timestamps
   t.index [:name], unique: true
   t.index [:email], unique: true
