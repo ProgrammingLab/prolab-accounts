@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testUsers(t *testing.T) {
+func testProfiles(t *testing.T) {
 	t.Parallel()
 
-	query := Users()
+	query := Profiles()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testUsersDelete(t *testing.T) {
+func testProfilesDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testUsersDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testUsersDelete(t *testing.T) {
 	}
 }
 
-func testUsersQueryDeleteAll(t *testing.T) {
+func testProfilesQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testUsersQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := Users().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := Profiles().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testUsersQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testUsersSliceDeleteAll(t *testing.T) {
+func testProfilesSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testUsersSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := UserSlice{o}
+	slice := ProfileSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testUsersSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testUsersSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testUsersExists(t *testing.T) {
+func testProfilesExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testUsersExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := UserExists(ctx, tx, o.ID)
+	e, err := ProfileExists(ctx, tx, o.ID)
 	if err != nil {
-		t.Errorf("Unable to check if User exists: %s", err)
+		t.Errorf("Unable to check if Profile exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected UserExists to return true, but got false.")
+		t.Errorf("Expected ProfileExists to return true, but got false.")
 	}
 }
 
-func testUsersFind(t *testing.T) {
+func testProfilesFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testUsersFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	userFound, err := FindUser(ctx, tx, o.ID)
+	profileFound, err := FindProfile(ctx, tx, o.ID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if userFound == nil {
+	if profileFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testUsersBind(t *testing.T) {
+func testProfilesBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testUsersBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = Users().Bind(ctx, tx, o); err != nil {
+	if err = Profiles().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testUsersOne(t *testing.T) {
+func testProfilesOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testUsersOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := Users().One(ctx, tx); err != nil {
+	if x, err := Profiles().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testUsersAll(t *testing.T) {
+func testProfilesAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	userOne := &User{}
-	userTwo := &User{}
-	if err = randomize.Struct(seed, userOne, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	profileOne := &Profile{}
+	profileTwo := &Profile{}
+	if err = randomize.Struct(seed, profileOne, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
-	if err = randomize.Struct(seed, userTwo, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	if err = randomize.Struct(seed, profileTwo, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = userOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = profileOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = userTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = profileTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := Users().All(ctx, tx)
+	slice, err := Profiles().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testUsersAll(t *testing.T) {
 	}
 }
 
-func testUsersCount(t *testing.T) {
+func testProfilesCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	userOne := &User{}
-	userTwo := &User{}
-	if err = randomize.Struct(seed, userOne, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	profileOne := &Profile{}
+	profileTwo := &Profile{}
+	if err = randomize.Struct(seed, profileOne, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
-	if err = randomize.Struct(seed, userTwo, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	if err = randomize.Struct(seed, profileTwo, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = userOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = profileOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = userTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = profileTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testUsersCount(t *testing.T) {
 	}
 }
 
-func userBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func userAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *User) error {
-	*o = User{}
+func profileAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Profile) error {
+	*o = Profile{}
 	return nil
 }
 
-func testUsersHooks(t *testing.T) {
+func testProfilesHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &User{}
-	o := &User{}
+	empty := &Profile{}
+	o := &Profile{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, userDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize User object: %s", err)
+	if err = randomize.Struct(seed, o, profileDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize Profile object: %s", err)
 	}
 
-	AddUserHook(boil.BeforeInsertHook, userBeforeInsertHook)
+	AddProfileHook(boil.BeforeInsertHook, profileBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	userBeforeInsertHooks = []UserHook{}
+	profileBeforeInsertHooks = []ProfileHook{}
 
-	AddUserHook(boil.AfterInsertHook, userAfterInsertHook)
+	AddProfileHook(boil.AfterInsertHook, profileAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	userAfterInsertHooks = []UserHook{}
+	profileAfterInsertHooks = []ProfileHook{}
 
-	AddUserHook(boil.AfterSelectHook, userAfterSelectHook)
+	AddProfileHook(boil.AfterSelectHook, profileAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	userAfterSelectHooks = []UserHook{}
+	profileAfterSelectHooks = []ProfileHook{}
 
-	AddUserHook(boil.BeforeUpdateHook, userBeforeUpdateHook)
+	AddProfileHook(boil.BeforeUpdateHook, profileBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	userBeforeUpdateHooks = []UserHook{}
+	profileBeforeUpdateHooks = []ProfileHook{}
 
-	AddUserHook(boil.AfterUpdateHook, userAfterUpdateHook)
+	AddProfileHook(boil.AfterUpdateHook, profileAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	userAfterUpdateHooks = []UserHook{}
+	profileAfterUpdateHooks = []ProfileHook{}
 
-	AddUserHook(boil.BeforeDeleteHook, userBeforeDeleteHook)
+	AddProfileHook(boil.BeforeDeleteHook, profileBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	userBeforeDeleteHooks = []UserHook{}
+	profileBeforeDeleteHooks = []ProfileHook{}
 
-	AddUserHook(boil.AfterDeleteHook, userAfterDeleteHook)
+	AddProfileHook(boil.AfterDeleteHook, profileAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	userAfterDeleteHooks = []UserHook{}
+	profileAfterDeleteHooks = []ProfileHook{}
 
-	AddUserHook(boil.BeforeUpsertHook, userBeforeUpsertHook)
+	AddProfileHook(boil.BeforeUpsertHook, profileBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	userBeforeUpsertHooks = []UserHook{}
+	profileBeforeUpsertHooks = []ProfileHook{}
 
-	AddUserHook(boil.AfterUpsertHook, userAfterUpsertHook)
+	AddProfileHook(boil.AfterUpsertHook, profileAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	userAfterUpsertHooks = []UserHook{}
+	profileAfterUpsertHooks = []ProfileHook{}
 }
 
-func testUsersInsert(t *testing.T) {
+func testProfilesInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testUsersInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testUsersInsert(t *testing.T) {
 	}
 }
 
-func testUsersInsertWhitelist(t *testing.T) {
+func testProfilesInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(userColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(profileColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,14 +494,14 @@ func testUsersInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testUsersReload(t *testing.T) {
+func testProfilesReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -516,14 +516,14 @@ func testUsersReload(t *testing.T) {
 	}
 }
 
-func testUsersReloadAll(t *testing.T) {
+func testProfilesReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -533,21 +533,21 @@ func testUsersReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := UserSlice{o}
+	slice := ProfileSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testUsersSelect(t *testing.T) {
+func testProfilesSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -557,7 +557,7 @@ func testUsersSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := Users().All(ctx, tx)
+	slice, err := Profiles().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -568,25 +568,25 @@ func testUsersSelect(t *testing.T) {
 }
 
 var (
-	userDBTypes = map[string]string{`AvatarFilename`: `varchar`, `CreatedAt`: `datetime`, `Email`: `varchar`, `FullName`: `varchar`, `ID`: `bigint`, `Name`: `varchar`, `PasswordDigest`: `varchar`, `ProfileID`: `bigint`, `UpdatedAt`: `datetime`}
-	_           = bytes.MinRead
+	profileDBTypes = map[string]string{`Department`: `int`, `Description`: `varchar`, `GithubUserName`: `varchar`, `Grade`: `int`, `ID`: `bigint`, `Left`: `tinyint`, `RoleID`: `bigint`, `TwitterScreenName`: `varchar`}
+	_              = bytes.MinRead
 )
 
-func testUsersUpdate(t *testing.T) {
+func testProfilesUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(userPrimaryKeyColumns) {
+	if 0 == len(profilePrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(userColumns) == len(userPrimaryKeyColumns) {
+	if len(profileColumns) == len(profilePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -596,7 +596,7 @@ func testUsersUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -605,8 +605,8 @@ func testUsersUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, userDBTypes, true, userPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profilePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -616,18 +616,18 @@ func testUsersUpdate(t *testing.T) {
 	}
 }
 
-func testUsersSliceUpdateAll(t *testing.T) {
+func testProfilesSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(userColumns) == len(userPrimaryKeyColumns) {
+	if len(profileColumns) == len(profilePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &User{}
-	if err = randomize.Struct(seed, o, userDBTypes, true, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := &Profile{}
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -637,7 +637,7 @@ func testUsersSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -646,18 +646,18 @@ func testUsersSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, userDBTypes, true, userPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	if err = randomize.Struct(seed, o, profileDBTypes, true, profilePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(userColumns, userPrimaryKeyColumns) {
-		fields = userColumns
+	if strmangle.StringSliceMatch(profileColumns, profilePrimaryKeyColumns) {
+		fields = profileColumns
 	} else {
 		fields = strmangle.SetComplement(
-			userColumns,
-			userPrimaryKeyColumns,
+			profileColumns,
+			profilePrimaryKeyColumns,
 		)
 	}
 
@@ -675,7 +675,7 @@ func testUsersSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := UserSlice{o}
+	slice := ProfileSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -683,32 +683,32 @@ func testUsersSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testUsersUpsert(t *testing.T) {
+func testProfilesUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(userColumns) == len(userPrimaryKeyColumns) {
+	if len(profileColumns) == len(profilePrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
-	if len(mySQLUserUniqueColumns) == 0 {
+	if len(mySQLProfileUniqueColumns) == 0 {
 		t.Skip("Skipping table with no unique columns to conflict on")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := User{}
-	if err = randomize.Struct(seed, &o, userDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	o := Profile{}
+	if err = randomize.Struct(seed, &o, profileDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert User: %s", err)
+		t.Errorf("Unable to upsert Profile: %s", err)
 	}
 
-	count, err := Users().Count(ctx, tx)
+	count, err := Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -717,15 +717,15 @@ func testUsersUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, userDBTypes, false, userPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
+	if err = randomize.Struct(seed, &o, profileDBTypes, false, profilePrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert User: %s", err)
+		t.Errorf("Unable to upsert Profile: %s", err)
 	}
 
-	count, err = Users().Count(ctx, tx)
+	count, err = Profiles().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}

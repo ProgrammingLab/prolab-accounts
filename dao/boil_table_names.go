@@ -4,7 +4,11 @@
 package dao
 
 var TableNames = struct {
-	Users string
+	Profiles string
+	Roles    string
+	Users    string
 }{
-	Users: "users",
+	Profiles: "profiles",
+	Roles:    "roles",
+	Users:    "users",
 }
