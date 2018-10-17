@@ -21,7 +21,7 @@ install:
   - scripts/setup-ci
 
 script:
-  - go test -v ./...
+  - go test -v -race ./...
 
 notifications:
   email:
