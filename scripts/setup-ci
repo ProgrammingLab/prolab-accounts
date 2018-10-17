@@ -5,3 +5,4 @@ dep ensure -v -vendor-only
 
 cp sqlboiler.toml.sample sqlboiler.toml
 mysql -e 'CREATE DATABASE accounts;'
+scripts/setup-db
