@@ -6,5 +6,9 @@ package dao
 import "testing"
 
 func TestUpsert(t *testing.T) {
+	t.Run("Profiles", testProfilesUpsert)
+
+	t.Run("Roles", testRolesUpsert)
+
 	t.Run("Users", testUsersUpsert)
 }
