@@ -1,11 +1,16 @@
 #!/bin/sh
 
-docker-compose -f db/docker-compose.yml run --rm ridgepole -c env:DATABASE_URL --apply --dry-run
-if [ $? -gt 0 ]; then
-    exit
+if [ ! -z "$1" ] && [ $1 != '-y' ]; then
+    echo "unknown option: $1"
+    exit 1
 fi
 
-while true; do
+docker-compose -f db/docker-compose.yml run --rm ridgepole -c env:DATABASE_URL --apply --dry-run
+if [ $? -gt 0 ]; then
+    exit $?
+fi
+
+while [ -z "$1" ]; do
     read -p 'Are you sure you want to apply changes? [Y/n]' ans
     case $ans in
         [Y] ) break;;
