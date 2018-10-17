@@ -7,7 +7,7 @@ services:
   - mysql
 
 install:
-  - ./setup.sh
+  - scripts/setup-ci
 
 script:
   - go test -v -race ./...
