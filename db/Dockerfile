@@ -12,6 +12,7 @@ LABEL maintainer="Ryota Egusa <gedorinku@yahoo.co.jp>"
 
 RUN apk --no-cache add mysql-client
 COPY --from=builder /usr/local/bundle /usr/local/bundle
+COPY --from=builder /usr/lib/libmysqlclient.so.18 /usr/lib
 WORKDIR /db
 
 ENTRYPOINT [ "ridgepole" ]
