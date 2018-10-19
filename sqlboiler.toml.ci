@@ -4,8 +4,8 @@ debug = false
 
 [mysql]
   dbname  = "accounts"
-  host    = "mysql"
+  host    = "127.0.0.1"
   port    = 3306
   user    = "root"
-  pass    = "password"
+  pass    = ""
   sslmode = "false"
