@@ -80,7 +80,6 @@ message GetCurrentUserRequest {}
 
 message UpdateUserRequest {
   User user = 1;
-  google.protobuf.FieldMask update_mask = 2;
 }
 
 message UpdatePasswordRequest {
