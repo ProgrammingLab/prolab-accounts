@@ -47,6 +47,14 @@ message User {
   string email = 3;
   string full_name = 4;
   string avatar_url = 5;
+  string description = 6;
+  int32 grade = 7;
+  bool left = 8;
+  string department = 9;
+  string short_department = 10;
+  string role = 11;
+  string twitter_screen_name = 12;
+  string github_user_name = 13;
 }
 
 message ListUsersRequest {
