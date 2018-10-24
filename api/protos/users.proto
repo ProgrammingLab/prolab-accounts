@@ -36,7 +36,7 @@ service UserService {
   }
   rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      patch: "/user/password"
+      put: "/user/password"
     };
   }
 }
@@ -47,6 +47,14 @@ message User {
   string email = 3;
   string full_name = 4;
   string avatar_url = 5;
+  string description = 6;
+  int32 grade = 7;
+  bool left = 8;
+  string department = 9;
+  string short_department = 10;
+  string role = 11;
+  string twitter_screen_name = 12;
+  string github_user_name = 13;
 }
 
 message ListUsersRequest {
@@ -72,7 +80,6 @@ message GetCurrentUserRequest {}
 
 message UpdateUserRequest {
   User user = 1;
-  google.protobuf.FieldMask update_mask = 2;
 }
 
 message UpdatePasswordRequest {
