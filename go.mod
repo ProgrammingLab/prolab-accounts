@@ -1,0 +1,44 @@
+module github.com/ProgrammingLab/prolab-accounts
+
+require (
+	github.com/fsnotify/fsnotify v1.4.7
+	github.com/ghodss/yaml v1.0.0
+	github.com/go-redis/redis v6.14.1+incompatible
+	github.com/go-sql-driver/mysql v1.4.0
+	github.com/gofrs/uuid v3.1.0+incompatible // indirect
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/golang/protobuf v1.2.0
+	github.com/grpc-ecosystem/go-grpc-middleware v0.0.0-20180830092908-498ae206fc3c
+	github.com/grpc-ecosystem/grpc-gateway v1.5.0
+	github.com/hashicorp/hcl v1.0.0
+	github.com/izumin5210/grapi v0.2.2
+	github.com/joho/godotenv v1.3.0
+	github.com/kat-co/vala v0.0.0-20140812221447-bfe9b50e828a
+	github.com/kelseyhightower/envconfig v1.3.0
+	github.com/labstack/gommon v0.2.7
+	github.com/magiconair/properties v1.8.0
+	github.com/mattn/go-colorable v0.0.9
+	github.com/mattn/go-isatty v0.0.4
+	github.com/mitchellh/mapstructure v1.1.2
+	github.com/pelletier/go-toml v1.2.0
+	github.com/pkg/errors v0.8.0
+	github.com/soheilhy/cmux v0.1.4
+	github.com/spf13/afero v1.1.2
+	github.com/spf13/cast v1.2.0
+	github.com/spf13/jwalterweatherman v1.0.0
+	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.2.1
+	github.com/valyala/bytebufferpool v1.0.0
+	github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4
+	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d
+	github.com/volatiletech/null v8.0.0+incompatible
+	github.com/volatiletech/sqlboiler v3.1.0+incompatible
+	golang.org/x/crypto v0.0.0-20181112202954-3d3f9f413869
+	golang.org/x/net v0.0.0-20180926154720-4dfa2610cdf3
+	golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611
+	golang.org/x/text v0.3.0
+	google.golang.org/appengine v1.2.0
+	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
+	google.golang.org/grpc v1.15.0
+	gopkg.in/yaml.v2 v2.2.1
+)

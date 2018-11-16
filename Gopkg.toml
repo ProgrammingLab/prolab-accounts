@@ -1,9 +1,0 @@
-required = [
-  "github.com/golang/protobuf/protoc-gen-go",
-  "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway",
-  "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger",
-]
-
-[[constraint]]
-  name = "github.com/izumin5210/grapi"
-  version = "v0.2.1"
