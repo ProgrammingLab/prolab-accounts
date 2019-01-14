@@ -4,4 +4,6 @@
 /tmp
 
 .env
+.envrc
 sqlboiler.toml
+
