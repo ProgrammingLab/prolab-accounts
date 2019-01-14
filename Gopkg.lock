@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:e988ed0ca0d81f4d28772760c02ee95084961311291bdfefc1b04617c178b722"
+  name = "github.com/fatih/color"
+  packages = ["."]
+  pruneopts = ""
+  revision = "5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4"
+  version = "v1.7.0"
+
+[[projects]]
   digest = "1:eb53021a8aa3f599d29c7102e65026242bdedce998a54837dc67f14b6a97c5fd"
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
@@ -80,12 +88,36 @@
   version = "v1.2.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:355d616958d987f0f6b632c93c26357a755b2b51dbcde1bb1515634a14473a97"
+  digest = "1:73ad2c6ea4dfacaf6fcb3cc1595b93bf2698380d95e10ead5b607abbdf8d0b7d"
+  name = "github.com/google/go-github"
+  packages = ["github"]
+  pruneopts = ""
+  revision = "a5cb647b1fac8ba77e1cf25af2f9526658ab63e3"
+  version = "v21.0.0"
+
+[[projects]]
+  digest = "1:cea4aa2038169ee558bf507d5ea02c94ca85bcca28a4c7bb99fd59b31e43a686"
+  name = "github.com/google/go-querystring"
+  packages = ["query"]
+  pruneopts = ""
+  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:c3aa20463194c145195947f72507c1d87e3a3389093661e1ca5b7d8d71fb645c"
+  name = "github.com/google/wire"
+  packages = ["."]
+  pruneopts = ""
+  revision = "28f5930663cd2ab724e2735cc5713b490f207616"
+  version = "v0.2.0"
+
+[[projects]]
+  digest = "1:9a0b2dd1f882668a3d7fbcd424eed269c383a16f1faa3a03d14e0dd5fba571b1"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
   packages = ["."]
   pruneopts = ""
-  revision = "498ae206fc3cfe81cd82e48c1d4354026fa5f9ec"
+  revision = "c250d6563d4d4c20252cd865923440e829844f4e"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:eb2f28fb6705ac16fdeb4557d4ecef21e9d729199d827ec0f07657700cebf2d9"
@@ -128,15 +160,113 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:a371882b9a0485fc14a258415a594c39c6d6732d634c6754e0b9c71466d3233c"
-  name = "github.com/izumin5210/grapi"
+  branch = "master"
+  digest = "1:825151fc1df14d134ca4e18bac531030ab718b329ef2464846bbe004547d5220"
+  name = "github.com/haya14busa/errorformat"
   packages = [
-    "pkg/grapiserver",
-    "pkg/grapiserver/internal",
+    ".",
+    "fmts",
   ]
   pruneopts = ""
-  revision = "b4236082121a78bfb78ae8c2c3c86fdc22156227"
-  version = "v0.2.2"
+  revision = "689b7d67b7a82a9cae3d8bfcfa0f6f4b5790b88a"
+
+[[projects]]
+  digest = "1:624f7c9a5ed5d04c405c8525d54f00c891e90dd8ae201aa81b703009f603fb4c"
+  name = "github.com/haya14busa/reviewdog"
+  packages = [
+    ".",
+    "cienv",
+    "cmd/reviewdog",
+    "diff",
+    "doghouse",
+    "doghouse/client",
+    "project",
+  ]
+  pruneopts = ""
+  revision = "ffb00ef78fd3e05f042505e8aaaa290919ce4d5a"
+  version = "0.9.11"
+
+[[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  pruneopts = ""
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
+  digest = "1:5a9f584f3d7355e0aa3c5fc93275f7da29a4c52cbac5baa3ed6a2fc164f223f7"
+  name = "github.com/izumin5210/clig"
+  packages = ["pkg/clib"]
+  pruneopts = ""
+  revision = "2e6c66ccd558d58f233f56f674a13642f9b55e2c"
+  version = "v0.2.0"
+
+[[projects]]
+  digest = "1:eb68b1bae33b5d6957b0088291ad0ab19b0522f367a2b325b5438fc95af69871"
+  name = "github.com/izumin5210/gex"
+  packages = [
+    ".",
+    "pkg/manager",
+    "pkg/manager/dep",
+    "pkg/manager/mod",
+    "pkg/tool",
+  ]
+  pruneopts = ""
+  revision = "9d0db8e87c4593d6bff9cf2bb6ad6db1e2f46316"
+  version = "v0.4.4"
+
+[[projects]]
+  digest = "1:42ad1581799a0d403173752f8b9a3b05457d7def0a126cade52295e73a26a221"
+  name = "github.com/izumin5210/grapi"
+  packages = [
+    "cmd/grapi",
+    "cmd/grapi-gen-command",
+    "cmd/grapi-gen-command/template",
+    "cmd/grapi-gen-scaffold-service",
+    "cmd/grapi-gen-service",
+    "cmd/grapi-gen-type",
+    "cmd/grapi-gen-type/di",
+    "cmd/grapi-gen-type/template",
+    "pkg/cli",
+    "pkg/excmd",
+    "pkg/gencmd",
+    "pkg/gencmd/util",
+    "pkg/grapicmd",
+    "pkg/grapicmd/cmd",
+    "pkg/grapicmd/di",
+    "pkg/grapicmd/internal/module",
+    "pkg/grapicmd/internal/module/generator",
+    "pkg/grapicmd/internal/module/generator/template",
+    "pkg/grapicmd/internal/module/script",
+    "pkg/grapicmd/internal/usecase",
+    "pkg/grapicmd/util/fs",
+    "pkg/grapiserver",
+    "pkg/grapiserver/internal",
+    "pkg/protoc",
+    "pkg/svcgen",
+    "pkg/svcgen/params",
+    "pkg/svcgen/template",
+  ]
+  pruneopts = ""
+  revision = "2518d77403918203a90541bf5edb02cf6f8c607a"
+  version = "v0.3.2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:860e1118ccf3d852a848b510624521344c0d4d0f35026ae2438fa96a0ec28740"
+  name = "github.com/jessevdk/go-assets"
+  packages = ["."]
+  pruneopts = ""
+  revision = "4f4301a06e153ff90e17793577ab6bf79f8dc5c5"
+
+[[projects]]
+  branch = "master"
+  digest = "1:d9a7385b84d8187fd94e0357045c6fa1147ca94caa56fdd539336c7c102fc728"
+  name = "github.com/jinzhu/inflection"
+  packages = ["."]
+  pruneopts = ""
+  revision = "04140366298a54a039076d798123ffa108fff46c"
 
 [[projects]]
   digest = "1:7df5a9695a743c3e1626b28bb8741602c8c15527e1efaeaec48ab2ff9a23f74c"
@@ -198,6 +328,14 @@
   version = "v0.0.4"
 
 [[projects]]
+  digest = "1:477cce5379198d3b8230b5c0961c61fcd1b337371cda81318e89a109245d83cb"
+  name = "github.com/mattn/go-shellwords"
+  packages = ["."]
+  pruneopts = ""
+  revision = "02e3cf038dcea8290e44424da473dd12be796a8a"
+  version = "v1.0.3"
+
+[[projects]]
   digest = "1:bcc46a0fbd9e933087bef394871256b5c60269575bb661935874729c65bbbf60"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
@@ -220,6 +358,30 @@
   pruneopts = ""
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:2cca4fc02c8329dadfc6e831e6feb61845983b434fb3e8a034fe5753295a752d"
+  name = "github.com/serenize/snaker"
+  packages = ["."]
+  pruneopts = ""
+  revision = "a683aaf2d516deecd70cad0c72e3ca773ecfcef0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:c756d63fd19d7a0addad30ecb77014fbe82b428c34bdd4142177d0a3d8e77095"
+  name = "github.com/shurcooL/httpfs"
+  packages = ["vfsutil"]
+  pruneopts = ""
+  revision = "74dc9339e414ad069a8d04bba7e7aafd08043a25"
+
+[[projects]]
+  branch = "master"
+  digest = "1:516000eb63bb341737069fafcb705951091b713d2359f84eec58df4347461cd7"
+  name = "github.com/shurcooL/vfsgen"
+  packages = ["."]
+  pruneopts = ""
+  revision = "6a9ea43bcacdf716a5c1b38efff722c07adf0069"
 
 [[projects]]
   digest = "1:022a4e2a8c327eb46a99088a51c0dda5d5be86928ace2afd72145dc1d746a323"
@@ -249,6 +411,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:a1403cc8a94b8d7956ee5e9694badef0e7b051af289caad1cf668331e3ffa4f6"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  pruneopts = ""
+  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
+
+[[projects]]
   digest = "1:9ceffa4ab5f7195ecf18b3a7fff90c837a9ed5e22e66d18069e4bccfe1f52aa0"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
@@ -271,6 +441,25 @@
   pruneopts = ""
   revision = "2c12c60302a5a0e62ee102ca9bc996277c2f64f5"
   version = "v1.2.1"
+
+[[projects]]
+  digest = "1:59f47ee1fbb31dc3d4df3fdc000fa4e4d001752dacddbba8169c149763e4ef2e"
+  name = "github.com/srvc/wraperr"
+  packages = [
+    ".",
+    "cmd/wraperr",
+  ]
+  pruneopts = ""
+  revision = "f6aeb1dc7dbd5421be3f411578f512eb6f6d3e07"
+  version = "v0.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:aedf192659743559548e480acabc6fd867de729a0c3d53c9f348ccd939e90a48"
+  name = "github.com/tcnksm/go-input"
+  packages = ["."]
+  pruneopts = ""
+  revision = "548a7d7a8ee8fcb3d013fae6acf857da56165975"
 
 [[projects]]
   digest = "1:857a9ecd5cb13379ecc8f798f6e6b6b574c98b9355657d91e068275f1120aaf7"
@@ -325,15 +514,66 @@
   version = "v3.1.0"
 
 [[projects]]
+  digest = "1:98aedf9c7082dcb583ea848729deba58dbabdfaa60767eb033850bb5ee77de44"
+  name = "github.com/xanzy/go-gitlab"
+  packages = ["."]
+  pruneopts = ""
+  revision = "294b2a04783ae9058544a6cba8642f335d6044bd"
+  version = "v0.13.0"
+
+[[projects]]
+  digest = "1:74f86c458e82e1c4efbab95233e0cf51b7cc02dc03193be9f62cd81224e10401"
+  name = "go.uber.org/atomic"
+  packages = ["."]
+  pruneopts = ""
+  revision = "1ea20fb1cbb1cc08cbd0d913a96dead89aa18289"
+  version = "v1.3.2"
+
+[[projects]]
+  digest = "1:22c7effcb4da0eacb2bb1940ee173fac010e9ef3c691f5de4b524d538bd980f5"
+  name = "go.uber.org/multierr"
+  packages = ["."]
+  pruneopts = ""
+  revision = "3c4937480c32f4c13a875a1829af76c98ca3d40a"
+  version = "v1.1.0"
+
+[[projects]]
+  digest = "1:246f378f80fba6fcf0f191c486b6613265abd2bc0f2fa55a36b928c67352021e"
+  name = "go.uber.org/zap"
+  packages = [
+    ".",
+    "buffer",
+    "internal/bufferpool",
+    "internal/color",
+    "internal/exit",
+    "zapcore",
+  ]
+  pruneopts = ""
+  revision = "ff33455a0e382e8a81d14dd7c922020b6b5e7982"
+  version = "v1.9.1"
+
+[[projects]]
   branch = "master"
   digest = "1:6914c49eed986dfb8dffb33516fa129c49929d4d873f41e073c83c11c372b870"
   name = "golang.org/x/crypto"
   packages = [
     "bcrypt",
     "blowfish",
+    "ssh/terminal",
   ]
   pruneopts = ""
   revision = "e3636079e1a4c1f337f212cc5cd2aca108f6c900"
+
+[[projects]]
+  branch = "master"
+  digest = "1:053024e8981dab276218a180e58f97034d06e8c4dd2e24c9365ad489104e1d90"
+  name = "golang.org/x/lint"
+  packages = [
+    ".",
+    "golint",
+  ]
+  pruneopts = ""
+  revision = "8f45f776aaf18cebc8d65861cc70c33c60471952"
 
 [[projects]]
   branch = "master"
@@ -341,6 +581,7 @@
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -353,9 +594,31 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:790c83515921619a461cf47449bbdd5f58e35f689edc8164262cce7db4ae29ca"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = ""
+  revision = "36a7019397c4c86cf59eeab3bc0d188bac444277"
+
+[[projects]]
+  branch = "master"
+  digest = "1:814474ab808c5e04b9334d046f8a0060fc1724c2c02acfd00a7cc0008d675455"
+  name = "golang.org/x/sync"
+  packages = ["errgroup"]
+  pruneopts = ""
+  revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
+
+[[projects]]
+  branch = "master"
   digest = "1:149a432fabebb8221a80f77731b1cd63597197ded4f14af606ebe3a0959004ec"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = ""
   revision = "e4b3c5e9061176387e7cea65e4dc5853801f3fb7"
 
@@ -383,9 +646,31 @@
   version = "v0.3.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:20d88050fd2ec7f77865cd23dcca07bf47b52b8fe9b8f35a6abf122336abb82d"
+  name = "golang.org/x/tools"
+  packages = [
+    "go/ast/astutil",
+    "go/gcexportdata",
+    "go/internal/gcimporter",
+    "go/types/typeutil",
+  ]
+  pruneopts = ""
+  revision = "fc1d57b08d7be19e6befb8d9a9405221faa3d5c9"
+
+[[projects]]
   digest = "1:8c432632a230496c35a15cfdf441436f04c90e724ad99c8463ef0c82bbe93edb"
   name = "google.golang.org/appengine"
-  packages = ["cloudsql"]
+  packages = [
+    "cloudsql",
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch",
+  ]
   pruneopts = ""
   revision = "ae0ab99deb4dc413a2b4bd6c8bdd0eb67f1e4d06"
   version = "v1.2.0"
@@ -446,6 +731,14 @@
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
+[[projects]]
+  branch = "master"
+  digest = "1:8b4b9c29be72c176988b04d5acc665c093b1efac228835f0a4716531c1f7563e"
+  name = "k8s.io/utils"
+  packages = ["exec"]
+  pruneopts = ""
+  revision = "8a16e7dd8fb6d97d1331b0c79a16722f934b00b1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -459,6 +752,11 @@
     "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
+    "github.com/izumin5210/grapi/cmd/grapi",
+    "github.com/izumin5210/grapi/cmd/grapi-gen-command",
+    "github.com/izumin5210/grapi/cmd/grapi-gen-scaffold-service",
+    "github.com/izumin5210/grapi/cmd/grapi-gen-service",
+    "github.com/izumin5210/grapi/cmd/grapi-gen-type",
     "github.com/izumin5210/grapi/pkg/grapiserver",
     "github.com/joho/godotenv",
     "github.com/kat-co/vala",
