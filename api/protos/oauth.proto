@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service OAuthService {
+  rpc StartOauthLogin (StartOauthLoginRequest) returns (StartOAuthLoginResponse) {
+    option (google.api.http) = {
+      get: "/oauth/login"
+    };
+  }
+  rpc OAuthLogin (OAuthLoginRequest) returns (OAuthLoginResponse) {
+    option (google.api.http) = {
+      get: "/oauth/login"
+    };
+  }
+}
+
+message StartOauthLoginRequest {
+  string challenge = 1;
+}
+
+message StartOAuthLoginResponse {
+  string redirect_url = 1;
+}
+
+message OAuthLoginRequest {
+  string name = 1;
+  string password = 2;
+  bool remember = 3;
+  string challenge = 4;
+}
+
+message OAuthLoginResponse {
+  string redirect_url = 1;
+}
