@@ -378,8 +378,8 @@
     "sdk/go/hydra/swagger",
   ]
   pruneopts = ""
-  revision = "3d6634bc0d71a508f7e8fc66fe40fbe86469d3e8"
-  version = "v0.11.14"
+  revision = "bdb6634e3d870918b0914f4210d95ae1872e2f51"
+  version = "v1.0.0-rc.6+oryOS.10"
 
 [[projects]]
   digest = "1:894aef961c056b6d85d12bac890bf60c44e99b46292888bfa66caf529f804457"
