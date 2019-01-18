@@ -25,6 +25,12 @@ func Run() error {
 		return err
 	}
 
+	_, err = di.NewClientComponent(cfg)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
 	boil.DebugMode = cfg.DebugLog
 
 	authorizator := interceptor.NewAuthorizator(store)

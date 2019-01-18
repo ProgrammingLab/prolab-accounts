@@ -371,7 +371,7 @@
   version = "v1.1.2"
 
 [[projects]]
-  digest = "1:98e67425d5ffbacf45f686d0139b12b7a371befeff41943c8a15b6385445609d"
+  digest = "1:d6e135c97663d8e8b001b56730988097109f7df8c4d1caabac9a41db9ccc311a"
   name = "github.com/ory/hydra"
   packages = [
     "sdk/go/hydra",
