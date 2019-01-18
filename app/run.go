@@ -25,7 +25,7 @@ func Run() error {
 		return err
 	}
 
-	_, err = di.NewClientComponent(cfg)
+	cli, err = di.NewClientComponent(cfg)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -43,7 +43,7 @@ func Run() error {
 		grapiserver.WithServers(
 			server.NewSessionServiceServer(store),
 			server.NewUserServiceServer(store),
-			server.NewOAuthServiceServer(),
+			server.NewOAuthServiceServer(cli),
 		),
 	)
 	return s.Serve()

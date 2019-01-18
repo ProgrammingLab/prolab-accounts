@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	"github.com/gedorinku/tsugidoko-server/app/di"
 )
 
 // OAuthServiceServer is a composite interface of api_pb.OAuthServiceServer and grapiserver.Server.
@@ -17,11 +18,14 @@ type OAuthServiceServer interface {
 }
 
 // NewOAuthServiceServer creates a new OAuthServiceServer instance.
-func NewOAuthServiceServer() OAuthServiceServer {
-	return &oAuthServiceServerImpl{}
+func NewOAuthServiceServer(cli di.ClientComponent) OAuthServiceServer {
+	return &oAuthServiceServerImpl{
+		ClientComponent: cli,
+	}
 }
 
 type oAuthServiceServerImpl struct {
+	di.ClientComponent
 }
 
 func (s *oAuthServiceServerImpl) StartOauthLogin(ctx context.Context, req *api_pb.StartOauthLoginRequest) (*api_pb.StartOAuthLoginResponse, error) {
