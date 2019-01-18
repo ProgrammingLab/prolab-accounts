@@ -25,7 +25,7 @@ func Run() error {
 		return err
 	}
 
-	cli, err = di.NewClientComponent(cfg)
+	cli, err := di.NewClientComponent(cfg)
 	if err != nil {
 		log.Error(err)
 		return err

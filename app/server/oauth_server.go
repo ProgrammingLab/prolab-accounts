@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
-	"github.com/gedorinku/tsugidoko-server/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
 // OAuthServiceServer is a composite interface of api_pb.OAuthServiceServer and grapiserver.Server.
