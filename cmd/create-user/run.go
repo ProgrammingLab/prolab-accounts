@@ -79,7 +79,7 @@ func readPassword(s *bufio.Scanner) ([]byte, error) {
 		}
 		fmt.Println()
 
-		if bytes.Compare(p, rp) == 0 {
+		if bytes.Equal(p, rp) {
 			d, err := bcrypt.GenerateFromPassword(p, bcrypt.DefaultCost)
 			if err != nil {
 				return nil, errors.WithStack(err)
