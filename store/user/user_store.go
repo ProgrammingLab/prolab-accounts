@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/volatiletech/sqlboiler/boil"
+
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
@@ -23,6 +25,11 @@ func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
 		ctx: ctx,
 		db:  db,
 	}
+}
+
+func (s *userStoreImpl) CreateUser(user *dao.User) error {
+	err := user.Insert(s.ctx, s.db, boil.Infer())
+	return errors.WithStack(err)
 }
 
 func (s *userStoreImpl) GetUser(userID model.UserID) (*dao.User, error) {
