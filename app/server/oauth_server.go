@@ -11,9 +11,12 @@ import (
 	"github.com/ory/hydra/sdk/go/hydra/swagger"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 )
@@ -82,7 +85,7 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 		Remember:    req.Remember,
 		RememberFor: int64(time.Hour.Seconds()),
 	}
-	res, _, err := cli.AcceptLoginRequest(req.GetChallenge(), acReq)
+	res, _, err := cli.AcceptLoginRequest(req.GetLoginChallenge(), acReq)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -93,4 +96,54 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 	}
 
 	return resp, nil
+}
+
+func (s *oAuthServiceServerImpl) StartOauthConsent(ctx context.Context, req *api_pb.StartOauthConsentRequest) (*api_pb.StartOauthConsentResponse, error) {
+	cli := s.HydraClient(ctx)
+	challenge := req.GetConsentChallenge()
+	res, _, err := cli.GetConsentRequest(challenge)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	if res.Skip {
+		req := swagger.AcceptConsentRequest{
+			GrantScope:               res.RequestedScope,
+			GrantAccessTokenAudience: res.RequestedAccessTokenAudience,
+		}
+		res, _, err := cli.AcceptConsentRequest(challenge, req)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+
+		resp := &api_pb.StartOauthConsentResponse{
+			Skip:        true,
+			RedirectUrl: res.RedirectTo,
+		}
+		return resp, nil
+	}
+
+	resp := &api_pb.StartOauthConsentResponse{
+		Skip:            false,
+		RequestedScopes: res.RequestedScope,
+		Client:          clientToResponse(res.Client),
+	}
+	return resp, nil
+}
+
+func (s *oAuthServiceServerImpl) OAuthConsent(context.Context, *api_pb.OAuthConsentRequest) (*api_pb.OAuthConsentResponse, error) {
+	// TODO: Not yet implemented.
+	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+}
+
+func clientToResponse(cli swagger.OAuth2Client) *type_pb.Client {
+	return &type_pb.Client{
+		Id:       cli.ClientId,
+		Name:     cli.ClientName,
+		Uri:      cli.ClientUri,
+		Contacts: cli.Contacts,
+		LogoUri:  cli.LogoUri,
+		Owner:    cli.Owner,
+	}
 }
