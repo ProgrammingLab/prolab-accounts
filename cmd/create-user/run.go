@@ -26,12 +26,12 @@ func main() {
 func run() int {
 	c, err := config.LoadConfig()
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		_ = fmt.Errorf("%+v", err)
 		return 1
 	}
 	store, err := di.NewStoreComponent(c)
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		_ = fmt.Errorf("%+v", err)
 		return 1
 	}
 
@@ -43,14 +43,14 @@ func run() int {
 	}
 	d, err := readPassword(s)
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		_ = fmt.Errorf("%+v", err)
 		return 1
 	}
 	u.PasswordDigest = string(d)
 
 	err = store.UserStore(context.Background()).CreateUser(u)
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		_ = fmt.Errorf("%+v", err)
 		return 1
 	}
 
