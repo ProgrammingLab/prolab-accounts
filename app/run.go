@@ -43,7 +43,7 @@ func Run() error {
 		grapiserver.WithServers(
 			server.NewSessionServiceServer(store),
 			server.NewUserServiceServer(store),
-			server.NewOAuthServiceServer(cli),
+			server.NewOAuthServiceServer(cli, store),
 		),
 	)
 	return s.Serve()

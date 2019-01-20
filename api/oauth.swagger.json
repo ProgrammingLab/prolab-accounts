@@ -17,6 +17,28 @@
   "paths": {
     "/oauth/login": {
       "get": {
+        "operationId": "StartOauthLogin",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsStartOAuthLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "login_challenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      },
+      "post": {
         "operationId": "OAuthLogin",
         "responses": {
           "200": {
@@ -28,29 +50,12 @@
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "remember",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "challenge",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthLoginRequest"
+            }
           }
         ],
         "tags": [
@@ -60,6 +65,24 @@
     }
   },
   "definitions": {
+    "prolab_accountsOAuthLoginRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "remember": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "challenge": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsOAuthLoginResponse": {
       "type": "object",
       "properties": {

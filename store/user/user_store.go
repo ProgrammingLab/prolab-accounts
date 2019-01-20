@@ -4,9 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/volatiletech/sqlboiler/boil"
-
 	"github.com/pkg/errors"
+	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/dao"
@@ -34,18 +33,6 @@ func (s *userStoreImpl) CreateUser(user *dao.User) error {
 
 func (s *userStoreImpl) GetUser(userID model.UserID) (*dao.User, error) {
 	u, err := dao.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, err
-		}
-		return nil, errors.Wrap(err, "")
-	}
-
-	return u, nil
-}
-
-func (s *userStoreImpl) FindUserByEmailOrName(name string) (*dao.User, error) {
-	u, err := dao.Users(qm.Where("email = ? or name = ?", name, name)).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err

@@ -16,7 +16,8 @@ service OAuthService {
   }
   rpc OAuthLogin (OAuthLoginRequest) returns (OAuthLoginResponse) {
     option (google.api.http) = {
-      get: "/oauth/login"
+      post: "/oauth/login"
+      body: "*"
     };
   }
 }
