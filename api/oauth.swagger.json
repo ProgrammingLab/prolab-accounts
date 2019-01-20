@@ -15,6 +15,54 @@
     "application/json"
   ],
   "paths": {
+    "/oauth/consent": {
+      "get": {
+        "operationId": "StartOauthConsent",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsStartOauthConsentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "consent_challenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      },
+      "post": {
+        "operationId": "OAuthConsent",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthConsentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthConsentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      }
+    },
     "/oauth/login": {
       "get": {
         "operationId": "StartOauthLogin",
@@ -65,6 +113,36 @@
     }
   },
   "definitions": {
+    "prolab_accountsOAuthConsentRequest": {
+      "type": "object",
+      "properties": {
+        "consent_challenge": {
+          "type": "string"
+        },
+        "accept": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "grant_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remember": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "prolab_accountsOAuthConsentResponse": {
+      "type": "object",
+      "properties": {
+        "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsOAuthLoginRequest": {
       "type": "object",
       "properties": {
@@ -99,6 +177,53 @@
           "format": "boolean"
         },
         "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsStartOauthConsentResponse": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "redirect_url": {
+          "type": "string"
+        },
+        "requested_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "client": {
+          "$ref": "#/definitions/typeClient"
+        }
+      }
+    },
+    "typeClient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logo_uri": {
+          "type": "string"
+        },
+        "owner": {
           "type": "string"
         }
       }

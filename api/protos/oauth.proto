@@ -8,6 +8,8 @@ option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "type/client.proto";
+
 service OAuthService {
   rpc StartOauthLogin (StartOauthLoginRequest) returns (StartOAuthLoginResponse) {
     option (google.api.http) = {
@@ -17,6 +19,17 @@ service OAuthService {
   rpc OAuthLogin (OAuthLoginRequest) returns (OAuthLoginResponse) {
     option (google.api.http) = {
       post: "/oauth/login"
+      body: "*"
+    };
+  }
+  rpc StartOauthConsent (StartOauthConsentRequest) returns (StartOauthConsentResponse) {
+    option (google.api.http) = {
+      get: "/oauth/consent"
+    };
+  }
+  rpc OAuthConsent (OAuthConsentRequest) returns (OAuthConsentResponse) {
+    option (google.api.http) = {
+      post: "/oauth/consent"
       body: "*"
     };
   }
@@ -39,5 +52,27 @@ message OAuthLoginRequest {
 }
 
 message OAuthLoginResponse {
+  string redirect_url = 1;
+}
+
+message StartOauthConsentRequest {
+  string consent_challenge = 1;
+}
+
+message StartOauthConsentResponse {
+  bool skip = 1;
+  string redirect_url = 2;
+  repeated string requested_scopes = 3;
+  type.Client client = 4;
+}
+
+message OAuthConsentRequest {
+  string consent_challenge = 1;
+  bool accept = 2;
+  repeated string grant_scopes = 3;
+  bool remember = 4;
+}
+
+message OAuthConsentResponse {
   string redirect_url = 1;
 }

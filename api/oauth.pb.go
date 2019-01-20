@@ -6,6 +6,7 @@ package api_pb // import "github.com/ProgrammingLab/prolab-accounts/api"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
+import _type "github.com/ProgrammingLab/prolab-accounts/api/type"
 import _ "github.com/golang/protobuf/ptypes/empty"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 
@@ -36,7 +37,7 @@ func (m *StartOauthLoginRequest) Reset()         { *m = StartOauthLoginRequest{}
 func (m *StartOauthLoginRequest) String() string { return proto.CompactTextString(m) }
 func (*StartOauthLoginRequest) ProtoMessage()    {}
 func (*StartOauthLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_oauth_98869bd5699bd70f, []int{0}
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{0}
 }
 func (m *StartOauthLoginRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartOauthLoginRequest.Unmarshal(m, b)
@@ -75,7 +76,7 @@ func (m *StartOAuthLoginResponse) Reset()         { *m = StartOAuthLoginResponse
 func (m *StartOAuthLoginResponse) String() string { return proto.CompactTextString(m) }
 func (*StartOAuthLoginResponse) ProtoMessage()    {}
 func (*StartOAuthLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_oauth_98869bd5699bd70f, []int{1}
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{1}
 }
 func (m *StartOAuthLoginResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartOAuthLoginResponse.Unmarshal(m, b)
@@ -123,7 +124,7 @@ func (m *OAuthLoginRequest) Reset()         { *m = OAuthLoginRequest{} }
 func (m *OAuthLoginRequest) String() string { return proto.CompactTextString(m) }
 func (*OAuthLoginRequest) ProtoMessage()    {}
 func (*OAuthLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_oauth_98869bd5699bd70f, []int{2}
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{2}
 }
 func (m *OAuthLoginRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OAuthLoginRequest.Unmarshal(m, b)
@@ -182,7 +183,7 @@ func (m *OAuthLoginResponse) Reset()         { *m = OAuthLoginResponse{} }
 func (m *OAuthLoginResponse) String() string { return proto.CompactTextString(m) }
 func (*OAuthLoginResponse) ProtoMessage()    {}
 func (*OAuthLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_oauth_98869bd5699bd70f, []int{3}
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{3}
 }
 func (m *OAuthLoginResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OAuthLoginResponse.Unmarshal(m, b)
@@ -209,11 +210,215 @@ func (m *OAuthLoginResponse) GetRedirectUrl() string {
 	return ""
 }
 
+type StartOauthConsentRequest struct {
+	ConsentChallenge     string   `protobuf:"bytes,1,opt,name=consent_challenge,json=consentChallenge,proto3" json:"consent_challenge,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *StartOauthConsentRequest) Reset()         { *m = StartOauthConsentRequest{} }
+func (m *StartOauthConsentRequest) String() string { return proto.CompactTextString(m) }
+func (*StartOauthConsentRequest) ProtoMessage()    {}
+func (*StartOauthConsentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{4}
+}
+func (m *StartOauthConsentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartOauthConsentRequest.Unmarshal(m, b)
+}
+func (m *StartOauthConsentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartOauthConsentRequest.Marshal(b, m, deterministic)
+}
+func (dst *StartOauthConsentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartOauthConsentRequest.Merge(dst, src)
+}
+func (m *StartOauthConsentRequest) XXX_Size() int {
+	return xxx_messageInfo_StartOauthConsentRequest.Size(m)
+}
+func (m *StartOauthConsentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartOauthConsentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartOauthConsentRequest proto.InternalMessageInfo
+
+func (m *StartOauthConsentRequest) GetConsentChallenge() string {
+	if m != nil {
+		return m.ConsentChallenge
+	}
+	return ""
+}
+
+type StartOauthConsentResponse struct {
+	Skip                 bool          `protobuf:"varint,1,opt,name=skip,proto3" json:"skip,omitempty"`
+	RedirectUrl          string        `protobuf:"bytes,2,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
+	RequestedScopes      []string      `protobuf:"bytes,3,rep,name=requested_scopes,json=requestedScopes,proto3" json:"requested_scopes,omitempty"`
+	Client               *_type.Client `protobuf:"bytes,4,opt,name=client,proto3" json:"client,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *StartOauthConsentResponse) Reset()         { *m = StartOauthConsentResponse{} }
+func (m *StartOauthConsentResponse) String() string { return proto.CompactTextString(m) }
+func (*StartOauthConsentResponse) ProtoMessage()    {}
+func (*StartOauthConsentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{5}
+}
+func (m *StartOauthConsentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartOauthConsentResponse.Unmarshal(m, b)
+}
+func (m *StartOauthConsentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartOauthConsentResponse.Marshal(b, m, deterministic)
+}
+func (dst *StartOauthConsentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartOauthConsentResponse.Merge(dst, src)
+}
+func (m *StartOauthConsentResponse) XXX_Size() int {
+	return xxx_messageInfo_StartOauthConsentResponse.Size(m)
+}
+func (m *StartOauthConsentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartOauthConsentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartOauthConsentResponse proto.InternalMessageInfo
+
+func (m *StartOauthConsentResponse) GetSkip() bool {
+	if m != nil {
+		return m.Skip
+	}
+	return false
+}
+
+func (m *StartOauthConsentResponse) GetRedirectUrl() string {
+	if m != nil {
+		return m.RedirectUrl
+	}
+	return ""
+}
+
+func (m *StartOauthConsentResponse) GetRequestedScopes() []string {
+	if m != nil {
+		return m.RequestedScopes
+	}
+	return nil
+}
+
+func (m *StartOauthConsentResponse) GetClient() *_type.Client {
+	if m != nil {
+		return m.Client
+	}
+	return nil
+}
+
+type OAuthConsentRequest struct {
+	ConsentChallenge     string   `protobuf:"bytes,1,opt,name=consent_challenge,json=consentChallenge,proto3" json:"consent_challenge,omitempty"`
+	Accept               bool     `protobuf:"varint,2,opt,name=accept,proto3" json:"accept,omitempty"`
+	GrantScopes          []string `protobuf:"bytes,3,rep,name=grant_scopes,json=grantScopes,proto3" json:"grant_scopes,omitempty"`
+	Remember             bool     `protobuf:"varint,4,opt,name=remember,proto3" json:"remember,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *OAuthConsentRequest) Reset()         { *m = OAuthConsentRequest{} }
+func (m *OAuthConsentRequest) String() string { return proto.CompactTextString(m) }
+func (*OAuthConsentRequest) ProtoMessage()    {}
+func (*OAuthConsentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{6}
+}
+func (m *OAuthConsentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OAuthConsentRequest.Unmarshal(m, b)
+}
+func (m *OAuthConsentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OAuthConsentRequest.Marshal(b, m, deterministic)
+}
+func (dst *OAuthConsentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OAuthConsentRequest.Merge(dst, src)
+}
+func (m *OAuthConsentRequest) XXX_Size() int {
+	return xxx_messageInfo_OAuthConsentRequest.Size(m)
+}
+func (m *OAuthConsentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_OAuthConsentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OAuthConsentRequest proto.InternalMessageInfo
+
+func (m *OAuthConsentRequest) GetConsentChallenge() string {
+	if m != nil {
+		return m.ConsentChallenge
+	}
+	return ""
+}
+
+func (m *OAuthConsentRequest) GetAccept() bool {
+	if m != nil {
+		return m.Accept
+	}
+	return false
+}
+
+func (m *OAuthConsentRequest) GetGrantScopes() []string {
+	if m != nil {
+		return m.GrantScopes
+	}
+	return nil
+}
+
+func (m *OAuthConsentRequest) GetRemember() bool {
+	if m != nil {
+		return m.Remember
+	}
+	return false
+}
+
+type OAuthConsentResponse struct {
+	RedirectUrl          string   `protobuf:"bytes,1,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *OAuthConsentResponse) Reset()         { *m = OAuthConsentResponse{} }
+func (m *OAuthConsentResponse) String() string { return proto.CompactTextString(m) }
+func (*OAuthConsentResponse) ProtoMessage()    {}
+func (*OAuthConsentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_oauth_163a7a7e0e30758c, []int{7}
+}
+func (m *OAuthConsentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OAuthConsentResponse.Unmarshal(m, b)
+}
+func (m *OAuthConsentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OAuthConsentResponse.Marshal(b, m, deterministic)
+}
+func (dst *OAuthConsentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OAuthConsentResponse.Merge(dst, src)
+}
+func (m *OAuthConsentResponse) XXX_Size() int {
+	return xxx_messageInfo_OAuthConsentResponse.Size(m)
+}
+func (m *OAuthConsentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_OAuthConsentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OAuthConsentResponse proto.InternalMessageInfo
+
+func (m *OAuthConsentResponse) GetRedirectUrl() string {
+	if m != nil {
+		return m.RedirectUrl
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*StartOauthLoginRequest)(nil), "programming_lab.prolab_accounts.StartOauthLoginRequest")
 	proto.RegisterType((*StartOAuthLoginResponse)(nil), "programming_lab.prolab_accounts.StartOAuthLoginResponse")
 	proto.RegisterType((*OAuthLoginRequest)(nil), "programming_lab.prolab_accounts.OAuthLoginRequest")
 	proto.RegisterType((*OAuthLoginResponse)(nil), "programming_lab.prolab_accounts.OAuthLoginResponse")
+	proto.RegisterType((*StartOauthConsentRequest)(nil), "programming_lab.prolab_accounts.StartOauthConsentRequest")
+	proto.RegisterType((*StartOauthConsentResponse)(nil), "programming_lab.prolab_accounts.StartOauthConsentResponse")
+	proto.RegisterType((*OAuthConsentRequest)(nil), "programming_lab.prolab_accounts.OAuthConsentRequest")
+	proto.RegisterType((*OAuthConsentResponse)(nil), "programming_lab.prolab_accounts.OAuthConsentResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -230,6 +435,8 @@ const _ = grpc.SupportPackageIsVersion4
 type OAuthServiceClient interface {
 	StartOauthLogin(ctx context.Context, in *StartOauthLoginRequest, opts ...grpc.CallOption) (*StartOAuthLoginResponse, error)
 	OAuthLogin(ctx context.Context, in *OAuthLoginRequest, opts ...grpc.CallOption) (*OAuthLoginResponse, error)
+	StartOauthConsent(ctx context.Context, in *StartOauthConsentRequest, opts ...grpc.CallOption) (*StartOauthConsentResponse, error)
+	OAuthConsent(ctx context.Context, in *OAuthConsentRequest, opts ...grpc.CallOption) (*OAuthConsentResponse, error)
 }
 
 type oAuthServiceClient struct {
@@ -258,10 +465,30 @@ func (c *oAuthServiceClient) OAuthLogin(ctx context.Context, in *OAuthLoginReque
 	return out, nil
 }
 
+func (c *oAuthServiceClient) StartOauthConsent(ctx context.Context, in *StartOauthConsentRequest, opts ...grpc.CallOption) (*StartOauthConsentResponse, error) {
+	out := new(StartOauthConsentResponse)
+	err := c.cc.Invoke(ctx, "/programming_lab.prolab_accounts.OAuthService/StartOauthConsent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *oAuthServiceClient) OAuthConsent(ctx context.Context, in *OAuthConsentRequest, opts ...grpc.CallOption) (*OAuthConsentResponse, error) {
+	out := new(OAuthConsentResponse)
+	err := c.cc.Invoke(ctx, "/programming_lab.prolab_accounts.OAuthService/OAuthConsent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OAuthServiceServer is the server API for OAuthService service.
 type OAuthServiceServer interface {
 	StartOauthLogin(context.Context, *StartOauthLoginRequest) (*StartOAuthLoginResponse, error)
 	OAuthLogin(context.Context, *OAuthLoginRequest) (*OAuthLoginResponse, error)
+	StartOauthConsent(context.Context, *StartOauthConsentRequest) (*StartOauthConsentResponse, error)
+	OAuthConsent(context.Context, *OAuthConsentRequest) (*OAuthConsentResponse, error)
 }
 
 func RegisterOAuthServiceServer(s *grpc.Server, srv OAuthServiceServer) {
@@ -304,6 +531,42 @@ func _OAuthService_OAuthLogin_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OAuthService_StartOauthConsent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartOauthConsentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OAuthServiceServer).StartOauthConsent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/programming_lab.prolab_accounts.OAuthService/StartOauthConsent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OAuthServiceServer).StartOauthConsent(ctx, req.(*StartOauthConsentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OAuthService_OAuthConsent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OAuthConsentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OAuthServiceServer).OAuthConsent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/programming_lab.prolab_accounts.OAuthService/OAuthConsent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OAuthServiceServer).OAuthConsent(ctx, req.(*OAuthConsentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _OAuthService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "programming_lab.prolab_accounts.OAuthService",
 	HandlerType: (*OAuthServiceServer)(nil),
@@ -316,39 +579,60 @@ var _OAuthService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "OAuthLogin",
 			Handler:    _OAuthService_OAuthLogin_Handler,
 		},
+		{
+			MethodName: "StartOauthConsent",
+			Handler:    _OAuthService_StartOauthConsent_Handler,
+		},
+		{
+			MethodName: "OAuthConsent",
+			Handler:    _OAuthService_OAuthConsent_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "oauth.proto",
 }
 
-func init() { proto.RegisterFile("oauth.proto", fileDescriptor_oauth_98869bd5699bd70f) }
+func init() { proto.RegisterFile("oauth.proto", fileDescriptor_oauth_163a7a7e0e30758c) }
 
-var fileDescriptor_oauth_98869bd5699bd70f = []byte{
-	// 408 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0x6e, 0xda, 0x30,
-	0x18, 0xc7, 0x15, 0x86, 0x26, 0x30, 0x08, 0x84, 0x35, 0x0d, 0x94, 0x21, 0x6d, 0xcb, 0x65, 0xd3,
-	0xa4, 0x25, 0x12, 0x4c, 0x63, 0xda, 0x4e, 0xac, 0x57, 0xa4, 0x22, 0x50, 0x2f, 0xbd, 0x44, 0x76,
-	0x70, 0x83, 0x55, 0xc7, 0x76, 0x6d, 0xa7, 0x55, 0x0f, 0xbd, 0xf4, 0x01, 0x7a, 0xe9, 0xad, 0xcf,
-	0xd2, 0xb7, 0xe8, 0x2b, 0xf4, 0x41, 0xaa, 0x38, 0x84, 0xb4, 0x80, 0x44, 0x7b, 0xf3, 0xf7, 0xff,
-	0xf2, 0xff, 0xf9, 0xef, 0x7c, 0x1f, 0x68, 0x08, 0x94, 0x9a, 0xa5, 0x2f, 0x95, 0x30, 0x02, 0x7e,
-	0x96, 0x4a, 0xc4, 0x0a, 0x25, 0x09, 0xe5, 0x71, 0xc8, 0x10, 0xce, 0x64, 0x86, 0x70, 0x88, 0xa2,
-	0x48, 0xa4, 0xdc, 0x68, 0xb7, 0x1f, 0x0b, 0x11, 0x33, 0x12, 0x20, 0x49, 0x03, 0xc4, 0xb9, 0x30,
-	0xc8, 0x50, 0xc1, 0x75, 0x6e, 0x77, 0x3f, 0xad, 0xba, 0xb6, 0xc2, 0xe9, 0x49, 0x40, 0x12, 0x69,
-	0x2e, 0xf3, 0xa6, 0x37, 0x06, 0x1f, 0xe7, 0x06, 0x29, 0x73, 0x98, 0xdd, 0x37, 0x11, 0x31, 0xe5,
-	0x33, 0x72, 0x96, 0x12, 0x6d, 0xe0, 0x37, 0xd0, 0x66, 0x59, 0x1d, 0x46, 0x4b, 0xc4, 0x18, 0xe1,
-	0x31, 0xe9, 0x39, 0x5f, 0x9c, 0xef, 0xf5, 0x59, 0xcb, 0xca, 0x07, 0x85, 0xea, 0x4d, 0x41, 0x37,
-	0x47, 0x8c, 0x4b, 0x84, 0x96, 0x82, 0x6b, 0x02, 0x21, 0xa8, 0xea, 0x53, 0x2a, 0xad, 0xb1, 0x36,
-	0xb3, 0x67, 0xf8, 0x15, 0x34, 0x15, 0x59, 0x50, 0x45, 0x22, 0x13, 0xa6, 0x8a, 0xf5, 0x2a, 0x16,
-	0xda, 0x28, 0xb4, 0x23, 0xc5, 0xbc, 0x2b, 0xd0, 0x79, 0x0e, 0xcb, 0xf3, 0x40, 0x50, 0xe5, 0x28,
-	0x29, 0x42, 0xd8, 0x33, 0x74, 0x41, 0x4d, 0x22, 0xad, 0x2f, 0x84, 0x5a, 0xac, 0x38, 0xeb, 0x3a,
-	0xeb, 0x29, 0x92, 0x90, 0x04, 0x13, 0xd5, 0x7b, 0x67, 0xef, 0x5f, 0xd7, 0xb0, 0x0f, 0xea, 0xe5,
-	0xab, 0xaa, 0xd6, 0x58, 0x0a, 0xde, 0x08, 0xc0, 0x1d, 0x6f, 0xd9, 0xcc, 0xed, 0x6c, 0xe5, 0x1e,
-	0xdc, 0x57, 0x40, 0xd3, 0x3a, 0xe7, 0x44, 0x9d, 0xd3, 0x88, 0xc0, 0x3b, 0x07, 0xb4, 0x37, 0x7e,
-	0x2f, 0x1c, 0xf9, 0x7b, 0xc6, 0xe9, 0xef, 0x1e, 0x88, 0xfb, 0xe7, 0x95, 0xc6, 0xad, 0xe8, 0xde,
-	0x87, 0xeb, 0x87, 0xc7, 0xdb, 0x4a, 0x0b, 0x36, 0x03, 0xbb, 0x56, 0x81, 0x1d, 0x20, 0xbc, 0x71,
-	0x00, 0x28, 0x3f, 0x86, 0x83, 0xbd, 0xf8, 0xad, 0x99, 0xb8, 0xc3, 0x37, 0x79, 0x56, 0x69, 0xba,
-	0x36, 0x4d, 0xc7, 0x7b, 0x91, 0xe6, 0xaf, 0xf3, 0xe3, 0xff, 0xef, 0xe3, 0x5f, 0x31, 0x35, 0xcb,
-	0x14, 0xfb, 0x91, 0x48, 0x82, 0x69, 0x49, 0x9e, 0x20, 0x1c, 0xe4, 0xe0, 0x9f, 0x05, 0x38, 0xdb,
-	0xf5, 0x7f, 0x48, 0xd2, 0x50, 0x62, 0xfc, 0xde, 0xae, 0xf2, 0xf0, 0x29, 0x00, 0x00, 0xff, 0xff,
-	0x6f, 0xed, 0x19, 0x3d, 0x35, 0x03, 0x00, 0x00,
+var fileDescriptor_oauth_163a7a7e0e30758c = []byte{
+	// 609 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x95, 0xcd, 0x6e, 0xd3, 0x4e,
+	0x14, 0xc5, 0xe5, 0x36, 0xaa, 0xda, 0x9b, 0x2a, 0x1f, 0xd3, 0x2a, 0x4d, 0xfd, 0xaf, 0xf4, 0x2f,
+	0xde, 0x50, 0x0a, 0xc4, 0x52, 0x5a, 0x28, 0x0d, 0xab, 0x12, 0x24, 0x36, 0x95, 0xa8, 0x1c, 0xb1,
+	0x61, 0x63, 0x8d, 0x9d, 0xc1, 0xb1, 0xb0, 0x67, 0x86, 0xf1, 0x18, 0xd4, 0x05, 0x1b, 0x1e, 0x80,
+	0x0d, 0x12, 0x12, 0x2c, 0x79, 0x15, 0x1e, 0x81, 0x57, 0xe0, 0x29, 0x58, 0x21, 0x8f, 0xc7, 0x71,
+	0xf3, 0x21, 0x25, 0xa1, 0x3b, 0xdf, 0x3b, 0x3d, 0xa7, 0xbf, 0x7b, 0x7c, 0xc7, 0x81, 0x2a, 0xc3,
+	0xa9, 0x1c, 0x75, 0xb8, 0x60, 0x92, 0xa1, 0xff, 0xb9, 0x60, 0x81, 0xc0, 0x71, 0x1c, 0xd2, 0xc0,
+	0x8d, 0xb0, 0x97, 0xb5, 0x23, 0xec, 0xb9, 0xd8, 0xf7, 0x59, 0x4a, 0x65, 0x62, 0x1e, 0x04, 0x8c,
+	0x05, 0x11, 0xb1, 0x31, 0x0f, 0x6d, 0x4c, 0x29, 0x93, 0x58, 0x86, 0x8c, 0x26, 0xb9, 0xdc, 0xfc,
+	0x4f, 0x9f, 0xaa, 0xca, 0x4b, 0xdf, 0xd8, 0x24, 0xe6, 0xf2, 0x5a, 0x1f, 0x36, 0xe5, 0x35, 0x27,
+	0xb6, 0x1f, 0x85, 0x84, 0xca, 0xbc, 0x65, 0x5d, 0x40, 0x6b, 0x20, 0xb1, 0x90, 0x2f, 0x33, 0x84,
+	0x4b, 0x16, 0x84, 0xd4, 0x21, 0xef, 0x52, 0x92, 0x48, 0x74, 0x17, 0xea, 0x51, 0x56, 0xbb, 0xfe,
+	0x08, 0x47, 0x11, 0xa1, 0x01, 0x69, 0x1b, 0x87, 0xc6, 0xd1, 0x96, 0x53, 0x53, 0xed, 0x7e, 0xd1,
+	0xb5, 0xae, 0x60, 0x2f, 0xb7, 0xb8, 0x28, 0x2d, 0x12, 0xce, 0x68, 0x42, 0x10, 0x82, 0x4a, 0xf2,
+	0x36, 0xe4, 0x4a, 0xb8, 0xe9, 0xa8, 0x67, 0x74, 0x07, 0xb6, 0x05, 0x19, 0x86, 0x82, 0xf8, 0xd2,
+	0x4d, 0x45, 0xd4, 0x5e, 0x53, 0xa6, 0xd5, 0xa2, 0xf7, 0x4a, 0x44, 0xd6, 0x47, 0x68, 0xde, 0x34,
+	0xcb, 0x79, 0x10, 0x54, 0x28, 0x8e, 0x0b, 0x08, 0xf5, 0x8c, 0x4c, 0xd8, 0xe4, 0x38, 0x49, 0x3e,
+	0x30, 0x31, 0xd4, 0x3e, 0xe3, 0x3a, 0x3b, 0x13, 0x24, 0x26, 0xb1, 0x47, 0x44, 0x7b, 0x5d, 0xfd,
+	0xff, 0x71, 0x8d, 0x0e, 0x60, 0xab, 0x9c, 0xaa, 0xa2, 0x84, 0x65, 0xc3, 0x3a, 0x03, 0x34, 0x67,
+	0x96, 0x69, 0x6e, 0x63, 0x96, 0xfb, 0x05, 0xb4, 0xcb, 0x30, 0xfb, 0x99, 0x8a, 0xca, 0x02, 0xff,
+	0x3e, 0x34, 0xfd, 0xbc, 0x33, 0x13, 0x68, 0x43, 0x1f, 0x94, 0x91, 0xfe, 0x34, 0x60, 0x7f, 0x8e,
+	0xd3, 0xad, 0x52, 0x45, 0xf7, 0xa0, 0x21, 0x72, 0x18, 0x32, 0x74, 0x13, 0x9f, 0x71, 0x92, 0xb4,
+	0xd7, 0x0f, 0xd7, 0x8f, 0xb6, 0x9c, 0xfa, 0xb8, 0x3f, 0x50, 0x6d, 0xf4, 0x1c, 0x36, 0xf2, 0x2d,
+	0x51, 0xe1, 0x54, 0xbb, 0x0f, 0x3a, 0x0b, 0xb6, 0xb2, 0x93, 0x6d, 0x56, 0xa7, 0xaf, 0x34, 0x8e,
+	0xd6, 0x5a, 0xdf, 0x0c, 0xd8, 0x51, 0x41, 0xde, 0x22, 0x0a, 0xd4, 0x82, 0x0d, 0xec, 0xfb, 0x84,
+	0x4b, 0x35, 0xd2, 0xa6, 0xa3, 0xab, 0x6c, 0xe0, 0x40, 0x60, 0x2a, 0x27, 0x27, 0xa9, 0xaa, 0x9e,
+	0x9e, 0xe2, 0xe6, 0x06, 0x54, 0x26, 0x37, 0xc0, 0x3a, 0x87, 0xdd, 0x49, 0xb4, 0xa5, 0xdf, 0x72,
+	0xf7, 0x4f, 0x05, 0xb6, 0x95, 0x76, 0x40, 0xc4, 0xfb, 0xd0, 0x27, 0xe8, 0xbb, 0x01, 0xf5, 0xa9,
+	0x4b, 0x84, 0xce, 0x16, 0x26, 0x36, 0xff, 0xda, 0x99, 0x4f, 0x96, 0x14, 0xce, 0x2c, 0xa8, 0xb5,
+	0xfb, 0xe9, 0xd7, 0xef, 0x2f, 0x6b, 0x35, 0xb4, 0x6d, 0xab, 0xef, 0x89, 0xad, 0xae, 0x29, 0xfa,
+	0x6c, 0x00, 0x94, 0x7f, 0x8c, 0xba, 0x0b, 0xed, 0x67, 0x6e, 0x9e, 0x79, 0xb2, 0x92, 0x46, 0xd3,
+	0xec, 0x29, 0x9a, 0xa6, 0x35, 0x41, 0xd3, 0x33, 0x8e, 0xd1, 0x0f, 0x03, 0x9a, 0x33, 0xbb, 0x8d,
+	0xce, 0x57, 0xc8, 0x6b, 0x72, 0x9d, 0xcc, 0xde, 0xbf, 0x48, 0x35, 0x65, 0x4b, 0x51, 0x36, 0x50,
+	0x4d, 0x53, 0xea, 0xf5, 0x43, 0x5f, 0x0d, 0xfd, 0x8e, 0x0b, 0xbe, 0xd3, 0xe5, 0x32, 0x98, 0x42,
+	0x7b, 0xb4, 0xa2, 0x4a, 0x53, 0xed, 0x2b, 0xaa, 0x1d, 0x6b, 0x8a, 0xaa, 0x67, 0x1c, 0x3f, 0x7b,
+	0xfc, 0xfa, 0x34, 0x08, 0xe5, 0x28, 0xf5, 0x3a, 0x3e, 0x8b, 0xed, 0xab, 0xd2, 0xfd, 0x12, 0x7b,
+	0x76, 0x6e, 0xfe, 0xb0, 0x30, 0xcf, 0x7e, 0x22, 0x9e, 0x62, 0x1e, 0xba, 0xdc, 0xf3, 0x36, 0xd4,
+	0xe7, 0xfe, 0xe4, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd2, 0xe2, 0x29, 0xdf, 0x6c, 0x06, 0x00,
+	0x00,
 }
