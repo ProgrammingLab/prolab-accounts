@@ -11,7 +11,7 @@ import "google/protobuf/empty.proto";
 import "type/client.proto";
 
 service OAuthService {
-  rpc StartOauthLogin (StartOauthLoginRequest) returns (StartOAuthLoginResponse) {
+  rpc StartOAuthLogin (StartOAuthLoginRequest) returns (StartOAuthLoginResponse) {
     option (google.api.http) = {
       get: "/oauth/login"
     };
@@ -22,7 +22,7 @@ service OAuthService {
       body: "*"
     };
   }
-  rpc StartOauthConsent (StartOauthConsentRequest) returns (StartOauthConsentResponse) {
+  rpc StartOAuthConsent (StartOAuthConsentRequest) returns (StartOAuthConsentResponse) {
     option (google.api.http) = {
       get: "/oauth/consent"
     };
@@ -35,7 +35,7 @@ service OAuthService {
   }
 }
 
-message StartOauthLoginRequest {
+message StartOAuthLoginRequest {
   string login_challenge = 1;
 }
 
@@ -55,11 +55,11 @@ message OAuthLoginResponse {
   string redirect_url = 1;
 }
 
-message StartOauthConsentRequest {
+message StartOAuthConsentRequest {
   string consent_challenge = 1;
 }
 
-message StartOauthConsentResponse {
+message StartOAuthConsentResponse {
   bool skip = 1;
   string redirect_url = 2;
   repeated string requested_scopes = 3;

@@ -29,18 +29,18 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
 var (
-	filter_OAuthService_StartOauthLogin_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_OAuthService_StartOAuthLogin_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_OAuthService_StartOauthLogin_0(ctx context.Context, marshaler runtime.Marshaler, client OAuthServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StartOauthLoginRequest
+func request_OAuthService_StartOAuthLogin_0(ctx context.Context, marshaler runtime.Marshaler, client OAuthServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq StartOAuthLoginRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_OAuthService_StartOauthLogin_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_OAuthService_StartOAuthLogin_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.StartOauthLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.StartOAuthLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -59,18 +59,18 @@ func request_OAuthService_OAuthLogin_0(ctx context.Context, marshaler runtime.Ma
 }
 
 var (
-	filter_OAuthService_StartOauthConsent_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_OAuthService_StartOAuthConsent_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_OAuthService_StartOauthConsent_0(ctx context.Context, marshaler runtime.Marshaler, client OAuthServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StartOauthConsentRequest
+func request_OAuthService_StartOAuthConsent_0(ctx context.Context, marshaler runtime.Marshaler, client OAuthServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq StartOAuthConsentRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_OAuthService_StartOauthConsent_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_OAuthService_StartOAuthConsent_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.StartOauthConsent(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.StartOAuthConsent(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -126,7 +126,7 @@ func RegisterOAuthServiceHandler(ctx context.Context, mux *runtime.ServeMux, con
 // "OAuthServiceClient" to call the correct interceptors.
 func RegisterOAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client OAuthServiceClient) error {
 
-	mux.Handle("GET", pattern_OAuthService_StartOauthLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_OAuthService_StartOAuthLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -144,14 +144,14 @@ func RegisterOAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OAuthService_StartOauthLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OAuthService_StartOAuthLogin_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OAuthService_StartOauthLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OAuthService_StartOAuthLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -184,7 +184,7 @@ func RegisterOAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 
 	})
 
-	mux.Handle("GET", pattern_OAuthService_StartOauthConsent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_OAuthService_StartOAuthConsent_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -202,14 +202,14 @@ func RegisterOAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_OAuthService_StartOauthConsent_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_OAuthService_StartOAuthConsent_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_OAuthService_StartOauthConsent_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_OAuthService_StartOAuthConsent_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -246,21 +246,21 @@ func RegisterOAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_OAuthService_StartOauthLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "login"}, ""))
+	pattern_OAuthService_StartOAuthLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "login"}, ""))
 
 	pattern_OAuthService_OAuthLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "login"}, ""))
 
-	pattern_OAuthService_StartOauthConsent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "consent"}, ""))
+	pattern_OAuthService_StartOAuthConsent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "consent"}, ""))
 
 	pattern_OAuthService_OAuthConsent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"oauth", "consent"}, ""))
 )
 
 var (
-	forward_OAuthService_StartOauthLogin_0 = runtime.ForwardResponseMessage
+	forward_OAuthService_StartOAuthLogin_0 = runtime.ForwardResponseMessage
 
 	forward_OAuthService_OAuthLogin_0 = runtime.ForwardResponseMessage
 
-	forward_OAuthService_StartOauthConsent_0 = runtime.ForwardResponseMessage
+	forward_OAuthService_StartOAuthConsent_0 = runtime.ForwardResponseMessage
 
 	forward_OAuthService_OAuthConsent_0 = runtime.ForwardResponseMessage
 )

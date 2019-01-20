@@ -17,12 +17,12 @@
   "paths": {
     "/oauth/consent": {
       "get": {
-        "operationId": "StartOauthConsent",
+        "operationId": "StartOAuthConsent",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/prolab_accountsStartOauthConsentResponse"
+              "$ref": "#/definitions/prolab_accountsStartOAuthConsentResponse"
             }
           }
         },
@@ -65,7 +65,7 @@
     },
     "/oauth/login": {
       "get": {
-        "operationId": "StartOauthLogin",
+        "operationId": "StartOAuthLogin",
         "responses": {
           "200": {
             "description": "",
@@ -169,19 +169,7 @@
         }
       }
     },
-    "prolab_accountsStartOAuthLoginResponse": {
-      "type": "object",
-      "properties": {
-        "skip": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "redirect_url": {
-          "type": "string"
-        }
-      }
-    },
-    "prolab_accountsStartOauthConsentResponse": {
+    "prolab_accountsStartOAuthConsentResponse": {
       "type": "object",
       "properties": {
         "skip": {
@@ -199,6 +187,18 @@
         },
         "client": {
           "$ref": "#/definitions/typeClient"
+        }
+      }
+    },
+    "prolab_accountsStartOAuthLoginResponse": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "redirect_url": {
+          "type": "string"
         }
       }
     },

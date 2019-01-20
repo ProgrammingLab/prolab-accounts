@@ -40,7 +40,7 @@ type oAuthServiceServerImpl struct {
 	di.StoreComponent
 }
 
-func (s *oAuthServiceServerImpl) StartOauthLogin(ctx context.Context, req *api_pb.StartOauthLoginRequest) (*api_pb.StartOAuthLoginResponse, error) {
+func (s *oAuthServiceServerImpl) StartOAuthLogin(ctx context.Context, req *api_pb.StartOAuthLoginRequest) (*api_pb.StartOAuthLoginResponse, error) {
 	cli := s.HydraClient(ctx)
 	challenge := req.GetLoginChallenge()
 	res, _, err := cli.GetLoginRequest(challenge)
@@ -98,7 +98,7 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 	return resp, nil
 }
 
-func (s *oAuthServiceServerImpl) StartOauthConsent(ctx context.Context, req *api_pb.StartOauthConsentRequest) (*api_pb.StartOauthConsentResponse, error) {
+func (s *oAuthServiceServerImpl) StartOAuthConsent(ctx context.Context, req *api_pb.StartOAuthConsentRequest) (*api_pb.StartOAuthConsentResponse, error) {
 	cli := s.HydraClient(ctx)
 	challenge := req.GetConsentChallenge()
 	res, _, err := cli.GetConsentRequest(challenge)
@@ -117,14 +117,14 @@ func (s *oAuthServiceServerImpl) StartOauthConsent(ctx context.Context, req *api
 			return nil, err
 		}
 
-		resp := &api_pb.StartOauthConsentResponse{
+		resp := &api_pb.StartOAuthConsentResponse{
 			Skip:        true,
 			RedirectUrl: res.RedirectTo,
 		}
 		return resp, nil
 	}
 
-	resp := &api_pb.StartOauthConsentResponse{
+	resp := &api_pb.StartOAuthConsentResponse{
 		Skip:            false,
 		RequestedScopes: res.RequestedScope,
 		Client:          clientToResponse(res.Client),
