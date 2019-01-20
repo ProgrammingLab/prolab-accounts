@@ -22,11 +22,12 @@ service OAuthService {
 }
 
 message StartOauthLoginRequest {
-  string challenge = 1;
+  string login_challenge = 1;
 }
 
 message StartOAuthLoginResponse {
-  string redirect_url = 1;
+  bool skip = 1;
+  string redirect_url = 2;
 }
 
 message OAuthLoginRequest {

@@ -71,6 +71,10 @@
     "prolab_accountsStartOAuthLoginResponse": {
       "type": "object",
       "properties": {
+        "skip": {
+          "type": "boolean",
+          "format": "boolean"
+        },
         "redirect_url": {
           "type": "string"
         }
