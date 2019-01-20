@@ -11,9 +11,7 @@ import (
 	"github.com/ory/hydra/sdk/go/hydra/swagger"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
@@ -132,9 +130,48 @@ func (s *oAuthServiceServerImpl) StartOAuthConsent(ctx context.Context, req *api
 	return resp, nil
 }
 
-func (s *oAuthServiceServerImpl) OAuthConsent(context.Context, *api_pb.OAuthConsentRequest) (*api_pb.OAuthConsentResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.OAuthConsentRequest) (*api_pb.OAuthConsentResponse, error) {
+	challenge := req.GetConsentChallenge()
+	cli := s.HydraClient(ctx)
+	if req.GetAccept() {
+		cons, _, err := cli.GetConsentRequest(challenge)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+
+		acReq := swagger.AcceptConsentRequest{
+			GrantScope:               req.GetGrantScopes(),
+			GrantAccessTokenAudience: cons.RequestedAccessTokenAudience,
+			Remember:                 req.GetRemember(),
+			RememberFor:              int64(time.Hour.Seconds()),
+		}
+		res, _, err := cli.AcceptConsentRequest(challenge, acReq)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+
+		resp := &api_pb.OAuthConsentResponse{
+			RedirectUrl: res.RedirectTo,
+		}
+		return resp, nil
+	}
+
+	rej := swagger.RejectRequest{
+		Error_:           "access_denied",
+		ErrorDescription: "The resource owner denied the request",
+	}
+	res, _, err := cli.RejectConsentRequest(challenge, rej)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	resp := &api_pb.OAuthConsentResponse{
+		RedirectUrl: res.RedirectTo,
+	}
+	return resp, nil
 }
 
 func clientToResponse(cli swagger.OAuth2Client) *type_pb.Client {
