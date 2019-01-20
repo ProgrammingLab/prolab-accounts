@@ -2,3 +2,6 @@
   name = "github.com/izumin5210/grapi"
   version = "0.3.2"
 
+[[constraint]]
+  name = "github.com/ory/hydra"
+  version = "1.0.0-rc.6+oryOS.10"

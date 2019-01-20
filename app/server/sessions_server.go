@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/labstack/gommon/log"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,7 +15,6 @@ import (
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
-	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 // NewSessionServiceServer creates a new SessionServiceServer instance.
@@ -39,22 +39,11 @@ func (s *sessionServiceServerImpl) GetSession(ctx context.Context, req *api_pb.G
 }
 
 func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_pb.CreateSessionRequest) (*api_pb.Session, error) {
-	u, err := s.UserStore(ctx).FindUserByEmailOrName(req.GetName())
+	session, err := s.SessionStore(ctx).CreateSession(req.GetName(), req.GetPassword())
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if c := errors.Cause(err); c == sql.ErrNoRows || c == bcrypt.ErrMismatchedHashAndPassword {
 			return nil, errLogin
 		}
-		log.Error(err)
-		return nil, util.ErrInternalServer
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(u.PasswordDigest), []byte(req.GetPassword()))
-	if err != nil {
-		return nil, errLogin
-	}
-
-	session, err := s.SessionStore(ctx).CreateSession(model.UserID(u.ID))
-	if err != nil {
 		log.Error(err)
 		return nil, util.ErrInternalServer
 	}

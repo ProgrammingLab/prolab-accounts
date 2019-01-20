@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "type/client.proto";
+
+service OAuthService {
+  rpc StartOAuthLogin (StartOAuthLoginRequest) returns (StartOAuthLoginResponse) {
+    option (google.api.http) = {
+      get: "/oauth/login"
+    };
+  }
+  rpc OAuthLogin (OAuthLoginRequest) returns (OAuthLoginResponse) {
+    option (google.api.http) = {
+      post: "/oauth/login"
+      body: "*"
+    };
+  }
+  rpc StartOAuthConsent (StartOAuthConsentRequest) returns (StartOAuthConsentResponse) {
+    option (google.api.http) = {
+      get: "/oauth/consent"
+    };
+  }
+  rpc OAuthConsent (OAuthConsentRequest) returns (OAuthConsentResponse) {
+    option (google.api.http) = {
+      post: "/oauth/consent"
+      body: "*"
+    };
+  }
+}
+
+message StartOAuthLoginRequest {
+  string login_challenge = 1;
+}
+
+message StartOAuthLoginResponse {
+  bool skip = 1;
+  string redirect_url = 2;
+}
+
+message OAuthLoginRequest {
+  string login_challenge = 1;
+  string name = 2;
+  string password = 3;
+  bool remember = 4;
+}
+
+message OAuthLoginResponse {
+  string redirect_url = 1;
+}
+
+message StartOAuthConsentRequest {
+  string consent_challenge = 1;
+}
+
+message StartOAuthConsentResponse {
+  bool skip = 1;
+  string redirect_url = 2;
+  repeated string requested_scopes = 3;
+  type.Client client = 4;
+}
+
+message OAuthConsentRequest {
+  string consent_challenge = 1;
+  bool accept = 2;
+  repeated string grant_scopes = 3;
+  bool remember = 4;
+}
+
+message OAuthConsentResponse {
+  string redirect_url = 1;
+}

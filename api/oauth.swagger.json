@@ -1,0 +1,232 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "oauth.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/oauth/consent": {
+      "get": {
+        "operationId": "StartOAuthConsent",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsStartOAuthConsentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "consent_challenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      },
+      "post": {
+        "operationId": "OAuthConsent",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthConsentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthConsentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      }
+    },
+    "/oauth/login": {
+      "get": {
+        "operationId": "StartOAuthLogin",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsStartOAuthLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "login_challenge",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      },
+      "post": {
+        "operationId": "OAuthLogin",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsOAuthLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OAuthService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsOAuthConsentRequest": {
+      "type": "object",
+      "properties": {
+        "consent_challenge": {
+          "type": "string"
+        },
+        "accept": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "grant_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "remember": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "prolab_accountsOAuthConsentResponse": {
+      "type": "object",
+      "properties": {
+        "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsOAuthLoginRequest": {
+      "type": "object",
+      "properties": {
+        "login_challenge": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "remember": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "prolab_accountsOAuthLoginResponse": {
+      "type": "object",
+      "properties": {
+        "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsStartOAuthConsentResponse": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "redirect_url": {
+          "type": "string"
+        },
+        "requested_scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "client": {
+          "$ref": "#/definitions/typeClient"
+        }
+      }
+    },
+    "prolab_accountsStartOAuthLoginResponse": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
+    "typeClient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logo_uri": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

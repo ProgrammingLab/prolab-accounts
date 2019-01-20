@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts.type;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api/type;type_pb";
+
+message Client {
+  string id = 1;
+  string name = 2;
+  string uri = 3;
+  repeated string contacts = 4;
+  string logo_uri = 5;
+  string owner = 6;
+}

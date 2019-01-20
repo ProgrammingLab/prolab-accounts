@@ -344,6 +344,17 @@
   version = "v1.1.2"
 
 [[projects]]
+  digest = "1:d6e135c97663d8e8b001b56730988097109f7df8c4d1caabac9a41db9ccc311a"
+  name = "github.com/ory/hydra"
+  packages = [
+    "sdk/go/hydra",
+    "sdk/go/hydra/swagger",
+  ]
+  pruneopts = ""
+  revision = "bdb6634e3d870918b0914f4210d95ae1872e2f51"
+  version = "v1.0.0-rc.6+oryOS.10"
+
+[[projects]]
   digest = "1:894aef961c056b6d85d12bac890bf60c44e99b46292888bfa66caf529f804457"
   name = "github.com/pelletier/go-toml"
   packages = ["."]
@@ -587,6 +598,7 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
+    "publicsuffix",
     "trace",
   ]
   pruneopts = ""
@@ -598,6 +610,7 @@
   name = "golang.org/x/oauth2"
   packages = [
     ".",
+    "clientcredentials",
     "internal",
   ]
   pruneopts = ""
@@ -724,6 +737,14 @@
   version = "v1.15.0"
 
 [[projects]]
+  digest = "1:ecbf853ae69b7b38a5039077c10892c9798bd5345c73902026622a65a94ea501"
+  name = "gopkg.in/resty.v1"
+  packages = ["."]
+  pruneopts = ""
+  revision = "03c09fa32a21b7b27b8dbb3877826c1ab3d2daa2"
+  version = "v1.11.0"
+
+[[projects]]
   digest = "1:f0620375dd1f6251d9973b5f2596228cc8042e887cd7f827e4220bc1ce8c30e2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -762,6 +783,8 @@
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
     "github.com/labstack/gommon/log",
+    "github.com/ory/hydra/sdk/go/hydra",
+    "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
     "github.com/spf13/viper",
     "github.com/volatiletech/null",
@@ -773,6 +796,7 @@
     "github.com/volatiletech/sqlboiler/randomize",
     "github.com/volatiletech/sqlboiler/strmangle",
     "golang.org/x/crypto/bcrypt",
+    "golang.org/x/crypto/ssh/terminal",
     "golang.org/x/net/context",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/genproto/protobuf/field_mask",
