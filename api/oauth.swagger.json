@@ -146,6 +146,9 @@
     "prolab_accountsOAuthLoginRequest": {
       "type": "object",
       "properties": {
+        "login_challenge": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
@@ -155,9 +158,6 @@
         "remember": {
           "type": "boolean",
           "format": "boolean"
-        },
-        "challenge": {
-          "type": "string"
         }
       }
     },

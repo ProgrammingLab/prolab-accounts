@@ -45,10 +45,10 @@ message StartOAuthLoginResponse {
 }
 
 message OAuthLoginRequest {
-  string name = 1;
-  string password = 2;
-  bool remember = 3;
-  string challenge = 4;
+  string login_challenge = 1;
+  string name = 2;
+  string password = 3;
+  bool remember = 4;
 }
 
 message OAuthLoginResponse {
