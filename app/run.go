@@ -38,6 +38,9 @@ func Run() error {
 
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
+		grapiserver.WithGatewayServerMiddlewares(
+			interceptor.CORSMiddleware,
+		),
 		grapiserver.WithGatewayMuxOptions(
 			runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 		),

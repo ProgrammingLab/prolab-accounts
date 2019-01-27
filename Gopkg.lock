@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:e4b30804a381d7603b8a344009987c1ba351c26043501b23b8c7ce21f0b67474"
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  pruneopts = ""
+  revision = "3012a1dbe2e4bd1391d42b32f0577cb7bbc7f005"
+  version = "v0.3.1"
+
+[[projects]]
   digest = "1:e988ed0ca0d81f4d28772760c02ee95084961311291bdfefc1b04617c178b722"
   name = "github.com/fatih/color"
   packages = ["."]
@@ -291,6 +299,17 @@
   pruneopts = ""
   revision = "f611eb38b3875cc3bd991ca91c51d06446afa14c"
   version = "v1.3.0"
+
+[[projects]]
+  digest = "1:e6b65ec5a09e42738d13762852d50a13865d9fccfd29576926e8ef05469388d9"
+  name = "github.com/kisielk/errcheck"
+  packages = [
+    ".",
+    "internal/errcheck",
+  ]
+  pruneopts = ""
+  revision = "e14f8d59a22d460d56c5ee92507cd94c78fbf274"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:f0c583bb1189614701bb928f1a73a7f71a3d31b76f1fbbe6619a83d92cbd2def"
@@ -664,9 +683,21 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
+    "go/buildutil",
+    "go/callgraph",
+    "go/callgraph/cha",
     "go/gcexportdata",
+    "go/internal/cgo",
     "go/internal/gcimporter",
+    "go/internal/packagesdriver",
+    "go/loader",
+    "go/packages",
+    "go/ssa",
+    "go/ssa/ssautil",
     "go/types/typeutil",
+    "internal/fastwalk",
+    "internal/gopathwalk",
+    "internal/semver",
   ]
   pruneopts = ""
   revision = "fc1d57b08d7be19e6befb8d9a9405221faa3d5c9"
@@ -753,12 +784,52 @@
   version = "v2.2.1"
 
 [[projects]]
+  digest = "1:c88e3258b6ae1a1a7351f4a7e83d67482f35448e4b9a01ea4618865ed5206c50"
+  name = "honnef.co/go/tools"
+  packages = [
+    "arg",
+    "callgraph",
+    "callgraph/static",
+    "cmd/megacheck",
+    "config",
+    "deprecated",
+    "functions",
+    "internal/sharedcheck",
+    "lint",
+    "lint/lintdsl",
+    "lint/lintutil",
+    "lint/lintutil/format",
+    "simple",
+    "ssa",
+    "ssa/ssautil",
+    "ssautil",
+    "staticcheck",
+    "staticcheck/vrp",
+    "unused",
+    "version",
+  ]
+  pruneopts = ""
+  revision = "c2f93a96b099cbbec1de36336ab049ffa620e6d7"
+  version = "2019.1"
+
+[[projects]]
   branch = "master"
   digest = "1:8b4b9c29be72c176988b04d5acc665c093b1efac228835f0a4716531c1f7563e"
   name = "k8s.io/utils"
   packages = ["exec"]
   pruneopts = ""
   revision = "8a16e7dd8fb6d97d1331b0c79a16722f934b00b1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:3dc3049527282cab93000e1aa6877eedaf9fe4e6d8fb177cf0641fd1719a8ec4"
+  name = "mvdan.cc/unparam"
+  packages = [
+    ".",
+    "check",
+  ]
+  pruneopts = ""
+  revision = "cc9d2fb5297134d45a3e8fd7a0335965c6d79a0b"
 
 [solve-meta]
   analyzer-name = "dep"
