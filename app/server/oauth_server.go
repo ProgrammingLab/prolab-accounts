@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
@@ -41,29 +44,36 @@ type oAuthServiceServerImpl struct {
 func (s *oAuthServiceServerImpl) StartOAuthLogin(ctx context.Context, req *api_pb.StartOAuthLoginRequest) (*api_pb.StartOAuthLoginResponse, error) {
 	cli := s.HydraClient(ctx)
 	challenge := req.GetLoginChallenge()
-	res, _, err := cli.GetLoginRequest(challenge)
+	res, resp, err := cli.GetLoginRequest(challenge)
 	if err != nil {
 		grpclog.Error(err)
 		return nil, err
 	}
+	if err := hydraError(resp); err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
 	if res.Skip {
-		res, _, err := cli.AcceptLoginRequest(challenge, swagger.AcceptLoginRequest{})
+		res, resp, err := cli.AcceptLoginRequest(challenge, swagger.AcceptLoginRequest{})
 		if err != nil {
 			grpclog.Error(err)
 			return nil, err
 		}
+		if err := hydraError(resp); err != nil {
+			grpclog.Error(err)
+			return nil, err
+		}
 
-		resp := &api_pb.StartOAuthLoginResponse{
+		return &api_pb.StartOAuthLoginResponse{
 			Skip:        true,
 			RedirectUrl: res.RedirectTo,
-		}
-		return resp, nil
+		}, nil
 	}
 
-	resp := &api_pb.StartOAuthLoginResponse{
+	return &api_pb.StartOAuthLoginResponse{
 		Skip: false,
-	}
-	return resp, nil
+	}, nil
 }
 
 func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAuthLoginRequest) (*api_pb.OAuthLoginResponse, error) {
@@ -83,60 +93,73 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 		Remember:    req.Remember,
 		RememberFor: int64(time.Hour.Seconds()),
 	}
-	res, _, err := cli.AcceptLoginRequest(req.GetLoginChallenge(), acReq)
+	res, resp, err := cli.AcceptLoginRequest(req.GetLoginChallenge(), acReq)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
-
-	resp := &api_pb.OAuthLoginResponse{
-		RedirectUrl: res.RedirectTo,
+	if err := hydraError(resp); err != nil {
+		grpclog.Error(err)
+		return nil, err
 	}
 
-	return resp, nil
+	return &api_pb.OAuthLoginResponse{
+		RedirectUrl: res.RedirectTo,
+	}, nil
 }
 
 func (s *oAuthServiceServerImpl) StartOAuthConsent(ctx context.Context, req *api_pb.StartOAuthConsentRequest) (*api_pb.StartOAuthConsentResponse, error) {
 	cli := s.HydraClient(ctx)
 	challenge := req.GetConsentChallenge()
-	res, _, err := cli.GetConsentRequest(challenge)
+	res, resp, err := cli.GetConsentRequest(challenge)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
+	if err := hydraError(resp); err != nil {
+		grpclog.Error(err)
+		return nil, err
+	}
+
 	if res.Skip {
 		req := swagger.AcceptConsentRequest{
 			GrantScope:               res.RequestedScope,
 			GrantAccessTokenAudience: res.RequestedAccessTokenAudience,
 		}
-		res, _, err := cli.AcceptConsentRequest(challenge, req)
+		res, resp, err := cli.AcceptConsentRequest(challenge, req)
 		if err != nil {
 			log.Error(err)
 			return nil, err
 		}
+		if err := hydraError(resp); err != nil {
+			grpclog.Error(err)
+			return nil, err
+		}
 
-		resp := &api_pb.StartOAuthConsentResponse{
+		return &api_pb.StartOAuthConsentResponse{
 			Skip:        true,
 			RedirectUrl: res.RedirectTo,
-		}
-		return resp, nil
+		}, nil
 	}
 
-	resp := &api_pb.StartOAuthConsentResponse{
+	return &api_pb.StartOAuthConsentResponse{
 		Skip:            false,
 		RequestedScopes: res.RequestedScope,
 		Client:          clientToResponse(res.Client),
-	}
-	return resp, nil
+	}, nil
 }
 
 func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.OAuthConsentRequest) (*api_pb.OAuthConsentResponse, error) {
 	challenge := req.GetConsentChallenge()
 	cli := s.HydraClient(ctx)
 	if req.GetAccept() {
-		cons, _, err := cli.GetConsentRequest(challenge)
+		cons, resp, err := cli.GetConsentRequest(challenge)
 		if err != nil {
 			log.Error(err)
+			return nil, err
+		}
+		if err := hydraError(resp); err != nil {
+			grpclog.Error(err)
 			return nil, err
 		}
 
@@ -146,32 +169,38 @@ func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.O
 			Remember:                 req.GetRemember(),
 			RememberFor:              int64(time.Hour.Seconds()),
 		}
-		res, _, err := cli.AcceptConsentRequest(challenge, acReq)
+		res, resp, err := cli.AcceptConsentRequest(challenge, acReq)
 		if err != nil {
 			log.Error(err)
 			return nil, err
 		}
-
-		resp := &api_pb.OAuthConsentResponse{
-			RedirectUrl: res.RedirectTo,
+		if err := hydraError(resp); err != nil {
+			grpclog.Error(err)
+			return nil, err
 		}
-		return resp, nil
+
+		return &api_pb.OAuthConsentResponse{
+			RedirectUrl: res.RedirectTo,
+		}, nil
 	}
 
 	rej := swagger.RejectRequest{
 		Error_:           "access_denied",
 		ErrorDescription: "The resource owner denied the request",
 	}
-	res, _, err := cli.RejectConsentRequest(challenge, rej)
+	res, resp, err := cli.RejectConsentRequest(challenge, rej)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
-
-	resp := &api_pb.OAuthConsentResponse{
-		RedirectUrl: res.RedirectTo,
+	if err := hydraError(resp); err != nil {
+		grpclog.Error(err)
+		return nil, err
 	}
-	return resp, nil
+
+	return &api_pb.OAuthConsentResponse{
+		RedirectUrl: res.RedirectTo,
+	}, nil
 }
 
 func clientToResponse(cli swagger.OAuth2Client) *type_pb.Client {
@@ -183,4 +212,18 @@ func clientToResponse(cli swagger.OAuth2Client) *type_pb.Client {
 		LogoUri:  cli.LogoUri,
 		Owner:    cli.Owner,
 	}
+}
+
+func hydraError(resp *swagger.APIResponse) error {
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
+
+	generic := &swagger.GenericError{}
+	err := json.Unmarshal(resp.Payload, generic)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return status.Error(util.CodeFromHTTPStatus(resp.StatusCode), generic.Error_)
 }
