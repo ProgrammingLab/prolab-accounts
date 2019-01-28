@@ -49,3 +49,8 @@ $ docker-compose exec hydra \
     --scope read_profile,write_profile
 ```
 Go to http://127.0.0.1:5555/
+
+### Create user
+```
+$ docker-compose exec accounts ./create-user
+```
