@@ -9,11 +9,9 @@ import (
 	"time"
 
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"github.com/labstack/gommon/log"
 	"github.com/ory/hydra/sdk/go/hydra/swagger"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
@@ -46,22 +44,18 @@ func (s *oAuthServiceServerImpl) StartOAuthLogin(ctx context.Context, req *api_p
 	challenge := req.GetLoginChallenge()
 	res, resp, err := cli.GetLoginRequest(challenge)
 	if err != nil {
-		grpclog.Error(err)
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	if err := hydraError(resp); err != nil {
-		grpclog.Error(err)
 		return nil, err
 	}
 
 	if res.Skip {
 		res, resp, err := cli.AcceptLoginRequest(challenge, swagger.AcceptLoginRequest{})
 		if err != nil {
-			grpclog.Error(err)
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 		if err := hydraError(resp); err != nil {
-			grpclog.Error(err)
 			return nil, err
 		}
 
@@ -83,8 +77,7 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 		if c := errors.Cause(err); c == sql.ErrNoRows || c == bcrypt.ErrMismatchedHashAndPassword {
 			return nil, errLogin
 		}
-		log.Error(err)
-		return nil, util.ErrInternalServer
+		return nil, err
 	}
 
 	cli := s.HydraClient(ctx)
@@ -95,11 +88,9 @@ func (s *oAuthServiceServerImpl) OAuthLogin(ctx context.Context, req *api_pb.OAu
 	}
 	res, resp, err := cli.AcceptLoginRequest(req.GetLoginChallenge(), acReq)
 	if err != nil {
-		log.Error(err)
 		return nil, err
 	}
 	if err := hydraError(resp); err != nil {
-		grpclog.Error(err)
 		return nil, err
 	}
 
@@ -113,11 +104,9 @@ func (s *oAuthServiceServerImpl) StartOAuthConsent(ctx context.Context, req *api
 	challenge := req.GetConsentChallenge()
 	res, resp, err := cli.GetConsentRequest(challenge)
 	if err != nil {
-		log.Error(err)
 		return nil, err
 	}
 	if err := hydraError(resp); err != nil {
-		grpclog.Error(err)
 		return nil, err
 	}
 
@@ -128,11 +117,9 @@ func (s *oAuthServiceServerImpl) StartOAuthConsent(ctx context.Context, req *api
 		}
 		res, resp, err := cli.AcceptConsentRequest(challenge, req)
 		if err != nil {
-			log.Error(err)
 			return nil, err
 		}
 		if err := hydraError(resp); err != nil {
-			grpclog.Error(err)
 			return nil, err
 		}
 
@@ -155,11 +142,9 @@ func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.O
 	if req.GetAccept() {
 		cons, resp, err := cli.GetConsentRequest(challenge)
 		if err != nil {
-			log.Error(err)
 			return nil, err
 		}
 		if err := hydraError(resp); err != nil {
-			grpclog.Error(err)
 			return nil, err
 		}
 
@@ -171,11 +156,9 @@ func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.O
 		}
 		res, resp, err := cli.AcceptConsentRequest(challenge, acReq)
 		if err != nil {
-			log.Error(err)
 			return nil, err
 		}
 		if err := hydraError(resp); err != nil {
-			grpclog.Error(err)
 			return nil, err
 		}
 
@@ -190,11 +173,9 @@ func (s *oAuthServiceServerImpl) OAuthConsent(ctx context.Context, req *api_pb.O
 	}
 	res, resp, err := cli.RejectConsentRequest(challenge, rej)
 	if err != nil {
-		log.Error(err)
 		return nil, err
 	}
 	if err := hydraError(resp); err != nil {
-		grpclog.Error(err)
 		return nil, err
 	}
 

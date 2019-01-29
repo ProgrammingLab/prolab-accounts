@@ -6,7 +6,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"github.com/labstack/gommon/log"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -14,7 +13,6 @@ import (
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
-	"github.com/ProgrammingLab/prolab-accounts/app/util"
 )
 
 // NewSessionServiceServer creates a new SessionServiceServer instance.
@@ -44,8 +42,7 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 		if c := errors.Cause(err); c == sql.ErrNoRows || c == bcrypt.ErrMismatchedHashAndPassword {
 			return nil, errLogin
 		}
-		log.Error(err)
-		return nil, util.ErrInternalServer
+		return nil, err
 	}
 
 	resp := &api_pb.Session{
