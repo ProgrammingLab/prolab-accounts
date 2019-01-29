@@ -6,7 +6,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"github.com/labstack/gommon/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -57,8 +56,7 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 		if err == sql.ErrNoRows {
 			return nil, util.ErrUnauthenticated
 		}
-		log.Error(err)
-		return nil, util.ErrInternalServer
+		return nil, err
 	}
 
 	return userToResponse(u, true), nil

@@ -14,6 +14,9 @@ type statusError interface {
 	GRPCStatus() *status.Status
 }
 
+// ErrInternalServer represents internal server error
+var errInternalServer = status.Error(codes.Internal, "internal server error")
+
 // ErrorUnaryServerInterceptor returns the error handling interceptor
 func ErrorUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
@@ -28,6 +31,6 @@ func ErrorUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			return
 		}
 		grpclog.Errorf("%+v", err)
-		return resp, status.Error(codes.Internal, "internal server error")
+		return resp, errInternalServer
 	}
 }
