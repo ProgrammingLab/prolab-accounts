@@ -312,17 +312,6 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:f0c583bb1189614701bb928f1a73a7f71a3d31b76f1fbbe6619a83d92cbd2def"
-  name = "github.com/labstack/gommon"
-  packages = [
-    "color",
-    "log",
-  ]
-  pruneopts = ""
-  revision = "2a618302b929cc20862dda3aa6f02f64dbe740dd"
-  version = "v0.2.7"
-
-[[projects]]
   digest = "1:961dc3b1d11f969370533390fdf203813162980c858e1dabe827b60940c909a5"
   name = "github.com/magiconair/properties"
   packages = ["."]
@@ -490,22 +479,6 @@
   packages = ["."]
   pruneopts = ""
   revision = "548a7d7a8ee8fcb3d013fae6acf857da56165975"
-
-[[projects]]
-  digest = "1:857a9ecd5cb13379ecc8f798f6e6b6b574c98b9355657d91e068275f1120aaf7"
-  name = "github.com/valyala/bytebufferpool"
-  packages = ["."]
-  pruneopts = ""
-  revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
-  version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:bf6f8915c0338e875383cb7fdebd58a4d360a232f461d9a029d7ccb12f90c5d7"
-  name = "github.com/valyala/fasttemplate"
-  packages = ["."]
-  pruneopts = ""
-  revision = "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
 
 [[projects]]
   branch = "master"
@@ -853,7 +826,6 @@
     "github.com/joho/godotenv",
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
-    "github.com/labstack/gommon/log",
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
