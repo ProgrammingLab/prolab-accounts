@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -18,7 +16,7 @@ import (
 func Run() error {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		_ = fmt.Errorf("%+v", err)
+		grpclog.Errorf("%+v", err)
 		return err
 	}
 
