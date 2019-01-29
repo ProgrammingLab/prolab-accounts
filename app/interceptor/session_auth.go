@@ -4,10 +4,10 @@ import (
 	"context"
 	"strings"
 
-	"github.com/labstack/gommon/log"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
@@ -59,7 +59,7 @@ func (a *Authorizator) UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 func (a *Authorizator) authorization(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 	d, err := fromMeta(ctx, AuthorizationKey)
 	if err != nil {
-		log.Error(err)
+		grpclog.Error(err)
 		return handler(ctx, req)
 	}
 
@@ -70,7 +70,7 @@ func (a *Authorizator) authorization(ctx context.Context, req interface{}, info 
 	sessionID := strings.TrimSpace(d[len(SessionAuthorizationType):])
 	s, err := a.SessionStore(ctx).GetSession(sessionID)
 	if err != nil {
-		log.Error(err)
+		grpclog.Error(err)
 		return nil, util.ErrUnauthenticated
 	}
 
@@ -81,12 +81,12 @@ func (a *Authorizator) authorization(ctx context.Context, req interface{}, info 
 func fromMeta(ctx context.Context, key string) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", errors.WithStack(ErrMetadataNotFound)
+		return "", errors.Wrap(ErrMetadataNotFound, "failed to get meradata from incoming contex")
 	}
 
 	h := md.Get(key)
 	if len(h) == 0 {
-		return "", errors.WithStack(errors.Errorf("metadata not found: key = %s", key))
+		return "", errors.Errorf("metadata not found: key = %s", key)
 	}
 	return h[0], nil
 }

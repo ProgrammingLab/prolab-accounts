@@ -1,10 +1,12 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"github.com/labstack/gommon/log"
 	"github.com/volatiletech/sqlboiler/boil"
+	"google.golang.org/grpc/grpclog"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
@@ -16,19 +18,19 @@ import (
 func Run() error {
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Error(err)
+		_ = fmt.Errorf("%+v", err)
 		return err
 	}
 
 	store, err := di.NewStoreComponent(cfg)
 	if err != nil {
-		log.Error(err)
+		grpclog.Errorf("%+v", err)
 		return err
 	}
 
 	cli, err := di.NewClientComponent(cfg)
 	if err != nil {
-		log.Error(err)
+		grpclog.Errorf("%+v", err)
 		return err
 	}
 
@@ -45,6 +47,7 @@ func Run() error {
 			runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 		),
 		grapiserver.WithGrpcServerUnaryInterceptors(
+			interceptor.ErrorUnaryServerInterceptor(),
 			authorizator.UnaryServerInterceptor(),
 		),
 		grapiserver.WithServers(
