@@ -1,3 +1,4 @@
 package accounts
 
-//go:generate sqlboiler mysql
+//go:generate gex --build
+//go:generate gex sqlboiler psql
