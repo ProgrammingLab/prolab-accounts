@@ -65,7 +65,7 @@ services:
       POSTGRES_DB: "accounts"
     restart: always
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql/data
     logging:
       options:
         max-size: 5m
@@ -85,5 +85,5 @@ services:
       - "6379:6379"
 
 volumes:
-  db-data:
+  pg-data:
     driver: local

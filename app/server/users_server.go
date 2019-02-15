@@ -13,7 +13,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
-	"github.com/ProgrammingLab/prolab-accounts/dao"
+	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 )
 
 // NewUserServiceServer creates a new UserServiceServer instance.
@@ -72,7 +72,7 @@ func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func userToResponse(user *dao.User, includeEmail bool) *api_pb.User {
+func userToResponse(user *record.User, includeEmail bool) *api_pb.User {
 	var email string
 	if includeEmail {
 		email = user.Email

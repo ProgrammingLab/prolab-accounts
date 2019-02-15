@@ -8,7 +8,7 @@ import (
 
 // Config represents app config
 type Config struct {
-	DataBaseURL   string `envconfig:"data_base_url" required:"true"`
+	DataBaseURL   string `envconfig:"database_url" required:"true"`
 	RedisAddr     string `envconfig:"redis_addr" required:"true"`
 	DebugLog      bool   `envconfig:"debug_log"`
 	HydraAdminURL string `envconfig:"hydra_admin_url" required:"true"`

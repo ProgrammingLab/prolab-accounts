@@ -1,11 +1,11 @@
-pkgname = "dao"
-output = "dao"
+pkgname="record"
+output="infra/record"
 debug = false
 
-[mysql]
+[psql]
   dbname  = "accounts"
-  host    = "127.0.0.1"
-  port    = 3306
-  user    = "root"
+  host    = "pg"
+  port    = 5432
+  user    = "postgres"
   pass    = ""
-  sslmode = "false"
+  sslmode = "disable"
