@@ -7,8 +7,13 @@ services:
   - docker
   - postgresql
 
-install:
-  - scripts/setup-ci
+before_script:
+  - go get -v -u github.com/golang/dep/cmd/dep
+  - dep ensure -v -vendor-only
+  - cp sqlboiler.toml.ci sqlboiler.toml
+  - cp .env.ci .env
+  - psql -c 'create database accounts;' -U postgres
+  - scripts/setup-db -y
 
 script:
   - go test -v -race ./...
