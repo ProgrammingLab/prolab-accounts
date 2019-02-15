@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/go-redis/redis"
-	_ "github.com/go-sql-driver/mysql" // for database/sql
+	_ "github.com/lib/pq" // for database/sql
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -39,7 +39,7 @@ func NewStoreComponent(cfg *config.Config) (StoreComponent, error) {
 }
 
 func connectRDB(cfg *config.Config) (*sql.DB, error) {
-	db, err := sql.Open("mysql", cfg.DataSourceName)
+	db, err := sql.Open("postgres", cfg.DataBaseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "faild to connect db")
 	}

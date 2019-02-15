@@ -9,7 +9,7 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - mysql
+      - pg
       - redis
       - hydra
     ports:
@@ -18,7 +18,7 @@ services:
   hydra-migrate:
     image: oryd/hydra:v1.0.0-rc.6_oryOS.10-alpine
     depends_on:
-      - mysql
+      - pg
     environment:
 #      - LOG_LEVEL=debug
       - DATABASE_URL=${DATABASE_URL_HYDRA}
@@ -58,21 +58,20 @@ services:
 #      - TRACING_PROVIDER_JAEGER_SAMPLING_VALUE=1
     restart: unless-stopped
 
-  mysql:
-    image: mysql:5.7
-    hostname: mysql
-    environment: 
-      MYSQL_ROOT_PASSWORD: "${ACCOUNTS_DB_PASSWORD}"
-      MYSQL_DATABASE: "accounts"
+  pg:
+    image: postgres:11-alpine
+    hostname: pg
+    environment:
+      POSTGRES_DB: "accounts"
     restart: always
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data:/var/lib/postgresql/data
     logging:
       options:
         max-size: 5m
         max-file: "10"
     ports:
-      - "3306:3306"
+      - "5432:5432"
 
   redis:
     image: redis:4.0.11-alpine

@@ -5,6 +5,11 @@ if [ ! -z "$1" ] && [ $1 != '-y' ]; then
     exit 1
 fi
 
+docker-compose -f db/docker-compose.yml build
+if [ $? -gt 0 ]; then
+    exit $?
+fi
+
 docker-compose -f db/docker-compose.yml run --rm ridgepole -c env:DATABASE_URL --apply --dry-run
 if [ $? -gt 0 ]; then
     exit $?
