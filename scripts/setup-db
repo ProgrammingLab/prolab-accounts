@@ -5,6 +5,8 @@ if [ ! -z "$1" ] && [ $1 != '-y' ]; then
     exit 1
 fi
 
+psql -c 'create database hydra;' -U postgres
+
 docker-compose -f db/docker-compose.yml build
 if [ $? -gt 0 ]; then
     exit $?
