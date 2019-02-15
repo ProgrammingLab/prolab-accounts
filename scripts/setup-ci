@@ -5,5 +5,5 @@ dep ensure -v -vendor-only
 
 cp sqlboiler.toml.ci sqlboiler.toml
 cp .env.ci .env
-mysql -e 'CREATE DATABASE accounts;'
+psql -c 'create database accounts;' -U postgres
 scripts/setup-db -y

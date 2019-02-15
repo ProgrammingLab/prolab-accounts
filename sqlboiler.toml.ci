@@ -4,7 +4,7 @@ debug = false
 
 [psql]
   dbname  = "accounts"
-  host    = "pg"
+  host    = "localhost"
   port    = 5432
   user    = "postgres"
   pass    = ""
