@@ -8,8 +8,8 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
-	"github.com/ProgrammingLab/prolab-accounts/dao"
-	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/infra/model"
+	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/store"
 )
 
@@ -26,13 +26,13 @@ func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
 	}
 }
 
-func (s *userStoreImpl) CreateUser(user *dao.User) error {
+func (s *userStoreImpl) CreateUser(user *record.User) error {
 	err := user.Insert(s.ctx, s.db, boil.Infer())
 	return errors.WithStack(err)
 }
 
-func (s *userStoreImpl) GetUser(userID model.UserID) (*dao.User, error) {
-	u, err := dao.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
+	u, err := record.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err

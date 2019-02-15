@@ -8,15 +8,13 @@ import (
 	"os"
 	"syscall"
 
-	"golang.org/x/crypto/bcrypt"
-
-	"golang.org/x/crypto/ssh/terminal"
-
-	"github.com/ProgrammingLab/prolab-accounts/dao"
 	"github.com/pkg/errors"
+	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 )
 
 func main() {
@@ -36,7 +34,7 @@ func run() int {
 	}
 
 	s := bufio.NewScanner(os.Stdin)
-	u := &dao.User{
+	u := &record.User{
 		Name:     readText(s, "user name >"),
 		Email:    readText(s, "email >"),
 		FullName: readText(s, "full name >"),

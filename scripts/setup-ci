@@ -1,9 +1,0 @@
-#!/bin/sh
-
-go get -v -u github.com/golang/dep/cmd/dep
-dep ensure -v -vendor-only
-
-cp sqlboiler.toml.ci sqlboiler.toml
-cp .env.ci .env
-mysql -e 'CREATE DATABASE accounts;'
-scripts/setup-db -y

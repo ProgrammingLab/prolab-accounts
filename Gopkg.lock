@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  digest = "1:e4b30804a381d7603b8a344009987c1ba351c26043501b23b8c7ce21f0b67474"
-  name = "github.com/BurntSushi/toml"
-  packages = ["."]
-  pruneopts = ""
-  revision = "3012a1dbe2e4bd1391d42b32f0577cb7bbc7f005"
-  version = "v0.3.1"
-
-[[projects]]
   digest = "1:e988ed0ca0d81f4d28772760c02ee95084961311291bdfefc1b04617c178b722"
   name = "github.com/fatih/color"
   packages = ["."]
@@ -48,14 +40,6 @@
   pruneopts = ""
   revision = "f3bba01df2026fc865f7782948845db9cf44cf23"
   version = "v6.14.1"
-
-[[projects]]
-  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
-  name = "github.com/go-sql-driver/mysql"
-  packages = ["."]
-  pruneopts = ""
-  revision = "d523deb1b23d913de5bdada721a6071e71283618"
-  version = "v1.4.0"
 
 [[projects]]
   digest = "1:10c7813de846fa10aad0ea9bca34a3c20815d51250e48ba1a3c3c7572184aea8"
@@ -301,15 +285,15 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:e6b65ec5a09e42738d13762852d50a13865d9fccfd29576926e8ef05469388d9"
-  name = "github.com/kisielk/errcheck"
+  digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
+  name = "github.com/lib/pq"
   packages = [
     ".",
-    "internal/errcheck",
+    "oid",
   ]
   pruneopts = ""
-  revision = "e14f8d59a22d460d56c5ee92507cd94c78fbf274"
-  version = "v1.2.0"
+  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:961dc3b1d11f969370533390fdf203813162980c858e1dabe827b60940c909a5"
@@ -503,14 +487,18 @@
   digest = "1:4b803d6e4d2eae3c745a5063e82fbc14eca88945da36814f6b677cebf19fb088"
   name = "github.com/volatiletech/sqlboiler"
   packages = [
+    ".",
     "boil",
+    "boilingcore",
     "drivers",
-    "drivers/sqlboiler-mysql/driver",
+    "drivers/sqlboiler-psql",
+    "drivers/sqlboiler-psql/driver",
     "importers",
     "queries",
     "queries/qm",
     "randomize",
     "strmangle",
+    "templatebin",
   ]
   pruneopts = ""
   revision = "4dea9a5f77e3ec6090ad455df3d408e47e077700"
@@ -656,21 +644,9 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
-    "go/buildutil",
-    "go/callgraph",
-    "go/callgraph/cha",
     "go/gcexportdata",
-    "go/internal/cgo",
     "go/internal/gcimporter",
-    "go/internal/packagesdriver",
-    "go/loader",
-    "go/packages",
-    "go/ssa",
-    "go/ssa/ssautil",
     "go/types/typeutil",
-    "internal/fastwalk",
-    "internal/gopathwalk",
-    "internal/semver",
   ]
   pruneopts = ""
   revision = "fc1d57b08d7be19e6befb8d9a9405221faa3d5c9"
@@ -679,7 +655,6 @@
   digest = "1:8c432632a230496c35a15cfdf441436f04c90e724ad99c8463ef0c82bbe93edb"
   name = "google.golang.org/appengine"
   packages = [
-    "cloudsql",
     "internal",
     "internal/base",
     "internal/datastore",
@@ -757,35 +732,6 @@
   version = "v2.2.1"
 
 [[projects]]
-  digest = "1:c88e3258b6ae1a1a7351f4a7e83d67482f35448e4b9a01ea4618865ed5206c50"
-  name = "honnef.co/go/tools"
-  packages = [
-    "arg",
-    "callgraph",
-    "callgraph/static",
-    "cmd/megacheck",
-    "config",
-    "deprecated",
-    "functions",
-    "internal/sharedcheck",
-    "lint",
-    "lint/lintdsl",
-    "lint/lintutil",
-    "lint/lintutil/format",
-    "simple",
-    "ssa",
-    "ssa/ssautil",
-    "ssautil",
-    "staticcheck",
-    "staticcheck/vrp",
-    "unused",
-    "version",
-  ]
-  pruneopts = ""
-  revision = "c2f93a96b099cbbec1de36336ab049ffa620e6d7"
-  version = "2019.1"
-
-[[projects]]
   branch = "master"
   digest = "1:8b4b9c29be72c176988b04d5acc665c093b1efac228835f0a4716531c1f7563e"
   name = "k8s.io/utils"
@@ -793,23 +739,11 @@
   pruneopts = ""
   revision = "8a16e7dd8fb6d97d1331b0c79a16722f934b00b1"
 
-[[projects]]
-  branch = "master"
-  digest = "1:3dc3049527282cab93000e1aa6877eedaf9fe4e6d8fb177cf0641fd1719a8ec4"
-  name = "mvdan.cc/unparam"
-  packages = [
-    ".",
-    "check",
-  ]
-  pruneopts = ""
-  revision = "cc9d2fb5297134d45a3e8fd7a0335965c6d79a0b"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/go-redis/redis",
-    "github.com/go-sql-driver/mysql",
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/protoc-gen-go",
     "github.com/golang/protobuf/ptypes/empty",
@@ -826,14 +760,17 @@
     "github.com/joho/godotenv",
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
+    "github.com/lib/pq",
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
     "github.com/spf13/viper",
     "github.com/volatiletech/null",
+    "github.com/volatiletech/sqlboiler",
     "github.com/volatiletech/sqlboiler/boil",
     "github.com/volatiletech/sqlboiler/drivers",
-    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql/driver",
+    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql",
+    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver",
     "github.com/volatiletech/sqlboiler/queries",
     "github.com/volatiletech/sqlboiler/queries/qm",
     "github.com/volatiletech/sqlboiler/randomize",

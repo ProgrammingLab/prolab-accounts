@@ -12,8 +12,8 @@ import (
 	"github.com/volatiletech/sqlboiler/queries/qm"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/ProgrammingLab/prolab-accounts/dao"
-	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/infra/model"
+	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/store"
 )
 
@@ -38,7 +38,7 @@ func NewSessionStore(ctx context.Context, cli *redis.Client, db *sql.DB) store.S
 }
 
 func (s *sessionStoreImpl) CreateSession(nameOrEmail, password string) (*model.Session, error) {
-	u, err := dao.Users(qm.Where("email = ? or name = ?", nameOrEmail, nameOrEmail)).One(s.ctx, s.db)
+	u, err := record.Users(qm.Where("email = ? or name = ?", nameOrEmail, nameOrEmail)).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
