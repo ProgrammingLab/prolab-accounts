@@ -50,14 +50,6 @@
   version = "v6.14.1"
 
 [[projects]]
-  digest = "1:c07de423ca37dc2765396d6971599ab652a339538084b9b58c9f7fc533b28525"
-  name = "github.com/go-sql-driver/mysql"
-  packages = ["."]
-  pruneopts = ""
-  revision = "d523deb1b23d913de5bdada721a6071e71283618"
-  version = "v1.4.0"
-
-[[projects]]
   digest = "1:10c7813de846fa10aad0ea9bca34a3c20815d51250e48ba1a3c3c7572184aea8"
   name = "github.com/gofrs/uuid"
   packages = ["."]
@@ -312,6 +304,17 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid",
+  ]
+  pruneopts = ""
+  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:961dc3b1d11f969370533390fdf203813162980c858e1dabe827b60940c909a5"
   name = "github.com/magiconair/properties"
   packages = ["."]
@@ -505,7 +508,7 @@
   packages = [
     "boil",
     "drivers",
-    "drivers/sqlboiler-mysql/driver",
+    "drivers/sqlboiler-psql/driver",
     "importers",
     "queries",
     "queries/qm",
@@ -679,7 +682,6 @@
   digest = "1:8c432632a230496c35a15cfdf441436f04c90e724ad99c8463ef0c82bbe93edb"
   name = "google.golang.org/appengine"
   packages = [
-    "cloudsql",
     "internal",
     "internal/base",
     "internal/datastore",
@@ -809,7 +811,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/go-redis/redis",
-    "github.com/go-sql-driver/mysql",
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/protoc-gen-go",
     "github.com/golang/protobuf/ptypes/empty",
@@ -826,6 +827,7 @@
     "github.com/joho/godotenv",
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
+    "github.com/lib/pq",
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
@@ -833,7 +835,7 @@
     "github.com/volatiletech/null",
     "github.com/volatiletech/sqlboiler/boil",
     "github.com/volatiletech/sqlboiler/drivers",
-    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql/driver",
+    "github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql/driver",
     "github.com/volatiletech/sqlboiler/queries",
     "github.com/volatiletech/sqlboiler/queries/qm",
     "github.com/volatiletech/sqlboiler/randomize",
