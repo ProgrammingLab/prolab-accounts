@@ -6,5 +6,5 @@ services:
     volumes:
       - .:/db
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_URL_RIDGEPOLE}
     network_mode: "host"
