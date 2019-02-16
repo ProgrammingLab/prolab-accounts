@@ -7,9 +7,9 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/field_mask.proto";
 
 service UserService {
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+  rpc ListPublicUsers (ListUsersRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
-      get: "/users"
+      get: "/users/public"
     };
   }
   rpc GetUser (GetUserRequest) returns (User) {

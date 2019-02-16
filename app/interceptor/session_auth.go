@@ -13,7 +13,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
-	"github.com/ProgrammingLab/prolab-accounts/infra/model"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 const (
