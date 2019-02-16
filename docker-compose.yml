@@ -81,8 +81,6 @@ services:
       options:
         max-size: 5m
         max-file: "10"
-    ports:
-      - "6379:6379"
 
 volumes:
   pg-data:
