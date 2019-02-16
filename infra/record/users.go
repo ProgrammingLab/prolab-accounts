@@ -32,6 +32,7 @@ type User struct {
 	ProfileID      null.Int64  `boil:"profile_id" json:"profile_id,omitempty" toml:"profile_id" yaml:"profile_id,omitempty"`
 	CreatedAt      time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ProfileScope   null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -47,6 +48,7 @@ var UserColumns = struct {
 	ProfileID      string
 	CreatedAt      string
 	UpdatedAt      string
+	ProfileScope   string
 }{
 	ID:             "id",
 	Name:           "name",
@@ -57,6 +59,7 @@ var UserColumns = struct {
 	ProfileID:      "profile_id",
 	CreatedAt:      "created_at",
 	UpdatedAt:      "updated_at",
+	ProfileScope:   "profile_scope",
 }
 
 // UserRels is where relationship names are stored.
@@ -80,8 +83,8 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at"}
+	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at", "profile_scope"}
+	userColumnsWithoutDefault = []string{"name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at", "profile_scope"}
 	userColumnsWithDefault    = []string{"id"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
