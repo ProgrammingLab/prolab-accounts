@@ -18,7 +18,7 @@ $ cp sqlboiler.toml.sample sqlboiler.toml
 ### Schema migration for database
 
 ```
-$ docker-compose up -d mysql
+$ docker-compose up -d pg
 $ scripts/setup-db
 ```
 
