@@ -8,7 +8,6 @@ create_table :users, force: :cascade do |t|
   t.timestamps
   t.index [:name], unique: true
   t.index [:email], unique: true
-  t.integer :profile_scope, defualt: 0
 end
 
 add_foreign_key :users, :profiles

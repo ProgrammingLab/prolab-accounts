@@ -31,6 +31,7 @@ type Profile struct {
 	RoleID            null.Int64  `boil:"role_id" json:"role_id,omitempty" toml:"role_id" yaml:"role_id,omitempty"`
 	TwitterScreenName null.String `boil:"twitter_screen_name" json:"twitter_screen_name,omitempty" toml:"twitter_screen_name" yaml:"twitter_screen_name,omitempty"`
 	GithubUserName    null.String `boil:"github_user_name" json:"github_user_name,omitempty" toml:"github_user_name" yaml:"github_user_name,omitempty"`
+	ProfileScope      null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
 
 	R *profileR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L profileL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -45,6 +46,7 @@ var ProfileColumns = struct {
 	RoleID            string
 	TwitterScreenName string
 	GithubUserName    string
+	ProfileScope      string
 }{
 	ID:                "id",
 	Description:       "description",
@@ -54,6 +56,7 @@ var ProfileColumns = struct {
 	RoleID:            "role_id",
 	TwitterScreenName: "twitter_screen_name",
 	GithubUserName:    "github_user_name",
+	ProfileScope:      "profile_scope",
 }
 
 // ProfileRels is where relationship names are stored.
@@ -80,8 +83,8 @@ func (*profileR) NewStruct() *profileR {
 type profileL struct{}
 
 var (
-	profileColumns               = []string{"id", "description", "grade", "left", "department", "role_id", "twitter_screen_name", "github_user_name"}
-	profileColumnsWithoutDefault = []string{"description", "grade", "department", "role_id", "twitter_screen_name", "github_user_name"}
+	profileColumns               = []string{"id", "description", "grade", "left", "department", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
+	profileColumnsWithoutDefault = []string{"description", "grade", "department", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
 	profileColumnsWithDefault    = []string{"id", "left"}
 	profilePrimaryKeyColumns     = []string{"id"}
 )
