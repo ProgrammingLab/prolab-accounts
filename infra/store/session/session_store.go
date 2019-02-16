@@ -12,9 +12,9 @@ import (
 	"github.com/volatiletech/sqlboiler/queries/qm"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/ProgrammingLab/prolab-accounts/infra/model"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
-	"github.com/ProgrammingLab/prolab-accounts/store"
+	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 type sessionStoreImpl struct {

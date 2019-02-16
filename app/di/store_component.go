@@ -9,9 +9,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
-	"github.com/ProgrammingLab/prolab-accounts/store"
-	sessionstore "github.com/ProgrammingLab/prolab-accounts/store/session"
-	userstore "github.com/ProgrammingLab/prolab-accounts/store/user"
+	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
+	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
 )
 
 // StoreComponent is an interface of stores

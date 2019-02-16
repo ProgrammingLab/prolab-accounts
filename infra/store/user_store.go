@@ -1,8 +1,8 @@
 package store
 
 import (
-	"github.com/ProgrammingLab/prolab-accounts/infra/model"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 // UserStore accesses users data

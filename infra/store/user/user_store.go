@@ -8,9 +8,9 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
-	"github.com/ProgrammingLab/prolab-accounts/infra/model"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
-	"github.com/ProgrammingLab/prolab-accounts/store"
+	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 type userStoreImpl struct {

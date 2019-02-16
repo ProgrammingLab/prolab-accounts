@@ -1,6 +1,6 @@
 package store
 
-import "github.com/ProgrammingLab/prolab-accounts/infra/model"
+import "github.com/ProgrammingLab/prolab-accounts/model"
 
 // SessionStore accesses sessions
 type SessionStore interface {
