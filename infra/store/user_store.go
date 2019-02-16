@@ -9,4 +9,5 @@ import (
 type UserStore interface {
 	CreateUser(user *record.User) error
 	GetUser(userID model.UserID) (*record.User, error)
+	ListPublicUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error)
 }

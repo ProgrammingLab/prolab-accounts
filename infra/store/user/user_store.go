@@ -42,3 +42,39 @@ func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
 
 	return u, nil
 }
+
+func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Select("profiles.*", s.selectQuery(model.Public)),
+		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
+		qm.Where("? <= users.id", minUserID),
+		qm.Where("profiles.profile_scope = ?", model.Public),
+		qm.Limit(limit + 1),
+		qm.OrderBy("users.id"),
+	}
+
+	u, err := record.Users(mods...).All(s.ctx, s.db)
+	if err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	if len(u) <= limit {
+		return u, 0, nil
+	}
+	return u[:limit], model.UserID(u[limit].ID), nil
+}
+
+var selectQuery = map[model.ProfileScope]string{
+	model.MembersOnly: "users.id, users.name, users.full_name, users.avatar_filename, users.profile_id",
+	model.Public:      "users.id, users.name, users.avatar_filename, users.profile_id",
+	model.Private:     "users.*",
+}
+
+func (s *userStoreImpl) selectQuery(scope model.ProfileScope) string {
+	q, ok := selectQuery[scope]
+	if !ok {
+		return selectQuery[model.Public]
+	}
+	return q
+}

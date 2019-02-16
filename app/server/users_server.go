@@ -14,6 +14,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 // NewUserServiceServer creates a new UserServiceServer instance.
@@ -30,9 +31,31 @@ type userServiceServerImpl struct {
 	di.StoreComponent
 }
 
+var (
+	// ErrPageSizeOutOfRange will be returned when page size is out of range
+	ErrPageSizeOutOfRange = status.Error(codes.OutOfRange, "page size must be 1 <= size <= 100")
+)
+
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	size := req.GetPageSize()
+	if size < 0 || 100 < size {
+		return nil, ErrPageSizeOutOfRange
+	}
+	if size == 0 {
+		size = 50
+	}
+
+	us := s.UserStore(ctx)
+	u, next, err := us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &api_pb.ListUsersResponse{
+		Users:         usersToResponse(u, false),
+		NextPageToken: uint32(next),
+	}
+	return resp, nil
 }
 
 func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUserRequest) (*api_pb.User, error) {
@@ -72,17 +95,42 @@ func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
+func usersToResponse(users []*record.User, includeEmail bool) []*api_pb.User {
+	res := make([]*api_pb.User, 0, len(users))
+	for _, u := range users {
+		res = append(res, userToResponse(u, includeEmail))
+	}
+	return res
+}
+
 func userToResponse(user *record.User, includeEmail bool) *api_pb.User {
 	var email string
 	if includeEmail {
 		email = user.Email
 	}
 
-	return &api_pb.User{
+	u := &api_pb.User{
 		UserId:    uint32(user.ID),
 		Name:      user.Name,
 		Email:     email,
 		FullName:  user.FullName,
 		AvatarUrl: "not implemented",
 	}
+	if r := user.R; r != nil && r.Profile != nil {
+		p := r.Profile
+		u.Description = p.Description
+		u.Grade = int32(p.Grade)
+		u.Left = p.Left
+		// TODO
+		u.Department = "not implemented"
+		// TODO
+		u.ShortDepartment = "not implemented"
+		if p.R != nil && p.R.Role != nil {
+			u.Role = p.R.Role.Name.String
+		}
+		u.TwitterScreenName = p.TwitterScreenName.String
+		u.GithubUserName = p.GithubUserName.String
+	}
+
+	return u
 }
