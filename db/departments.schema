@@ -1,0 +1,4 @@
+create_table :departments, force: :cascade do |t|
+  t.string :name
+  t.string :short_name
+end
