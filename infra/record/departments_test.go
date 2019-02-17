@@ -494,6 +494,334 @@ func testDepartmentsInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testDepartmentToManyProfiles(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Department
+	var b, c Profile
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, departmentDBTypes, true, departmentColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Department struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, profileDBTypes, false, profileColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&b.DepartmentID, a.ID)
+	queries.Assign(&c.DepartmentID, a.ID)
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	profile, err := a.Profiles().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range profile {
+		if queries.Equal(v.DepartmentID, b.DepartmentID) {
+			bFound = true
+		}
+		if queries.Equal(v.DepartmentID, c.DepartmentID) {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := DepartmentSlice{&a}
+	if err = a.L.LoadProfiles(ctx, tx, false, (*[]*Department)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Profiles); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Profiles = nil
+	if err = a.L.LoadProfiles(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Profiles); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", profile)
+	}
+}
+
+func testDepartmentToManyAddOpProfiles(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Department
+	var b, c, d, e Profile
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Profile{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Profile{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddProfiles(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if !queries.Equal(a.ID, first.DepartmentID) {
+			t.Error("foreign key was wrong value", a.ID, first.DepartmentID)
+		}
+		if !queries.Equal(a.ID, second.DepartmentID) {
+			t.Error("foreign key was wrong value", a.ID, second.DepartmentID)
+		}
+
+		if first.R.Department != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Department != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Profiles[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Profiles[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Profiles().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+
+func testDepartmentToManySetOpProfiles(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Department
+	var b, c, d, e Profile
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Profile{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.SetProfiles(ctx, tx, false, &b, &c)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.Profiles().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.SetProfiles(ctx, tx, true, &d, &e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.Profiles().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.DepartmentID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.DepartmentID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+	if !queries.Equal(a.ID, d.DepartmentID) {
+		t.Error("foreign key was wrong value", a.ID, d.DepartmentID)
+	}
+	if !queries.Equal(a.ID, e.DepartmentID) {
+		t.Error("foreign key was wrong value", a.ID, e.DepartmentID)
+	}
+
+	if b.R.Department != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Department != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Department != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+	if e.R.Department != &a {
+		t.Error("relationship was not added properly to the foreign struct")
+	}
+
+	if a.R.Profiles[0] != &d {
+		t.Error("relationship struct slice not set to correct value")
+	}
+	if a.R.Profiles[1] != &e {
+		t.Error("relationship struct slice not set to correct value")
+	}
+}
+
+func testDepartmentToManyRemoveOpProfiles(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Department
+	var b, c, d, e Profile
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Profile{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	err = a.AddProfiles(ctx, tx, true, foreigners...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err := a.Profiles().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 4 {
+		t.Error("count was wrong:", count)
+	}
+
+	err = a.RemoveProfiles(ctx, tx, foreigners[:2]...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	count, err = a.Profiles().Count(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 2 {
+		t.Error("count was wrong:", count)
+	}
+
+	if !queries.IsValuerNil(b.DepartmentID) {
+		t.Error("want b's foreign key value to be nil")
+	}
+	if !queries.IsValuerNil(c.DepartmentID) {
+		t.Error("want c's foreign key value to be nil")
+	}
+
+	if b.R.Department != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if c.R.Department != nil {
+		t.Error("relationship was not removed properly from the foreign struct")
+	}
+	if d.R.Department != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+	if e.R.Department != &a {
+		t.Error("relationship to a should have been preserved")
+	}
+
+	if len(a.R.Profiles) != 2 {
+		t.Error("should have preserved two relationships")
+	}
+
+	// Removal doesn't do a stable deletion for performance so we have to flip the order
+	if a.R.Profiles[1] != &d {
+		t.Error("relationship to d should have been preserved")
+	}
+	if a.R.Profiles[0] != &e {
+		t.Error("relationship to e should have been preserved")
+	}
+}
+
 func testDepartmentsReload(t *testing.T) {
 	t.Parallel()
 

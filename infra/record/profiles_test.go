@@ -873,6 +873,57 @@ func testProfileToOneRoleUsingRole(t *testing.T) {
 	}
 }
 
+func testProfileToOneDepartmentUsingDepartment(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local Profile
+	var foreign Department
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, departmentDBTypes, false, departmentColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Department struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	queries.Assign(&local.DepartmentID, foreign.ID)
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Department().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !queries.Equal(check.ID, foreign.ID) {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := ProfileSlice{&local}
+	if err = local.L.LoadDepartment(ctx, tx, false, (*[]*Profile)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Department == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Department = nil
+	if err = local.L.LoadDepartment(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Department == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
 func testProfileToOneSetOpRoleUsingRole(t *testing.T) {
 	var err error
 
@@ -982,6 +1033,115 @@ func testProfileToOneRemoveOpRoleUsingRole(t *testing.T) {
 	}
 }
 
+func testProfileToOneSetOpDepartmentUsingDepartment(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Profile
+	var b, c Department
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Department{&b, &c} {
+		err = a.SetDepartment(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Department != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Profiles[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if !queries.Equal(a.DepartmentID, x.ID) {
+			t.Error("foreign key was wrong value", a.DepartmentID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.DepartmentID))
+		reflect.Indirect(reflect.ValueOf(&a.DepartmentID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if !queries.Equal(a.DepartmentID, x.ID) {
+			t.Error("foreign key was wrong value", a.DepartmentID, x.ID)
+		}
+	}
+}
+
+func testProfileToOneRemoveOpDepartmentUsingDepartment(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Profile
+	var b Department
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, departmentDBTypes, false, strmangle.SetComplement(departmentPrimaryKeyColumns, departmentColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetDepartment(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveDepartment(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.Department().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.Department != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.DepartmentID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.Profiles) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
+
 func testProfilesReload(t *testing.T) {
 	t.Parallel()
 
@@ -1056,7 +1216,7 @@ func testProfilesSelect(t *testing.T) {
 }
 
 var (
-	profileDBTypes = map[string]string{`Department`: `integer`, `Description`: `character varying`, `GithubUserName`: `character varying`, `Grade`: `integer`, `ID`: `bigint`, `Left`: `boolean`, `ProfileScope`: `integer`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`}
+	profileDBTypes = map[string]string{`DepartmentID`: `bigint`, `Description`: `character varying`, `GithubUserName`: `character varying`, `Grade`: `integer`, `ID`: `bigint`, `Left`: `boolean`, `ProfileScope`: `integer`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`}
 	_              = bytes.MinRead
 )
 
