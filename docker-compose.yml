@@ -13,7 +13,7 @@ services:
       - redis
       - hydra
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
 
   hydra-migrate:
     image: oryd/hydra:v1.0.0-rc.6_oryOS.10-alpine
@@ -32,11 +32,11 @@ services:
       - hydra-migrate
     ports:
       # Public port
-      - "4444:4444"
+      - "127.0.0.1:4444:4444"
       # Admin port
-      - "4445:4445"
+      - "127.0.0.1:4445:4445"
       # Port for hydra token user
-      - "5555:5555"
+      - "127.0.0.1:5555:5555"
     command:
       serve all --dangerous-force-http
     environment:
@@ -62,7 +62,8 @@ services:
     image: postgres:11-alpine
     hostname: pg
     environment:
-      POSTGRES_DB: "accounts"
+      - POSTGRES_DB="accounts"
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} 
     restart: always
     volumes:
       - pg-data:/var/lib/postgresql/data
@@ -71,7 +72,7 @@ services:
         max-size: 5m
         max-file: "10"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
 
   redis:
     image: redis:4.0.11-alpine
@@ -81,6 +82,8 @@ services:
       options:
         max-size: 5m
         max-file: "10"
+    ports:
+      - "127.0.0.1:6379:6379"
 
 volumes:
   pg-data:
