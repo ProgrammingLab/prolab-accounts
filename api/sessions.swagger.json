@@ -22,7 +22,7 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/apiSession"
+              "$ref": "#/definitions/prolab_accountsSession"
             }
           }
         },
@@ -50,7 +50,7 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/apiSession"
+              "$ref": "#/definitions/prolab_accountsSession"
             }
           }
         },
@@ -60,7 +60,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiCreateSessionRequest"
+              "$ref": "#/definitions/prolab_accountsCreateSessionRequest"
             }
           }
         ],
@@ -71,7 +71,7 @@
     }
   },
   "definitions": {
-    "apiCreateSessionRequest": {
+    "prolab_accountsCreateSessionRequest": {
       "type": "object",
       "properties": {
         "name": {
@@ -82,7 +82,7 @@
         }
       }
     },
-    "apiSession": {
+    "prolab_accountsSession": {
       "type": "object",
       "properties": {
         "session_id": {
