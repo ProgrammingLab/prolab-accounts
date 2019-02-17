@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -23,9 +22,9 @@ import (
 
 // Department is an object representing the database table.
 type Department struct {
-	ID        int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      null.String `boil:"name" json:"name,omitempty" toml:"name" yaml:"name,omitempty"`
-	ShortName null.String `boil:"short_name" json:"short_name,omitempty" toml:"short_name" yaml:"short_name,omitempty"`
+	ID        int64  `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name      string `boil:"name" json:"name" toml:"name" yaml:"name"`
+	ShortName string `boil:"short_name" json:"short_name" toml:"short_name" yaml:"short_name"`
 
 	R *departmentR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L departmentL  `boil:"-" json:"-" toml:"-" yaml:"-"`

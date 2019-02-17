@@ -61,19 +61,19 @@ var ProfileColumns = struct {
 
 // ProfileRels is where relationship names are stored.
 var ProfileRels = struct {
-	Role       string
 	Department string
+	Role       string
 	Users      string
 }{
-	Role:       "Role",
 	Department: "Department",
+	Role:       "Role",
 	Users:      "Users",
 }
 
 // profileR is where relationships are stored.
 type profileR struct {
-	Role       *Role
 	Department *Department
+	Role       *Role
 	Users      UserSlice
 }
 
@@ -328,20 +328,6 @@ func (q profileQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	return count > 0, nil
 }
 
-// Role pointed to by the foreign key.
-func (o *Profile) Role(mods ...qm.QueryMod) roleQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("id=?", o.RoleID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Roles(queryMods...)
-	queries.SetFrom(query.Query, "\"roles\"")
-
-	return query
-}
-
 // Department pointed to by the foreign key.
 func (o *Profile) Department(mods ...qm.QueryMod) departmentQuery {
 	queryMods := []qm.QueryMod{
@@ -352,6 +338,20 @@ func (o *Profile) Department(mods ...qm.QueryMod) departmentQuery {
 
 	query := Departments(queryMods...)
 	queries.SetFrom(query.Query, "\"departments\"")
+
+	return query
+}
+
+// Role pointed to by the foreign key.
+func (o *Profile) Role(mods ...qm.QueryMod) roleQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.RoleID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Roles(queryMods...)
+	queries.SetFrom(query.Query, "\"roles\"")
 
 	return query
 }
@@ -375,107 +375,6 @@ func (o *Profile) Users(mods ...qm.QueryMod) userQuery {
 	}
 
 	return query
-}
-
-// LoadRole allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (profileL) LoadRole(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
-	var slice []*Profile
-	var object *Profile
-
-	if singular {
-		object = maybeProfile.(*Profile)
-	} else {
-		slice = *maybeProfile.(*[]*Profile)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &profileR{}
-		}
-		if !queries.IsNil(object.RoleID) {
-			args = append(args, object.RoleID)
-		}
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &profileR{}
-			}
-
-			for _, a := range args {
-				if queries.Equal(a, obj.RoleID) {
-					continue Outer
-				}
-			}
-
-			if !queries.IsNil(obj.RoleID) {
-				args = append(args, obj.RoleID)
-			}
-
-		}
-	}
-
-	query := NewQuery(qm.From(`roles`), qm.WhereIn(`id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Role")
-	}
-
-	var resultSlice []*Role
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Role")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for roles")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for roles")
-	}
-
-	if len(profileAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Role = foreign
-		if foreign.R == nil {
-			foreign.R = &roleR{}
-		}
-		foreign.R.Profiles = append(foreign.R.Profiles, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if queries.Equal(local.RoleID, foreign.ID) {
-				local.R.Role = foreign
-				if foreign.R == nil {
-					foreign.R = &roleR{}
-				}
-				foreign.R.Profiles = append(foreign.R.Profiles, local)
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadDepartment allows an eager lookup of values, cached into the
@@ -579,6 +478,107 @@ func (profileL) LoadDepartment(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
+// LoadRole allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (profileL) LoadRole(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
+	var slice []*Profile
+	var object *Profile
+
+	if singular {
+		object = maybeProfile.(*Profile)
+	} else {
+		slice = *maybeProfile.(*[]*Profile)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &profileR{}
+		}
+		if !queries.IsNil(object.RoleID) {
+			args = append(args, object.RoleID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &profileR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.RoleID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.RoleID) {
+				args = append(args, obj.RoleID)
+			}
+
+		}
+	}
+
+	query := NewQuery(qm.From(`roles`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Role")
+	}
+
+	var resultSlice []*Role
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Role")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for roles")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for roles")
+	}
+
+	if len(profileAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Role = foreign
+		if foreign.R == nil {
+			foreign.R = &roleR{}
+		}
+		foreign.R.Profiles = append(foreign.R.Profiles, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.RoleID, foreign.ID) {
+				local.R.Role = foreign
+				if foreign.R == nil {
+					foreign.R = &roleR{}
+				}
+				foreign.R.Profiles = append(foreign.R.Profiles, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // LoadUsers allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (profileL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
@@ -670,84 +670,6 @@ func (profileL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
-// SetRole of the profile to the related item.
-// Sets o.R.Role to related.
-// Adds o to related.R.Profiles.
-func (o *Profile) SetRole(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Role) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"profiles\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"role_id"}),
-		strmangle.WhereClause("\"", "\"", 2, profilePrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, updateQuery)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	queries.Assign(&o.RoleID, related.ID)
-	if o.R == nil {
-		o.R = &profileR{
-			Role: related,
-		}
-	} else {
-		o.R.Role = related
-	}
-
-	if related.R == nil {
-		related.R = &roleR{
-			Profiles: ProfileSlice{o},
-		}
-	} else {
-		related.R.Profiles = append(related.R.Profiles, o)
-	}
-
-	return nil
-}
-
-// RemoveRole relationship.
-// Sets o.R.Role to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *Profile) RemoveRole(ctx context.Context, exec boil.ContextExecutor, related *Role) error {
-	var err error
-
-	queries.SetScanner(&o.RoleID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("role_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.R.Role = nil
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.Profiles {
-		if queries.Equal(o.RoleID, ri.RoleID) {
-			continue
-		}
-
-		ln := len(related.R.Profiles)
-		if ln > 1 && i < ln-1 {
-			related.R.Profiles[i] = related.R.Profiles[ln-1]
-		}
-		related.R.Profiles = related.R.Profiles[:ln-1]
-		break
-	}
-	return nil
-}
-
 // SetDepartment of the profile to the related item.
 // Sets o.R.Department to related.
 // Adds o to related.R.Profiles.
@@ -813,6 +735,84 @@ func (o *Profile) RemoveDepartment(ctx context.Context, exec boil.ContextExecuto
 
 	for i, ri := range related.R.Profiles {
 		if queries.Equal(o.DepartmentID, ri.DepartmentID) {
+			continue
+		}
+
+		ln := len(related.R.Profiles)
+		if ln > 1 && i < ln-1 {
+			related.R.Profiles[i] = related.R.Profiles[ln-1]
+		}
+		related.R.Profiles = related.R.Profiles[:ln-1]
+		break
+	}
+	return nil
+}
+
+// SetRole of the profile to the related item.
+// Sets o.R.Role to related.
+// Adds o to related.R.Profiles.
+func (o *Profile) SetRole(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Role) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"profiles\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"role_id"}),
+		strmangle.WhereClause("\"", "\"", 2, profilePrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.RoleID, related.ID)
+	if o.R == nil {
+		o.R = &profileR{
+			Role: related,
+		}
+	} else {
+		o.R.Role = related
+	}
+
+	if related.R == nil {
+		related.R = &roleR{
+			Profiles: ProfileSlice{o},
+		}
+	} else {
+		related.R.Profiles = append(related.R.Profiles, o)
+	}
+
+	return nil
+}
+
+// RemoveRole relationship.
+// Sets o.R.Role to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *Profile) RemoveRole(ctx context.Context, exec boil.ContextExecutor, related *Role) error {
+	var err error
+
+	queries.SetScanner(&o.RoleID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("role_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.Role = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Profiles {
+		if queries.Equal(o.RoleID, ri.RoleID) {
 			continue
 		}
 

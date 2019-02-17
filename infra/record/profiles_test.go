@@ -822,57 +822,6 @@ func testProfileToManyRemoveOpUsers(t *testing.T) {
 	}
 }
 
-func testProfileToOneRoleUsingRole(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var local Profile
-	var foreign Role
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Profile struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, roleDBTypes, false, roleColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Role struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	queries.Assign(&local.RoleID, foreign.ID)
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.Role().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !queries.Equal(check.ID, foreign.ID) {
-		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
-	}
-
-	slice := ProfileSlice{&local}
-	if err = local.L.LoadRole(ctx, tx, false, (*[]*Profile)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Role == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.Role = nil
-	if err = local.L.LoadRole(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Role == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
 func testProfileToOneDepartmentUsingDepartment(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
@@ -924,112 +873,54 @@ func testProfileToOneDepartmentUsingDepartment(t *testing.T) {
 	}
 }
 
-func testProfileToOneSetOpRoleUsingRole(t *testing.T) {
-	var err error
-
+func testProfileToOneRoleUsingRole(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Profile
-	var b, c Role
+	var local Profile
+	var foreign Role
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &local, profileDBTypes, true, profileColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Profile struct: %s", err)
 	}
-	if err = randomize.Struct(seed, &b, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &foreign, roleDBTypes, false, roleColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Role struct: %s", err)
 	}
 
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	for i, x := range []*Role{&b, &c} {
-		err = a.SetRole(ctx, tx, i != 0, x)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if a.R.Role != x {
-			t.Error("relationship struct not set to correct value")
-		}
-
-		if x.R.Profiles[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if !queries.Equal(a.RoleID, x.ID) {
-			t.Error("foreign key was wrong value", a.RoleID)
-		}
-
-		zero := reflect.Zero(reflect.TypeOf(a.RoleID))
-		reflect.Indirect(reflect.ValueOf(&a.RoleID)).Set(zero)
-
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if !queries.Equal(a.RoleID, x.ID) {
-			t.Error("foreign key was wrong value", a.RoleID, x.ID)
-		}
-	}
-}
-
-func testProfileToOneRemoveOpRoleUsingRole(t *testing.T) {
-	var err error
-
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Profile
-	var b Role
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &b, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
+	queries.Assign(&local.RoleID, foreign.ID)
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = a.SetRole(ctx, tx, true, &b); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = a.RemoveRole(ctx, tx, &b); err != nil {
-		t.Error("failed to remove relationship")
-	}
-
-	count, err := a.Role().Count(ctx, tx)
+	check, err := local.Role().One(ctx, tx)
 	if err != nil {
-		t.Error(err)
-	}
-	if count != 0 {
-		t.Error("want no relationships remaining")
+		t.Fatal(err)
 	}
 
-	if a.R.Role != nil {
-		t.Error("R struct entry should be nil")
+	if !queries.Equal(check.ID, foreign.ID) {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
 	}
 
-	if !queries.IsValuerNil(a.RoleID) {
-		t.Error("foreign key value should be nil")
+	slice := ProfileSlice{&local}
+	if err = local.L.LoadRole(ctx, tx, false, (*[]*Profile)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Role == nil {
+		t.Error("struct should have been eager loaded")
 	}
 
-	if len(b.R.Profiles) != 0 {
-		t.Error("failed to remove a from b's relationships")
+	local.R.Role = nil
+	if err = local.L.LoadRole(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Role == nil {
+		t.Error("struct should have been eager loaded")
 	}
 }
 
@@ -1134,6 +1025,115 @@ func testProfileToOneRemoveOpDepartmentUsingDepartment(t *testing.T) {
 	}
 
 	if !queries.IsValuerNil(a.DepartmentID) {
+		t.Error("foreign key value should be nil")
+	}
+
+	if len(b.R.Profiles) != 0 {
+		t.Error("failed to remove a from b's relationships")
+	}
+}
+
+func testProfileToOneSetOpRoleUsingRole(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Profile
+	var b, c Role
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Role{&b, &c} {
+		err = a.SetRole(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Role != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Profiles[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if !queries.Equal(a.RoleID, x.ID) {
+			t.Error("foreign key was wrong value", a.RoleID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.RoleID))
+		reflect.Indirect(reflect.ValueOf(&a.RoleID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if !queries.Equal(a.RoleID, x.ID) {
+			t.Error("foreign key was wrong value", a.RoleID, x.ID)
+		}
+	}
+}
+
+func testProfileToOneRemoveOpRoleUsingRole(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Profile
+	var b Role
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, profileDBTypes, false, strmangle.SetComplement(profilePrimaryKeyColumns, profileColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, roleDBTypes, false, strmangle.SetComplement(rolePrimaryKeyColumns, roleColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.SetRole(ctx, tx, true, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = a.RemoveRole(ctx, tx, &b); err != nil {
+		t.Error("failed to remove relationship")
+	}
+
+	count, err := a.Role().Count(ctx, tx)
+	if err != nil {
+		t.Error(err)
+	}
+	if count != 0 {
+		t.Error("want no relationships remaining")
+	}
+
+	if a.R.Role != nil {
+		t.Error("R struct entry should be nil")
+	}
+
+	if !queries.IsValuerNil(a.RoleID) {
 		t.Error("foreign key value should be nil")
 	}
 
