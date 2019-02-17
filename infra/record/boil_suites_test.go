@@ -12,72 +12,85 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("Departments", testDepartments)
 	t.Run("Profiles", testProfiles)
 	t.Run("Roles", testRoles)
 	t.Run("Users", testUsers)
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("Departments", testDepartmentsDelete)
 	t.Run("Profiles", testProfilesDelete)
 	t.Run("Roles", testRolesDelete)
 	t.Run("Users", testUsersDelete)
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("Departments", testDepartmentsQueryDeleteAll)
 	t.Run("Profiles", testProfilesQueryDeleteAll)
 	t.Run("Roles", testRolesQueryDeleteAll)
 	t.Run("Users", testUsersQueryDeleteAll)
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("Departments", testDepartmentsSliceDeleteAll)
 	t.Run("Profiles", testProfilesSliceDeleteAll)
 	t.Run("Roles", testRolesSliceDeleteAll)
 	t.Run("Users", testUsersSliceDeleteAll)
 }
 
 func TestExists(t *testing.T) {
+	t.Run("Departments", testDepartmentsExists)
 	t.Run("Profiles", testProfilesExists)
 	t.Run("Roles", testRolesExists)
 	t.Run("Users", testUsersExists)
 }
 
 func TestFind(t *testing.T) {
+	t.Run("Departments", testDepartmentsFind)
 	t.Run("Profiles", testProfilesFind)
 	t.Run("Roles", testRolesFind)
 	t.Run("Users", testUsersFind)
 }
 
 func TestBind(t *testing.T) {
+	t.Run("Departments", testDepartmentsBind)
 	t.Run("Profiles", testProfilesBind)
 	t.Run("Roles", testRolesBind)
 	t.Run("Users", testUsersBind)
 }
 
 func TestOne(t *testing.T) {
+	t.Run("Departments", testDepartmentsOne)
 	t.Run("Profiles", testProfilesOne)
 	t.Run("Roles", testRolesOne)
 	t.Run("Users", testUsersOne)
 }
 
 func TestAll(t *testing.T) {
+	t.Run("Departments", testDepartmentsAll)
 	t.Run("Profiles", testProfilesAll)
 	t.Run("Roles", testRolesAll)
 	t.Run("Users", testUsersAll)
 }
 
 func TestCount(t *testing.T) {
+	t.Run("Departments", testDepartmentsCount)
 	t.Run("Profiles", testProfilesCount)
 	t.Run("Roles", testRolesCount)
 	t.Run("Users", testUsersCount)
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("Departments", testDepartmentsHooks)
 	t.Run("Profiles", testProfilesHooks)
 	t.Run("Roles", testRolesHooks)
 	t.Run("Users", testUsersHooks)
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("Departments", testDepartmentsInsert)
+	t.Run("Departments", testDepartmentsInsertWhitelist)
 	t.Run("Profiles", testProfilesInsert)
 	t.Run("Profiles", testProfilesInsertWhitelist)
 	t.Run("Roles", testRolesInsert)
@@ -89,6 +102,7 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("ProfileToDepartmentUsingDepartment", testProfileToOneDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingRole", testProfileToOneRoleUsingRole)
 	t.Run("UserToProfileUsingProfile", testUserToOneProfileUsingProfile)
 }
@@ -100,6 +114,7 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
+	t.Run("DepartmentToProfiles", testDepartmentToManyProfiles)
 	t.Run("ProfileToUsers", testProfileToManyUsers)
 	t.Run("RoleToProfiles", testRoleToManyProfiles)
 }
@@ -107,6 +122,7 @@ func TestToMany(t *testing.T) {
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneSetOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneSetOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneSetOpProfileUsingProfile)
 }
@@ -114,6 +130,7 @@ func TestToOneSet(t *testing.T) {
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
+	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneRemoveOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneRemoveOpProfileUsingProfile)
 }
@@ -129,6 +146,7 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
+	t.Run("DepartmentToProfiles", testDepartmentToManyAddOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyAddOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyAddOpProfiles)
 }
@@ -136,6 +154,7 @@ func TestToManyAdd(t *testing.T) {
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManySet(t *testing.T) {
+	t.Run("DepartmentToProfiles", testDepartmentToManySetOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManySetOpUsers)
 	t.Run("RoleToProfiles", testRoleToManySetOpProfiles)
 }
@@ -143,35 +162,41 @@ func TestToManySet(t *testing.T) {
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyRemove(t *testing.T) {
+	t.Run("DepartmentToProfiles", testDepartmentToManyRemoveOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyRemoveOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyRemoveOpProfiles)
 }
 
 func TestReload(t *testing.T) {
+	t.Run("Departments", testDepartmentsReload)
 	t.Run("Profiles", testProfilesReload)
 	t.Run("Roles", testRolesReload)
 	t.Run("Users", testUsersReload)
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("Departments", testDepartmentsReloadAll)
 	t.Run("Profiles", testProfilesReloadAll)
 	t.Run("Roles", testRolesReloadAll)
 	t.Run("Users", testUsersReloadAll)
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("Departments", testDepartmentsSelect)
 	t.Run("Profiles", testProfilesSelect)
 	t.Run("Roles", testRolesSelect)
 	t.Run("Users", testUsersSelect)
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("Departments", testDepartmentsUpdate)
 	t.Run("Profiles", testProfilesUpdate)
 	t.Run("Roles", testRolesUpdate)
 	t.Run("Users", testUsersUpdate)
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("Departments", testDepartmentsSliceUpdateAll)
 	t.Run("Profiles", testProfilesSliceUpdateAll)
 	t.Run("Roles", testRolesSliceUpdateAll)
 	t.Run("Users", testUsersSliceUpdateAll)

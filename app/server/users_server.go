@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
@@ -121,15 +122,21 @@ func userToResponse(user *record.User, includeEmail bool) *api_pb.User {
 		u.Description = p.Description
 		u.Grade = int32(p.Grade)
 		u.Left = p.Left
-		// TODO
-		u.Department = "not implemented"
-		// TODO
-		u.ShortDepartment = "not implemented"
-		if p.R != nil && p.R.Role != nil {
-			u.Role = p.R.Role.Name.String
-		}
 		u.TwitterScreenName = p.TwitterScreenName.String
 		u.GithubUserName = p.GithubUserName.String
+
+		if r := p.R; p.R != nil {
+			if role := r.Role; role != nil {
+				u.Role = role.Name.String
+			}
+			if dep := r.Department; dep != nil {
+				u.Department = &type_pb.Department{
+					Id:        uint32(dep.ID),
+					Name:      dep.Name,
+					ShortName: dep.ShortName,
+				}
+			}
+		}
 	}
 
 	return u

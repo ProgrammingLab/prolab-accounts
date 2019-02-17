@@ -1,6 +1,9 @@
 syntax = "proto3";
-option go_package = "api_pb";
-package com.github.ProgrammingLab.prolab_accounts.api;
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
