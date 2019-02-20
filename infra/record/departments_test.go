@@ -528,13 +528,13 @@ func testDepartmentToManyProfiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	profile, err := a.Profiles().All(ctx, tx)
+	check, err := a.Profiles().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range profile {
+	for _, v := range check {
 		if queries.Equal(v.DepartmentID, b.DepartmentID) {
 			bFound = true
 		}
@@ -567,7 +567,7 @@ func testDepartmentToManyProfiles(t *testing.T) {
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", profile)
+		t.Logf("%#v", check)
 	}
 }
 

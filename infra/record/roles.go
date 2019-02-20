@@ -18,6 +18,7 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
+	"github.com/volatiletech/sqlboiler/queries/qmhelper"
 	"github.com/volatiletech/sqlboiler/strmangle"
 )
 
@@ -36,6 +37,16 @@ var RoleColumns = struct {
 }{
 	ID:   "id",
 	Name: "name",
+}
+
+// Generated where
+
+var RoleWhere = struct {
+	ID   whereHelperint64
+	Name whereHelpernull_String
+}{
+	ID:   whereHelperint64{field: `id`},
+	Name: whereHelpernull_String{field: `name`},
 }
 
 // RoleRels is where relationship names are stored.
@@ -93,6 +104,9 @@ var (
 var (
 	// Force time package dependency for automated UpdatedAt/CreatedAt.
 	_ = time.Second
+	// Force qmhelper dependency for where clause generation (which doesn't
+	// always happen)
+	_ = qmhelper.Where
 )
 
 var roleBeforeInsertHooks []RoleHook
@@ -108,6 +122,10 @@ var roleAfterUpsertHooks []RoleHook
 
 // doBeforeInsertHooks executes all "before insert" hooks.
 func (o *Role) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleBeforeInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -119,6 +137,10 @@ func (o *Role) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecuto
 
 // doBeforeUpdateHooks executes all "before Update" hooks.
 func (o *Role) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleBeforeUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -130,6 +152,10 @@ func (o *Role) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecuto
 
 // doBeforeDeleteHooks executes all "before Delete" hooks.
 func (o *Role) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleBeforeDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -141,6 +167,10 @@ func (o *Role) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecuto
 
 // doBeforeUpsertHooks executes all "before Upsert" hooks.
 func (o *Role) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleBeforeUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -152,6 +182,10 @@ func (o *Role) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecuto
 
 // doAfterInsertHooks executes all "after Insert" hooks.
 func (o *Role) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleAfterInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -163,6 +197,10 @@ func (o *Role) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor
 
 // doAfterSelectHooks executes all "after Select" hooks.
 func (o *Role) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleAfterSelectHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -174,6 +212,10 @@ func (o *Role) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor
 
 // doAfterUpdateHooks executes all "after Update" hooks.
 func (o *Role) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleAfterUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -185,6 +227,10 @@ func (o *Role) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor
 
 // doAfterDeleteHooks executes all "after Delete" hooks.
 func (o *Role) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleAfterDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -196,6 +242,10 @@ func (o *Role) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor
 
 // doAfterUpsertHooks executes all "after Upsert" hooks.
 func (o *Role) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range roleAfterUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -355,6 +405,10 @@ func (roleL) LoadProfiles(ctx context.Context, e boil.ContextExecutor, singular 
 
 			args = append(args, obj.ID)
 		}
+	}
+
+	if len(args) == 0 {
+		return nil
 	}
 
 	query := NewQuery(qm.From(`profiles`), qm.WhereIn(`role_id in ?`, args...))
@@ -833,7 +887,7 @@ func (o *Role) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 			rolePrimaryKeyColumns,
 		)
 
-		if len(update) == 0 {
+		if updateOnConflict && len(update) == 0 {
 			return errors.New("record: unable to upsert roles, could not build update column list")
 		}
 
