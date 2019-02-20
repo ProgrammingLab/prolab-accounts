@@ -86,7 +86,7 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 	return userToResponse(u, true), nil
 }
 
-func (s *userServiceServerImpl) UpdateUser(ctx context.Context, req *api_pb.UpdateUserRequest) (*api_pb.User, error) {
+func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_pb.UpdateUserProfileRequest) (*api_pb.User, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }

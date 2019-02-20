@@ -179,9 +179,6 @@
         "full_name": {
           "type": "string"
         },
-        "avatar_url": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },

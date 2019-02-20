@@ -3,6 +3,7 @@ package util
 import (
 	"net/http"
 
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -45,4 +46,20 @@ func CodeFromHTTPStatus(status int) codes.Code {
 	}
 
 	return codes.Internal
+}
+
+// ErrorFromRecover creates error with stacktrace from recover
+func ErrorFromRecover(err interface{}) error {
+	if err == nil {
+		return nil
+	}
+
+	switch e := err.(type) {
+	case string:
+		return errors.New(e)
+	case error:
+		return errors.WithStack(e)
+	default:
+		return errors.New("unknown panic")
+	}
 }
