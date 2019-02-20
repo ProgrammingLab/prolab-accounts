@@ -32,10 +32,10 @@ service UserService {
       get: "/user"
     };
   }
-  rpc UpdateUser (UpdateUserRequest) returns (User) {
+  rpc UpdateUserProfile (UpdateUserProfileRequest) returns (User) {
     option (google.api.http) = {
-      patch: "/user"
-      body: "user"
+      patch: "/user/profile"
+      body: "*"
     };
   }
   rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
@@ -82,8 +82,16 @@ message CreateUserRequest {
 
 message GetCurrentUserRequest {}
 
-message UpdateUserRequest {
-  User user = 1;
+message UpdateUserProfileRequest {
+  string full_name = 1;
+  string description = 2;
+  int32 grade = 3;
+  bool left = 4;
+  string short_department = 5;
+  uint32 role_id = 6;
+  string twitter_screen_name = 7;
+  string github_user_name = 8;
+  uint32 department_id = 9;
 }
 
 message UpdatePasswordRequest {

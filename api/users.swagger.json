@@ -29,9 +29,27 @@
         "tags": [
           "UserService"
         ]
-      },
+      }
+    },
+    "/user/password": {
+      "put": {
+        "operationId": "UpdatePassword",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/user/profile": {
       "patch": {
-        "operationId": "UpdateUser",
+        "operationId": "UpdateUserProfile",
         "responses": {
           "200": {
             "description": "",
@@ -46,26 +64,10 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsUser"
+              "$ref": "#/definitions/prolab_accountsUpdateUserProfileRequest"
             }
           }
         ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/user/password": {
-      "put": {
-        "operationId": "UpdatePassword",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
         "tags": [
           "UserService"
         ]
@@ -166,6 +168,45 @@
           }
         },
         "next_page_token": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "prolab_accountsUpdateUserProfileRequest": {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "short_department": {
+          "type": "string"
+        },
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "twitter_screen_name": {
+          "type": "string"
+        },
+        "github_user_name": {
+          "type": "string"
+        },
+        "department_id": {
           "type": "integer",
           "format": "int64"
         }
