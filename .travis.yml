@@ -5,15 +5,20 @@ go:
 
 services:
   - docker
-  - postgresql
+
+install:
+  - sudo apt-get remove postgresql-* -y
+  - sudo -E apt-get -yq --no-install-suggests --no-install-recommends $(travis_apt_get_options) install postgresql-client-11
 
 before_script:
-  - go get -v -u github.com/golang/dep/cmd/dep
-  - dep ensure -v -vendor-only
   - cp sqlboiler.toml.ci sqlboiler.toml
   - cp .env.ci .env
-  - psql -c 'create database accounts;' -U postgres
+  - docker-compose up -d pg
+#   - timeout 30 docker-compose exec pg bash -c "until psql -c '\q' -U postgres; do sleep 0.5; done"
+  - sleep 10
   - scripts/setup-db -y
+  - go get -v -u github.com/golang/dep/cmd/dep
+  - dep ensure -v -vendor-only
 
 script:
   - go test -v -race ./...
