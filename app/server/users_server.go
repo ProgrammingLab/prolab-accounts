@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/volatiletech/null"
+
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"google.golang.org/grpc/codes"
@@ -87,8 +89,45 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 }
 
 func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_pb.UpdateUserProfileRequest) (*api_pb.User, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	id, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	err := s.validateUpdateUserProfileRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	us := s.UserStore(ctx)
+	u, err := us.UpdateFullName(id, req.GetFullName())
+	if err != nil {
+		return nil, err
+	}
+
+	ps := s.ProfileStore(ctx)
+	p := &record.Profile{
+		ID:                u.ProfileID.Int64,
+		Description:       req.GetDescription(),
+		Grade:             int(req.GetGrade()),
+		Left:              req.GetLeft(),
+		RoleID:            null.Int64From(int64(req.GetRoleId())),
+		TwitterScreenName: null.StringFrom(req.GetTwitterScreenName()),
+		GithubUserName:    null.StringFrom(req.GetGithubUserName()),
+		ProfileScope:      null.IntFrom(int(req.GetProfileScope())),
+		DepartmentID:      null.Int64From(int64(req.GetDepartmentId())),
+	}
+	err = ps.CreateOrUpdateProfile(p)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err = us.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userToResponse(u, true), nil
 }
 
 func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*empty.Empty, error) {

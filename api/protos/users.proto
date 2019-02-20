@@ -92,6 +92,7 @@ message UpdateUserProfileRequest {
   string twitter_screen_name = 7;
   string github_user_name = 8;
   uint32 department_id = 9;
+  uint32 profile_scope = 10;
 }
 
 message UpdatePasswordRequest {

@@ -206,6 +206,10 @@
         "department_id": {
           "type": "integer",
           "format": "int64"
+        },
+        "profile_scope": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
