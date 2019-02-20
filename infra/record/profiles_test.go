@@ -528,13 +528,13 @@ func testProfileToManyUsers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	user, err := a.Users().All(ctx, tx)
+	check, err := a.Users().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	bFound, cFound := false, false
-	for _, v := range user {
+	for _, v := range check {
 		if queries.Equal(v.ProfileID, b.ProfileID) {
 			bFound = true
 		}
@@ -567,7 +567,7 @@ func testProfileToManyUsers(t *testing.T) {
 	}
 
 	if t.Failed() {
-		t.Logf("%#v", user)
+		t.Logf("%#v", check)
 	}
 }
 
@@ -1216,7 +1216,7 @@ func testProfilesSelect(t *testing.T) {
 }
 
 var (
-	profileDBTypes = map[string]string{`DepartmentID`: `bigint`, `Description`: `character varying`, `GithubUserName`: `character varying`, `Grade`: `integer`, `ID`: `bigint`, `Left`: `boolean`, `ProfileScope`: `integer`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`}
+	profileDBTypes = map[string]string{`ID`: `bigint`, `Description`: `character varying`, `Grade`: `integer`, `Left`: `boolean`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`, `GithubUserName`: `character varying`, `ProfileScope`: `integer`, `DepartmentID`: `bigint`}
 	_              = bytes.MinRead
 )
 

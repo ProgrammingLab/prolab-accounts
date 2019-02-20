@@ -17,6 +17,7 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
+	"github.com/volatiletech/sqlboiler/queries/qmhelper"
 	"github.com/volatiletech/sqlboiler/strmangle"
 )
 
@@ -38,6 +39,36 @@ var DepartmentColumns = struct {
 	ID:        "id",
 	Name:      "name",
 	ShortName: "short_name",
+}
+
+// Generated where
+
+type whereHelperint64 struct{ field string }
+
+func (w whereHelperint64) EQ(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperint64) NEQ(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperint64) LT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperint64) LTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperint64) GT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperint64) GTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
+type whereHelperstring struct{ field string }
+
+func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
+var DepartmentWhere = struct {
+	ID        whereHelperint64
+	Name      whereHelperstring
+	ShortName whereHelperstring
+}{
+	ID:        whereHelperint64{field: `id`},
+	Name:      whereHelperstring{field: `name`},
+	ShortName: whereHelperstring{field: `short_name`},
 }
 
 // DepartmentRels is where relationship names are stored.
@@ -95,6 +126,9 @@ var (
 var (
 	// Force time package dependency for automated UpdatedAt/CreatedAt.
 	_ = time.Second
+	// Force qmhelper dependency for where clause generation (which doesn't
+	// always happen)
+	_ = qmhelper.Where
 )
 
 var departmentBeforeInsertHooks []DepartmentHook
@@ -110,6 +144,10 @@ var departmentAfterUpsertHooks []DepartmentHook
 
 // doBeforeInsertHooks executes all "before insert" hooks.
 func (o *Department) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentBeforeInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -121,6 +159,10 @@ func (o *Department) doBeforeInsertHooks(ctx context.Context, exec boil.ContextE
 
 // doBeforeUpdateHooks executes all "before Update" hooks.
 func (o *Department) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentBeforeUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -132,6 +174,10 @@ func (o *Department) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextE
 
 // doBeforeDeleteHooks executes all "before Delete" hooks.
 func (o *Department) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentBeforeDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -143,6 +189,10 @@ func (o *Department) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextE
 
 // doBeforeUpsertHooks executes all "before Upsert" hooks.
 func (o *Department) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentBeforeUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -154,6 +204,10 @@ func (o *Department) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextE
 
 // doAfterInsertHooks executes all "after Insert" hooks.
 func (o *Department) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentAfterInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -165,6 +219,10 @@ func (o *Department) doAfterInsertHooks(ctx context.Context, exec boil.ContextEx
 
 // doAfterSelectHooks executes all "after Select" hooks.
 func (o *Department) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentAfterSelectHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -176,6 +234,10 @@ func (o *Department) doAfterSelectHooks(ctx context.Context, exec boil.ContextEx
 
 // doAfterUpdateHooks executes all "after Update" hooks.
 func (o *Department) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentAfterUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -187,6 +249,10 @@ func (o *Department) doAfterUpdateHooks(ctx context.Context, exec boil.ContextEx
 
 // doAfterDeleteHooks executes all "after Delete" hooks.
 func (o *Department) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentAfterDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -198,6 +264,10 @@ func (o *Department) doAfterDeleteHooks(ctx context.Context, exec boil.ContextEx
 
 // doAfterUpsertHooks executes all "after Upsert" hooks.
 func (o *Department) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range departmentAfterUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -357,6 +427,10 @@ func (departmentL) LoadProfiles(ctx context.Context, e boil.ContextExecutor, sin
 
 			args = append(args, obj.ID)
 		}
+	}
+
+	if len(args) == 0 {
+		return nil
 	}
 
 	query := NewQuery(qm.From(`profiles`), qm.WhereIn(`department_id in ?`, args...))
@@ -835,7 +909,7 @@ func (o *Department) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 			departmentPrimaryKeyColumns,
 		)
 
-		if len(update) == 0 {
+		if updateOnConflict && len(update) == 0 {
 			return errors.New("record: unable to upsert departments, could not build update column list")
 		}
 

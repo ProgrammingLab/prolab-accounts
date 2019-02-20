@@ -18,6 +18,7 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
+	"github.com/volatiletech/sqlboiler/queries/qmhelper"
 	"github.com/volatiletech/sqlboiler/strmangle"
 )
 
@@ -57,6 +58,117 @@ var ProfileColumns = struct {
 	GithubUserName:    "github_user_name",
 	ProfileScope:      "profile_scope",
 	DepartmentID:      "department_id",
+}
+
+// Generated where
+
+type whereHelperint struct{ field string }
+
+func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
+type whereHelperbool struct{ field string }
+
+func (w whereHelperbool) EQ(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperbool) NEQ(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperbool) LT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperbool) LTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
+type whereHelpernull_Int64 struct{ field string }
+
+func (w whereHelpernull_Int64) EQ(x null.Int64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Int64) NEQ(x null.Int64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Int64) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Int64) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_Int64) LT(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Int64) LTE(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Int64) GT(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Int64) GTE(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+type whereHelpernull_String struct{ field string }
+
+func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+type whereHelpernull_Int struct{ field string }
+
+func (w whereHelpernull_Int) EQ(x null.Int) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Int) NEQ(x null.Int) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Int) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Int) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_Int) LT(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Int) LTE(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Int) GT(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+var ProfileWhere = struct {
+	ID                whereHelperint64
+	Description       whereHelperstring
+	Grade             whereHelperint
+	Left              whereHelperbool
+	RoleID            whereHelpernull_Int64
+	TwitterScreenName whereHelpernull_String
+	GithubUserName    whereHelpernull_String
+	ProfileScope      whereHelpernull_Int
+	DepartmentID      whereHelpernull_Int64
+}{
+	ID:                whereHelperint64{field: `id`},
+	Description:       whereHelperstring{field: `description`},
+	Grade:             whereHelperint{field: `grade`},
+	Left:              whereHelperbool{field: `left`},
+	RoleID:            whereHelpernull_Int64{field: `role_id`},
+	TwitterScreenName: whereHelpernull_String{field: `twitter_screen_name`},
+	GithubUserName:    whereHelpernull_String{field: `github_user_name`},
+	ProfileScope:      whereHelpernull_Int{field: `profile_scope`},
+	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
 }
 
 // ProfileRels is where relationship names are stored.
@@ -120,6 +232,9 @@ var (
 var (
 	// Force time package dependency for automated UpdatedAt/CreatedAt.
 	_ = time.Second
+	// Force qmhelper dependency for where clause generation (which doesn't
+	// always happen)
+	_ = qmhelper.Where
 )
 
 var profileBeforeInsertHooks []ProfileHook
@@ -135,6 +250,10 @@ var profileAfterUpsertHooks []ProfileHook
 
 // doBeforeInsertHooks executes all "before insert" hooks.
 func (o *Profile) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileBeforeInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -146,6 +265,10 @@ func (o *Profile) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExec
 
 // doBeforeUpdateHooks executes all "before Update" hooks.
 func (o *Profile) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileBeforeUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -157,6 +280,10 @@ func (o *Profile) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExec
 
 // doBeforeDeleteHooks executes all "before Delete" hooks.
 func (o *Profile) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileBeforeDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -168,6 +295,10 @@ func (o *Profile) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExec
 
 // doBeforeUpsertHooks executes all "before Upsert" hooks.
 func (o *Profile) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileBeforeUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -179,6 +310,10 @@ func (o *Profile) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExec
 
 // doAfterInsertHooks executes all "after Insert" hooks.
 func (o *Profile) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileAfterInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -190,6 +325,10 @@ func (o *Profile) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecu
 
 // doAfterSelectHooks executes all "after Select" hooks.
 func (o *Profile) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileAfterSelectHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -201,6 +340,10 @@ func (o *Profile) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecu
 
 // doAfterUpdateHooks executes all "after Update" hooks.
 func (o *Profile) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileAfterUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -212,6 +355,10 @@ func (o *Profile) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecu
 
 // doAfterDeleteHooks executes all "after Delete" hooks.
 func (o *Profile) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileAfterDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -223,6 +370,10 @@ func (o *Profile) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecu
 
 // doAfterUpsertHooks executes all "after Upsert" hooks.
 func (o *Profile) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+	if boil.HooksAreSkipped(ctx) {
+		return nil
+	}
+
 	for _, hook := range profileAfterUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
@@ -418,6 +569,10 @@ func (profileL) LoadDepartment(ctx context.Context, e boil.ContextExecutor, sing
 		}
 	}
 
+	if len(args) == 0 {
+		return nil
+	}
+
 	query := NewQuery(qm.From(`departments`), qm.WhereIn(`id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
@@ -519,6 +674,10 @@ func (profileL) LoadRole(ctx context.Context, e boil.ContextExecutor, singular b
 		}
 	}
 
+	if len(args) == 0 {
+		return nil
+	}
+
 	query := NewQuery(qm.From(`roles`), qm.WhereIn(`id in ?`, args...))
 	if mods != nil {
 		mods.Apply(query)
@@ -612,6 +771,10 @@ func (profileL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular 
 
 			args = append(args, obj.ID)
 		}
+	}
+
+	if len(args) == 0 {
+		return nil
 	}
 
 	query := NewQuery(qm.From(`users`), qm.WhereIn(`profile_id in ?`, args...))
@@ -1246,7 +1409,7 @@ func (o *Profile) Upsert(ctx context.Context, exec boil.ContextExecutor, updateO
 			profilePrimaryKeyColumns,
 		)
 
-		if len(update) == 0 {
+		if updateOnConflict && len(update) == 0 {
 			return errors.New("record: unable to upsert profiles, could not build update column list")
 		}
 
