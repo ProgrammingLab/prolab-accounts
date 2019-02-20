@@ -84,7 +84,7 @@ func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u 
 	}
 
 	u.FullName = fullName
-	_, err = u.Update(s.ctx, tx, boil.Infer())
+	_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
 	if err != nil {
 		tx.Rollback()
 		return nil, errors.WithStack(err)
