@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/volatiletech/null"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/volatiletech/null"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -92,11 +91,6 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 	id, ok := interceptor.GetCurrentUserID(ctx)
 	if !ok {
 		return nil, util.ErrUnauthenticated
-	}
-
-	err := s.validateUpdateUserProfileRequest(req)
-	if err != nil {
-		return nil, err
 	}
 
 	us := s.UserStore(ctx)

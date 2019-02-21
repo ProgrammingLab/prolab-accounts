@@ -23,3 +23,7 @@ import_dirs = [
   [[protoc.plugins]]
   name = "swagger"
   args = { logtostderr = true }
+
+  [[protoc.plugins]]
+  name = "govalidators"
+  args = { logtostderr = true, paths = "source_relative" }
