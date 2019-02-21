@@ -10,6 +10,7 @@ import_dirs = [
   "./api/protos",
   "./vendor/github.com/grpc-ecosystem/grpc-gateway",
   "./vendor/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis",
+  "./vendor",
 ]
 
   [[protoc.plugins]]

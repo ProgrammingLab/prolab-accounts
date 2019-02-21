@@ -5,6 +5,7 @@ package programming_lab.prolab_accounts;
 option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 
 
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
@@ -59,6 +60,12 @@ message User {
   string twitter_screen_name = 12;
   string github_user_name = 13;
   type.Department department = 14;
+  ProfileScope profile_scope = 15;
+}
+
+enum ProfileScope {
+  MEMBERS_ONLY = 0;
+  PUBLIC = 1;
 }
 
 message ListUsersRequest {
@@ -83,16 +90,15 @@ message CreateUserRequest {
 message GetCurrentUserRequest {}
 
 message UpdateUserProfileRequest {
-  string full_name = 1;
-  string description = 2;
-  int32 grade = 3;
+  string full_name = 1 [(validator.field) = {length_lt: 128}];
+  string description = 2 [(validator.field) = {length_lt: 1024}];
+  int32 grade = 3 [(validator.field) = {int_gt: 0, int_lt: 6}];
   bool left = 4;
-  string short_department = 5;
-  uint32 role_id = 6;
-  string twitter_screen_name = 7;
-  string github_user_name = 8;
-  uint32 department_id = 9;
-  uint32 profile_scope = 10;
+  uint32 role_id = 5 [(validator.field) = {int_gt: -1}];
+  string twitter_screen_name = 6 [(validator.field) = {length_lt: 16}];
+  string github_user_name = 7 [(validator.field) = {length_lt: 40}];
+  uint32 department_id = 8 [(validator.field) = {int_gt: -1}];
+  ProfileScope profile_scope = 9 [(validator.field) = {is_in_enum : true}];
 }
 
 message UpdatePasswordRequest {

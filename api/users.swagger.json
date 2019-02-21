@@ -173,6 +173,14 @@
         }
       }
     },
+    "prolab_accountsProfileScope": {
+      "type": "string",
+      "enum": [
+        "MEMBERS_ONLY",
+        "PUBLIC"
+      ],
+      "default": "MEMBERS_ONLY"
+    },
     "prolab_accountsUpdateUserProfileRequest": {
       "type": "object",
       "properties": {
@@ -190,9 +198,6 @@
           "type": "boolean",
           "format": "boolean"
         },
-        "short_department": {
-          "type": "string"
-        },
         "role_id": {
           "type": "integer",
           "format": "int64"
@@ -208,8 +213,7 @@
           "format": "int64"
         },
         "profile_scope": {
-          "type": "integer",
-          "format": "int64"
+          "$ref": "#/definitions/prolab_accountsProfileScope"
         }
       }
     },
@@ -257,6 +261,9 @@
         },
         "department": {
           "$ref": "#/definitions/typeDepartment"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
         }
       }
     },

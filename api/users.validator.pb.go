@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/ProgrammingLab/prolab-accounts/api/type"
+	_ "github.com/mwitkow/go-proto-validators"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -54,6 +55,33 @@ func (this *GetCurrentUserRequest) Validate() error {
 	return nil
 }
 func (this *UpdateUserProfileRequest) Validate() error {
+	if !(len(this.FullName) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("FullName", fmt.Errorf(`value '%v' must length be less than '128'`, this.FullName))
+	}
+	if !(len(this.Description) < 1024) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Description", fmt.Errorf(`value '%v' must length be less than '1024'`, this.Description))
+	}
+	if !(this.Grade > 0) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Grade", fmt.Errorf(`value '%v' must be greater than '0'`, this.Grade))
+	}
+	if !(this.Grade < 6) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Grade", fmt.Errorf(`value '%v' must be less than '6'`, this.Grade))
+	}
+	if !(this.RoleId > -1) {
+		return github_com_mwitkow_go_proto_validators.FieldError("RoleId", fmt.Errorf(`value '%v' must be greater than '-1'`, this.RoleId))
+	}
+	if !(len(this.TwitterScreenName) < 16) {
+		return github_com_mwitkow_go_proto_validators.FieldError("TwitterScreenName", fmt.Errorf(`value '%v' must length be less than '16'`, this.TwitterScreenName))
+	}
+	if !(len(this.GithubUserName) < 40) {
+		return github_com_mwitkow_go_proto_validators.FieldError("GithubUserName", fmt.Errorf(`value '%v' must length be less than '40'`, this.GithubUserName))
+	}
+	if !(this.DepartmentId > -1) {
+		return github_com_mwitkow_go_proto_validators.FieldError("DepartmentId", fmt.Errorf(`value '%v' must be greater than '-1'`, this.DepartmentId))
+	}
+	if _, ok := ProfileScope_name[int32(this.ProfileScope)]; !ok {
+		return github_com_mwitkow_go_proto_validators.FieldError("ProfileScope", fmt.Errorf(`value '%v' must be a valid ProfileScope field`, this.ProfileScope))
+	}
 	return nil
 }
 func (this *UpdatePasswordRequest) Validate() error {
