@@ -31,15 +31,24 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(profile *record.Profile) (err e
 		return errors.WithStack(err)
 	}
 	defer func() {
-		if err = util.ErrorFromRecover(recover()); err != nil {
+		if e := util.ErrorFromRecover(recover()); e != nil {
 			_ = tx.Rollback()
+			err = e
 		}
 	}()
 
-	err = profile.Upsert(s.ctx, tx, true, nil, boil.Infer(), boil.Infer())
-	if err != nil {
-		_ = tx.Rollback()
-		return errors.WithStack(err)
+	if profile.ID == 0 {
+		err = profile.Insert(s.ctx, tx, boil.Infer())
+		if err != nil {
+			_ = tx.Rollback()
+			return errors.WithStack(err)
+		}
+	} else {
+		_, err = profile.Update(s.ctx, tx, boil.Infer())
+		if err != nil {
+			_ = tx.Rollback()
+			return errors.WithStack(err)
+		}
 	}
 
 	err = tx.Commit()
@@ -48,4 +57,17 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(profile *record.Profile) (err e
 		return errors.WithStack(err)
 	}
 	return nil
+}
+
+func allColumns() boil.Columns {
+	return boil.Whitelist(
+		record.ProfileColumns.Description,
+		record.ProfileColumns.Grade,
+		record.ProfileColumns.Left,
+		record.ProfileColumns.RoleID,
+		record.ProfileColumns.TwitterScreenName,
+		record.ProfileColumns.GithubUserName,
+		record.ProfileColumns.ProfileScope,
+		record.ProfileColumns.DepartmentID,
+	)
 }

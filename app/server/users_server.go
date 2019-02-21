@@ -105,12 +105,21 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		Description:       req.GetDescription(),
 		Grade:             int(req.GetGrade()),
 		Left:              req.GetLeft(),
-		RoleID:            null.Int64From(int64(req.GetRoleId())),
 		TwitterScreenName: null.StringFrom(req.GetTwitterScreenName()),
 		GithubUserName:    null.StringFrom(req.GetGithubUserName()),
 		ProfileScope:      null.IntFrom(int(req.GetProfileScope())),
-		DepartmentID:      null.Int64From(int64(req.GetDepartmentId())),
 	}
+	if id := req.GetRoleId(); id == 0 {
+		p.RoleID = null.NewInt64(0, false)
+	} else {
+		p.RoleID = null.Int64From(int64(id))
+	}
+	if id := req.GetDepartmentId(); id == 0 {
+		p.DepartmentID = null.NewInt64(0, false)
+	} else {
+		p.DepartmentID = null.Int64From(int64(id))
+	}
+
 	err = ps.CreateOrUpdateProfile(p)
 	if err != nil {
 		return nil, err
