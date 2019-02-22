@@ -1,10 +1,20 @@
 package userstore
 
 import (
+	"bytes"
 	"context"
+	"crypto/rand"
 	"database/sql"
+	"encoding/base64"
+	"image"
+	_ "image/gif" // for image
+	_ "image/jpeg"
+	_ "image/png"
+	"io"
 
+	minio "github.com/minio/minio-go"
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
@@ -15,15 +25,19 @@ import (
 )
 
 type userStoreImpl struct {
-	ctx context.Context
-	db  *sql.DB
+	ctx        context.Context
+	db         *sql.DB
+	cli        *minio.Client
+	bucketName string
 }
 
 // NewUserStore returns new user store
-func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
+func NewUserStore(ctx context.Context, db *sql.DB, cli *minio.Client, bucket string) store.UserStore {
 	return &userStoreImpl{
-		ctx: ctx,
-		db:  db,
+		ctx:        ctx,
+		db:         db,
+		cli:        cli,
+		bucketName: bucket,
 	}
 }
 
@@ -102,6 +116,58 @@ func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u 
 	}
 
 	return u, nil
+}
+
+func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.User, error) {
+	r := bytes.NewReader(icon)
+	_, ext, err := image.DecodeConfig(r)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	name, err := generateFilename(ext)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	u, err := record.FindUser(s.ctx, s.db, int64(userID), record.UserColumns.ID, record.UserColumns.AvatarFilename)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), minio.PutObjectOptions{})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	old := u.AvatarFilename
+	u.AvatarFilename = null.StringFrom(name)
+	_, err = u.Update(s.ctx, s.db, boil.Infer())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if !old.Valid {
+		return u, nil
+	}
+
+	err = s.cli.RemoveObject(s.bucketName, old.String)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
+}
+
+func generateFilename(ext string) (string, error) {
+	r := io.LimitReader(rand.Reader, 256)
+	d := base64.NewDecoder(base64.RawURLEncoding, r)
+	b := make([]byte, 256)
+	_, err := d.Read(b)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	return string(b) + "." + ext, nil
 }
 
 var selectQuery = map[model.ProfileScope]string{
