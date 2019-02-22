@@ -7,10 +7,11 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/ProgrammingLab/prolab-accounts/api/type"
+	_ "github.com/mwitkow/go-proto-validators"
+	regexp "regexp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -54,6 +55,10 @@ func (this *CreateUserRequest) Validate() error {
 func (this *GetCurrentUserRequest) Validate() error {
 	return nil
 }
+
+var _regex_UpdateUserProfileRequest_TwitterScreenName = regexp.MustCompile(`^[A-Za-z0-9_]{0,15}$`)
+var _regex_UpdateUserProfileRequest_GithubUserName = regexp.MustCompile(`^([a-z\d]+-)*[a-z\d]+$`)
+
 func (this *UpdateUserProfileRequest) Validate() error {
 	if !(len(this.FullName) < 128) {
 		return github_com_mwitkow_go_proto_validators.FieldError("FullName", fmt.Errorf(`value '%v' must length be less than '128'`, this.FullName))
@@ -67,8 +72,11 @@ func (this *UpdateUserProfileRequest) Validate() error {
 	if !(this.Grade < 6) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Grade", fmt.Errorf(`value '%v' must be less than '6'`, this.Grade))
 	}
-	if !(len(this.TwitterScreenName) < 16) {
-		return github_com_mwitkow_go_proto_validators.FieldError("TwitterScreenName", fmt.Errorf(`value '%v' must length be less than '16'`, this.TwitterScreenName))
+	if !_regex_UpdateUserProfileRequest_TwitterScreenName.MatchString(this.TwitterScreenName) {
+		return github_com_mwitkow_go_proto_validators.FieldError("TwitterScreenName", fmt.Errorf(`value '%v' must be a string conforming to regex "^[A-Za-z0-9_]{0,15}$"`, this.TwitterScreenName))
+	}
+	if !_regex_UpdateUserProfileRequest_GithubUserName.MatchString(this.GithubUserName) {
+		return github_com_mwitkow_go_proto_validators.FieldError("GithubUserName", fmt.Errorf(`value '%v' must be a string conforming to regex "^([a-z\\d]+-)*[a-z\\d]+$"`, this.GithubUserName))
 	}
 	if !(len(this.GithubUserName) < 40) {
 		return github_com_mwitkow_go_proto_validators.FieldError("GithubUserName", fmt.Errorf(`value '%v' must length be less than '40'`, this.GithubUserName))
