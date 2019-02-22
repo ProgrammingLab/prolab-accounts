@@ -84,20 +84,20 @@ func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u 
 	}()
 	u, err = record.FindUser(s.ctx, tx, int64(userID))
 	if err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
 		return nil, errors.WithStack(err)
 	}
 
 	u.FullName = fullName
 	_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
 	if err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
 		return nil, errors.WithStack(err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
 		return nil, errors.WithStack(err)
 	}
 
