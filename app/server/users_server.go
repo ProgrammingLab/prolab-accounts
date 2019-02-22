@@ -120,7 +120,7 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		p.DepartmentID = null.Int64From(int64(id))
 	}
 
-	err = ps.CreateOrUpdateProfile(p)
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
 	if err != nil {
 		return nil, err
 	}

@@ -33,6 +33,8 @@ type Profile struct {
 	GithubUserName    null.String `boil:"github_user_name" json:"github_user_name,omitempty" toml:"github_user_name" yaml:"github_user_name,omitempty"`
 	ProfileScope      null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
 	DepartmentID      null.Int64  `boil:"department_id" json:"department_id,omitempty" toml:"department_id" yaml:"department_id,omitempty"`
+	CreatedAt         time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt         time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *profileR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L profileL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -48,6 +50,8 @@ var ProfileColumns = struct {
 	GithubUserName    string
 	ProfileScope      string
 	DepartmentID      string
+	CreatedAt         string
+	UpdatedAt         string
 }{
 	ID:                "id",
 	Description:       "description",
@@ -58,6 +62,8 @@ var ProfileColumns = struct {
 	GithubUserName:    "github_user_name",
 	ProfileScope:      "profile_scope",
 	DepartmentID:      "department_id",
+	CreatedAt:         "created_at",
+	UpdatedAt:         "updated_at",
 }
 
 // Generated where
@@ -149,6 +155,27 @@ func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
+type whereHelpertime_Time struct{ field string }
+
+func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
+}
+func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
 var ProfileWhere = struct {
 	ID                whereHelperint64
 	Description       whereHelperstring
@@ -159,6 +186,8 @@ var ProfileWhere = struct {
 	GithubUserName    whereHelpernull_String
 	ProfileScope      whereHelpernull_Int
 	DepartmentID      whereHelpernull_Int64
+	CreatedAt         whereHelpertime_Time
+	UpdatedAt         whereHelpertime_Time
 }{
 	ID:                whereHelperint64{field: `id`},
 	Description:       whereHelperstring{field: `description`},
@@ -169,6 +198,8 @@ var ProfileWhere = struct {
 	GithubUserName:    whereHelpernull_String{field: `github_user_name`},
 	ProfileScope:      whereHelpernull_Int{field: `profile_scope`},
 	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
+	CreatedAt:         whereHelpertime_Time{field: `created_at`},
+	UpdatedAt:         whereHelpertime_Time{field: `updated_at`},
 }
 
 // ProfileRels is where relationship names are stored.
@@ -198,8 +229,8 @@ func (*profileR) NewStruct() *profileR {
 type profileL struct{}
 
 var (
-	profileColumns               = []string{"id", "description", "grade", "left", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id"}
-	profileColumnsWithoutDefault = []string{"description", "grade", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id"}
+	profileColumns               = []string{"id", "description", "grade", "left", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
+	profileColumnsWithoutDefault = []string{"description", "grade", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
 	profileColumnsWithDefault    = []string{"id", "left"}
 	profilePrimaryKeyColumns     = []string{"id"}
 )
@@ -1152,6 +1183,16 @@ func (o *Profile) Insert(ctx context.Context, exec boil.ContextExecutor, columns
 	}
 
 	var err error
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		if o.UpdatedAt.IsZero() {
+			o.UpdatedAt = currTime
+		}
+	}
 
 	if err := o.doBeforeInsertHooks(ctx, exec); err != nil {
 		return err
@@ -1226,6 +1267,12 @@ func (o *Profile) Insert(ctx context.Context, exec boil.ContextExecutor, columns
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
 func (o *Profile) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		o.UpdatedAt = currTime
+	}
+
 	var err error
 	if err = o.doBeforeUpdateHooks(ctx, exec); err != nil {
 		return 0, err
@@ -1355,6 +1402,14 @@ func (o ProfileSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, 
 func (o *Profile) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
 		return errors.New("record: no profiles provided for upsert")
+	}
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		o.UpdatedAt = currTime
 	}
 
 	if err := o.doBeforeUpsertHooks(ctx, exec); err != nil {

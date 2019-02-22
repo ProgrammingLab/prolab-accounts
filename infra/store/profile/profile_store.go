@@ -5,11 +5,13 @@ import (
 	"database/sql"
 
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 type profileStoreImpl struct {
@@ -25,7 +27,7 @@ func NewProfileStore(ctx context.Context, db *sql.DB) store.ProfileStore {
 	}
 }
 
-func (s *profileStoreImpl) CreateOrUpdateProfile(profile *record.Profile) (err error) {
+func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *record.Profile) (err error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return errors.WithStack(err)
@@ -39,6 +41,15 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(profile *record.Profile) (err e
 
 	if profile.ID == 0 {
 		err = profile.Insert(s.ctx, tx, boil.Infer())
+		if err != nil {
+			_ = tx.Rollback()
+			return errors.WithStack(err)
+		}
+		u := record.User{
+			ID:        int64(userID),
+			ProfileID: null.Int64From(profile.ID),
+		}
+		_, err = u.Update(s.ctx, tx, boil.Infer())
 		if err != nil {
 			_ = tx.Rollback()
 			return errors.WithStack(err)
@@ -57,17 +68,4 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(profile *record.Profile) (err e
 		return errors.WithStack(err)
 	}
 	return nil
-}
-
-func allColumns() boil.Columns {
-	return boil.Whitelist(
-		record.ProfileColumns.Description,
-		record.ProfileColumns.Grade,
-		record.ProfileColumns.Left,
-		record.ProfileColumns.RoleID,
-		record.ProfileColumns.TwitterScreenName,
-		record.ProfileColumns.GithubUserName,
-		record.ProfileColumns.ProfileScope,
-		record.ProfileColumns.DepartmentID,
-	)
 }
