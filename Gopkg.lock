@@ -10,6 +10,14 @@
   version = "v0.3.1"
 
 [[projects]]
+  digest = "1:f1a75a8e00244e5ea77ff274baa9559eb877437b240ee7b278f3fc560d9f08bf"
+  name = "github.com/dustin/go-humanize"
+  packages = ["."]
+  pruneopts = ""
+  revision = "9f541cc9db5d55bce703bd99987c9d5cb8eea45e"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:e988ed0ca0d81f4d28772760c02ee95084961311291bdfefc1b04617c178b722"
   name = "github.com/fatih/color"
   packages = ["."]
@@ -320,6 +328,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:6a874e3ddfb9db2b42bd8c85b6875407c702fa868eed20634ff489bc896ccfd3"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = ""
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
   name = "github.com/lib/pq"
   packages = [
@@ -361,6 +377,29 @@
   pruneopts = ""
   revision = "02e3cf038dcea8290e44424da473dd12be796a8a"
   version = "v1.0.3"
+
+[[projects]]
+  digest = "1:1975590f32a9726e1cef324e20654ca2066880187e52d90100addeef82bfe5fa"
+  name = "github.com/minio/minio-go"
+  packages = [
+    ".",
+    "pkg/credentials",
+    "pkg/encrypt",
+    "pkg/s3signer",
+    "pkg/s3utils",
+    "pkg/set",
+  ]
+  pruneopts = ""
+  revision = "34f2b94c43ca6460e42b83624ad10308dbc9fa05"
+  version = "v6.0.17"
+
+[[projects]]
+  digest = "1:6dbb0eb72090871f2e58d1e37973fe3cb8c0f45f49459398d3fc740cb30e13bd"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  pruneopts = ""
+  revision = "af06845cf3004701891bf4fdb884bfe4920b3727"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:bcc46a0fbd9e933087bef394871256b5c60269575bb661935874729c65bbbf60"
@@ -432,6 +471,14 @@
   packages = ["."]
   pruneopts = ""
   revision = "6a9ea43bcacdf716a5c1b38efff722c07adf0069"
+
+[[projects]]
+  digest = "1:9a3c631555e0351fdc4e696577bb63afd90c399d782a8462dba9d100d7021db3"
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  pruneopts = ""
+  revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
+  version = "v1.3.0"
 
 [[projects]]
   digest = "1:022a4e2a8c327eb46a99088a51c0dda5d5be86928ace2afd72145dc1d746a323"
@@ -596,7 +643,9 @@
   digest = "1:6914c49eed986dfb8dffb33516fa129c49929d4d873f41e073c83c11c372b870"
   name = "golang.org/x/crypto"
   packages = [
+    "argon2",
     "bcrypt",
+    "blake2b",
     "blowfish",
     "ssh/terminal",
   ]
@@ -657,6 +706,7 @@
   digest = "1:149a432fabebb8221a80f77731b1cd63597197ded4f14af606ebe3a0959004ec"
   name = "golang.org/x/sys"
   packages = [
+    "cpu",
     "unix",
     "windows",
   ]
@@ -773,6 +823,14 @@
   version = "v1.15.0"
 
 [[projects]]
+  digest = "1:03edf882162b807cdf1bc558c66226167fa2f8eb44359eac2eeb3794a91cb168"
+  name = "gopkg.in/ini.v1"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c85607071cf08ca1adaf48319cd1aa322e81d8c1"
+  version = "v1.42.0"
+
+[[projects]]
   digest = "1:ecbf853ae69b7b38a5039077c10892c9798bd5345c73902026622a65a94ea501"
   name = "gopkg.in/resty.v1"
   packages = ["."]
@@ -858,6 +916,7 @@
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
     "github.com/lib/pq",
+    "github.com/minio/minio-go",
     "github.com/mwitkow/go-proto-validators",
     "github.com/mwitkow/go-proto-validators/protoc-gen-govalidators",
     "github.com/ory/hydra/sdk/go/hydra",

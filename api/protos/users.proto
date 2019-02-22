@@ -39,6 +39,12 @@ service UserService {
       body: "*"
     };
   }
+  rpc UpdateUserIcon (UpdateUserIconRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/user/icon"
+      body: "*"
+    };
+  }
   rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       put: "/user/password"
@@ -51,7 +57,7 @@ message User {
   string name = 2;
   string email = 3;
   string full_name = 4;
-  string avatar_url = 5;
+  string icon_url = 5;
   string description = 6;
   int32 grade = 7;
   bool left = 8;
@@ -98,6 +104,10 @@ message UpdateUserProfileRequest {
   string github_user_name = 7 [(validator.field) = {regex: "^([a-z\\d]+-)*[a-z\\d]+$", length_lt: 40}];
   uint32 department_id = 8;
   ProfileScope profile_scope = 9 [(validator.field) = {is_in_enum : true}];
+}
+
+message UpdateUserIconRequest {
+  bytes image = 1;
 }
 
 message UpdatePasswordRequest {

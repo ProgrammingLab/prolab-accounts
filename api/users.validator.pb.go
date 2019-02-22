@@ -86,6 +86,9 @@ func (this *UpdateUserProfileRequest) Validate() error {
 	}
 	return nil
 }
+func (this *UpdateUserIconRequest) Validate() error {
+	return nil
+}
 func (this *UpdatePasswordRequest) Validate() error {
 	return nil
 }

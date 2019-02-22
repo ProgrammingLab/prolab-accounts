@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-redis/redis"
 	_ "github.com/lib/pq" // for database/sql
+	minio "github.com/minio/minio-go"
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -34,9 +35,16 @@ func NewStoreComponent(cfg *config.Config) (StoreComponent, error) {
 		return nil, err
 	}
 
+	min, err := connectMinio(cfg)
+	if err != nil {
+		return nil, err
+	}
+
 	return &storeComponentImpl{
-		db:     db,
-		client: cli,
+		db:       db,
+		client:   cli,
+		minioCli: min,
+		cfg:      cfg,
 	}, nil
 }
 
@@ -66,13 +74,56 @@ func connectRedis(cfg *config.Config) (*redis.Client, error) {
 	return cli, nil
 }
 
+func connectMinio(cfg *config.Config) (*minio.Client, error) {
+	cli, err := minio.New(cfg.MinioEndpoint, cfg.MinioAccessKey, cfg.MinioSecretKey, false)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	name := cfg.MinioBucketName
+	ex, err := cli.BucketExists(name)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if ex {
+		return cli, nil
+	}
+
+	err = cli.MakeBucket(name, "asia-northeast1")
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	policy := `{
+		"Version": "2012-10-17",
+		"Statement": [
+			{
+				"Action": ["s3:GetObject"],
+				"Effect": "Allow",
+				"Principal": {"AWS": ["*"]},
+				"Resource": ["arn:aws:s3:::` + name + `/*"],
+				"Sid": ""
+			}
+		]
+	}`
+	err = cli.SetBucketPolicy(name, policy)
+	if err != nil {
+		_ = cli.RemoveBucket(name)
+		return nil, errors.WithStack(err)
+	}
+
+	return cli, nil
+}
+
 type storeComponentImpl struct {
-	db     *sql.DB
-	client *redis.Client
+	db       *sql.DB
+	client   *redis.Client
+	minioCli *minio.Client
+	cfg      *config.Config
 }
 
 func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
-	return userstore.NewUserStore(ctx, s.db)
+	return userstore.NewUserStore(ctx, s.db, s.minioCli, s.cfg.MinioBucketName)
 }
 
 func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
