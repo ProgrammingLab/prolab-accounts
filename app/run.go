@@ -51,7 +51,7 @@ func Run() error {
 		),
 		grapiserver.WithServers(
 			server.NewSessionServiceServer(store),
-			server.NewUserServiceServer(store),
+			server.NewUserServiceServer(store, cfg),
 			server.NewOAuthServiceServer(cli, store),
 		),
 	)

@@ -11,4 +11,5 @@ type UserStore interface {
 	GetUserWithPrivate(userID model.UserID) (*record.User, error)
 	ListPublicUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error)
 	UpdateFullName(userID model.UserID, fullName string) (*record.User, error)
+	UpdateIcon(userID model.UserID, icon []byte) (*record.User, error)
 }

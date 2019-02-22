@@ -31,6 +31,32 @@
         ]
       }
     },
+    "/user/icon": {
+      "patch": {
+        "operationId": "UpdateUserIcon",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateUserIconRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/user/password": {
       "put": {
         "operationId": "UpdatePassword",
@@ -181,6 +207,15 @@
       ],
       "default": "MEMBERS_ONLY"
     },
+    "prolab_accountsUpdateUserIconRequest": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "prolab_accountsUpdateUserProfileRequest": {
       "type": "object",
       "properties": {
@@ -233,7 +268,7 @@
         "full_name": {
           "type": "string"
         },
-        "avatar_url": {
+        "icon_url": {
           "type": "string"
         },
         "description": {

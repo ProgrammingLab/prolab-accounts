@@ -3,15 +3,18 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	validator "github.com/mwitkow/go-proto-validators"
 	"github.com/volatiletech/null"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
+	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
@@ -20,22 +23,31 @@ import (
 )
 
 // NewUserServiceServer creates a new UserServiceServer instance.
-func NewUserServiceServer(store di.StoreComponent) interface {
+func NewUserServiceServer(store di.StoreComponent, cfg *config.Config) interface {
 	api_pb.UserServiceServer
 	grapiserver.Server
 } {
 	return &userServiceServerImpl{
 		StoreComponent: store,
+		cfg:            cfg,
 	}
 }
 
 type userServiceServerImpl struct {
 	di.StoreComponent
+	cfg *config.Config
 }
+
+const (
+	// MaxIconSize represents max of icon size
+	MaxIconSize = 1024 * 1024 // 1MiB
+)
 
 var (
 	// ErrPageSizeOutOfRange will be returned when page size is out of range
 	ErrPageSizeOutOfRange = status.Error(codes.OutOfRange, "page size must be 1 <= size <= 100")
+	// ErrIconSizeTooLarge will be returned when icon is too large
+	ErrIconSizeTooLarge = validator.FieldError("Image", fmt.Errorf("image must be smaller than 1MiB"))
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
@@ -54,7 +66,7 @@ func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb
 	}
 
 	resp := &api_pb.ListUsersResponse{
-		Users:         usersToResponse(u, false),
+		Users:         usersToResponse(u, false, s.cfg),
 		NextPageToken: uint32(next),
 	}
 	return resp, nil
@@ -84,7 +96,7 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 		return nil, err
 	}
 
-	return userToResponse(u, true), nil
+	return userToResponse(u, true, s.cfg), nil
 }
 
 func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_pb.UpdateUserProfileRequest) (*api_pb.User, error) {
@@ -130,7 +142,27 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		return nil, err
 	}
 
-	return userToResponse(u, true), nil
+	return userToResponse(u, true, s.cfg), nil
+}
+
+func (s *userServiceServerImpl) UpdateUserIcon(ctx context.Context, req *api_pb.UpdateUserIconRequest) (*api_pb.User, error) {
+	id, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	icon := req.GetImage()
+	if MaxIconSize < len(icon) {
+		return nil, ErrIconSizeTooLarge
+	}
+
+	us := s.UserStore(ctx)
+	u, err := us.UpdateIcon(id, icon)
+	if err != nil {
+		return nil, err
+	}
+
+	return userToResponse(u, true, s.cfg), nil
 }
 
 func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*empty.Empty, error) {
@@ -138,26 +170,28 @@ func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func usersToResponse(users []*record.User, includeEmail bool) []*api_pb.User {
+func usersToResponse(users []*record.User, includeEmail bool, cfg *config.Config) []*api_pb.User {
 	res := make([]*api_pb.User, 0, len(users))
 	for _, u := range users {
-		res = append(res, userToResponse(u, includeEmail))
+		res = append(res, userToResponse(u, includeEmail, cfg))
 	}
 	return res
 }
 
-func userToResponse(user *record.User, includeEmail bool) *api_pb.User {
+func userToResponse(user *record.User, includeEmail bool, cfg *config.Config) *api_pb.User {
 	var email string
 	if includeEmail {
 		email = user.Email
 	}
 
 	u := &api_pb.User{
-		UserId:    uint32(user.ID),
-		Name:      user.Name,
-		Email:     email,
-		FullName:  user.FullName,
-		AvatarUrl: "not implemented",
+		UserId:   uint32(user.ID),
+		Name:     user.Name,
+		Email:    email,
+		FullName: user.FullName,
+	}
+	if user.AvatarFilename.Valid {
+		u.IconUrl = cfg.MinioPublicURL + "/" + user.AvatarFilename.String
 	}
 	if r := user.R; r != nil && r.Profile != nil {
 		p := r.Profile

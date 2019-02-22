@@ -129,7 +129,7 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 		return nil, errors.WithStack(err)
 	}
 
-	u, err := record.FindUser(s.ctx, s.db, int64(userID), record.UserColumns.ID, record.UserColumns.AvatarFilename)
+	u, err := record.FindUser(s.ctx, s.db, int64(userID))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -141,7 +141,7 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 
 	old := u.AvatarFilename
 	u.AvatarFilename = null.StringFrom(name)
-	_, err = u.Update(s.ctx, s.db, boil.Infer())
+	_, err = u.Update(s.ctx, s.db, boil.Whitelist(record.UserColumns.AvatarFilename, record.UserColumns.UpdatedAt))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
