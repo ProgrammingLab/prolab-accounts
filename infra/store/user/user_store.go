@@ -128,7 +128,12 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 		return nil, errors.WithStack(err)
 	}
 
-	u, err := record.FindUser(s.ctx, s.db, int64(userID))
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("id = ?", userID),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

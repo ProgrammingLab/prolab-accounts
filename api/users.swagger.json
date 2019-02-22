@@ -32,7 +32,7 @@
       }
     },
     "/user/icon": {
-      "patch": {
+      "post": {
         "operationId": "UpdateUserIcon",
         "responses": {
           "200": {

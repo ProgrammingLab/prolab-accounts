@@ -41,7 +41,7 @@ service UserService {
   }
   rpc UpdateUserIcon (UpdateUserIconRequest) returns (User) {
     option (google.api.http) = {
-      patch: "/user/icon"
+      post: "/user/icon"
       body: "*"
     };
   }
