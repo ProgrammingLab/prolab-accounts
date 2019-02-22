@@ -55,7 +55,6 @@ message User {
   string description = 6;
   int32 grade = 7;
   bool left = 8;
-  string short_department = 10;
   string role = 11;
   string twitter_screen_name = 12;
   string github_user_name = 13;

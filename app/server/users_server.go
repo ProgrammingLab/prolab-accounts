@@ -76,7 +76,7 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 		return nil, util.ErrUnauthenticated
 	}
 
-	u, err := s.UserStore(ctx).GetUser(userID)
+	u, err := s.UserStore(ctx).GetUserWithPrivate(userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, util.ErrUnauthenticated
@@ -125,7 +125,7 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		return nil, err
 	}
 
-	u, err = us.GetUser(id)
+	u, err = us.GetUserWithPrivate(id)
 	if err != nil {
 		return nil, err
 	}

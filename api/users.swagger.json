@@ -247,9 +247,6 @@
           "type": "boolean",
           "format": "boolean"
         },
-        "short_department": {
-          "type": "string"
-        },
         "role": {
           "type": "string"
         },

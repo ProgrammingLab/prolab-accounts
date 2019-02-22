@@ -32,8 +32,13 @@ func (s *userStoreImpl) CreateUser(user *record.User) error {
 	return errors.WithStack(err)
 }
 
-func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
-	u, err := record.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+func (s *userStoreImpl) GetUserWithPrivate(userID model.UserID) (*record.User, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("id = ?", userID),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
