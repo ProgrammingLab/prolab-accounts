@@ -8,6 +8,7 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
@@ -31,8 +32,13 @@ func (s *userStoreImpl) CreateUser(user *record.User) error {
 	return errors.WithStack(err)
 }
 
-func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
-	u, err := record.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+func (s *userStoreImpl) GetUserWithPrivate(userID model.UserID) (*record.User, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("id = ?", userID),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -64,6 +70,38 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 		return u, 0, nil
 	}
 	return u[:limit], model.UserID(u[limit].ID), nil
+}
+
+func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u *record.User, err error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	defer func() {
+		if err = util.ErrorFromRecover(recover()); err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	u, err = record.FindUser(s.ctx, tx, int64(userID))
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	u.FullName = fullName
+	_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
 }
 
 var selectQuery = map[model.ProfileScope]string{

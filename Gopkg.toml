@@ -5,3 +5,7 @@
 [[constraint]]
   name = "github.com/ory/hydra"
   version = "1.0.0-rc.6+oryOS.10"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/mwitkow/go-proto-validators"

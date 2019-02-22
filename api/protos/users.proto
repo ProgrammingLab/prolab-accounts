@@ -5,6 +5,7 @@ package programming_lab.prolab_accounts;
 option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 
 
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
@@ -32,10 +33,10 @@ service UserService {
       get: "/user"
     };
   }
-  rpc UpdateUser (UpdateUserRequest) returns (User) {
+  rpc UpdateUserProfile (UpdateUserProfileRequest) returns (User) {
     option (google.api.http) = {
-      patch: "/user"
-      body: "user"
+      patch: "/user/profile"
+      body: "*"
     };
   }
   rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
@@ -54,11 +55,16 @@ message User {
   string description = 6;
   int32 grade = 7;
   bool left = 8;
-  string short_department = 10;
   string role = 11;
   string twitter_screen_name = 12;
   string github_user_name = 13;
   type.Department department = 14;
+  ProfileScope profile_scope = 15;
+}
+
+enum ProfileScope {
+  MEMBERS_ONLY = 0;
+  PUBLIC = 1;
 }
 
 message ListUsersRequest {
@@ -82,8 +88,16 @@ message CreateUserRequest {
 
 message GetCurrentUserRequest {}
 
-message UpdateUserRequest {
-  User user = 1;
+message UpdateUserProfileRequest {
+  string full_name = 1 [(validator.field) = {length_lt: 128}];
+  string description = 2 [(validator.field) = {length_lt: 1024}];
+  int32 grade = 3 [(validator.field) = {int_gt: 0, int_lt: 6}];
+  bool left = 4;
+  uint32 role_id = 5;
+  string twitter_screen_name = 6 [(validator.field) = {regex: "^[A-Za-z0-9_]{0,15}$"}];
+  string github_user_name = 7 [(validator.field) = {regex: "^([a-z\\d]+-)*[a-z\\d]+$", length_lt: 40}];
+  uint32 department_id = 8;
+  ProfileScope profile_scope = 9 [(validator.field) = {is_in_enum : true}];
 }
 
 message UpdatePasswordRequest {

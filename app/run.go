@@ -46,6 +46,7 @@ func Run() error {
 		),
 		grapiserver.WithGrpcServerUnaryInterceptors(
 			interceptor.ErrorUnaryServerInterceptor(),
+			interceptor.ValidationUnaryServerInterceptor(),
 			authorizator.UnaryServerInterceptor(),
 		),
 		grapiserver.WithServers(

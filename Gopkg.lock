@@ -58,6 +58,22 @@
   version = "v3.1.1"
 
 [[projects]]
+  digest = "1:fd53b471edb4c28c7d297f617f4da0d33402755f58d6301e7ca1197ef0a90937"
+  name = "github.com/gogo/protobuf"
+  packages = [
+    "gogoproto",
+    "proto",
+    "protoc-gen-gogo/descriptor",
+    "protoc-gen-gogo/generator",
+    "protoc-gen-gogo/generator/internal/remap",
+    "protoc-gen-gogo/plugin",
+    "vanity",
+  ]
+  pruneopts = ""
+  revision = "ba06b47c162d49f2af050fb4c75bcbc86a159d5c"
+  version = "v1.2.1"
+
+[[projects]]
   digest = "1:107b233e45174dbab5b1324201d092ea9448e58243ab9f039e4c0f332e121e3a"
   name = "github.com/golang/glog"
   packages = ["."]
@@ -353,6 +369,18 @@
   pruneopts = ""
   revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
   version = "v1.1.2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:5350b8f9bedc3e9f3d940abc6a3914c76b9ada1c0c3a8c13273d2eb2c7a16878"
+  name = "github.com/mwitkow/go-proto-validators"
+  packages = [
+    ".",
+    "plugin",
+    "protoc-gen-govalidators",
+  ]
+  pruneopts = ""
+  revision = "1f388280e944c97cc59c75d8c84a704097d1f1d6"
 
 [[projects]]
   digest = "1:d6e135c97663d8e8b001b56730988097109f7df8c4d1caabac9a41db9ccc311a"
@@ -830,6 +858,8 @@
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
     "github.com/lib/pq",
+    "github.com/mwitkow/go-proto-validators",
+    "github.com/mwitkow/go-proto-validators/protoc-gen-govalidators",
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",

@@ -10,6 +10,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
 )
@@ -18,6 +19,7 @@ import (
 type StoreComponent interface {
 	UserStore(ctx context.Context) store.UserStore
 	SessionStore(ctx context.Context) store.SessionStore
+	ProfileStore(ctx context.Context) store.ProfileStore
 }
 
 // NewStoreComponent returns new store component
@@ -75,4 +77,8 @@ func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
 
 func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
 	return sessionstore.NewSessionStore(ctx, s.client, s.db)
+}
+
+func (s *storeComponentImpl) ProfileStore(ctx context.Context) store.ProfileStore {
+	return profilestore.NewProfileStore(ctx, s.db)
 }

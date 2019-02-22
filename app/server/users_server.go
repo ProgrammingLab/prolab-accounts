@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/volatiletech/null"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -75,7 +76,7 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 		return nil, util.ErrUnauthenticated
 	}
 
-	u, err := s.UserStore(ctx).GetUser(userID)
+	u, err := s.UserStore(ctx).GetUserWithPrivate(userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, util.ErrUnauthenticated
@@ -86,9 +87,50 @@ func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.
 	return userToResponse(u, true), nil
 }
 
-func (s *userServiceServerImpl) UpdateUser(ctx context.Context, req *api_pb.UpdateUserRequest) (*api_pb.User, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_pb.UpdateUserProfileRequest) (*api_pb.User, error) {
+	id, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	us := s.UserStore(ctx)
+	u, err := us.UpdateFullName(id, req.GetFullName())
+	if err != nil {
+		return nil, err
+	}
+
+	ps := s.ProfileStore(ctx)
+	p := &record.Profile{
+		ID:                u.ProfileID.Int64,
+		Description:       req.GetDescription(),
+		Grade:             int(req.GetGrade()),
+		Left:              req.GetLeft(),
+		TwitterScreenName: null.StringFrom(req.GetTwitterScreenName()),
+		GithubUserName:    null.StringFrom(req.GetGithubUserName()),
+		ProfileScope:      null.IntFrom(int(req.GetProfileScope())),
+	}
+	if id := req.GetRoleId(); id == 0 {
+		p.RoleID = null.NewInt64(0, false)
+	} else {
+		p.RoleID = null.Int64From(int64(id))
+	}
+	if id := req.GetDepartmentId(); id == 0 {
+		p.DepartmentID = null.NewInt64(0, false)
+	} else {
+		p.DepartmentID = null.Int64From(int64(id))
+	}
+
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err = us.GetUserWithPrivate(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userToResponse(u, true), nil
 }
 
 func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*empty.Empty, error) {
