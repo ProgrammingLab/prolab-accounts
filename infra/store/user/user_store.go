@@ -10,7 +10,6 @@ import (
 	_ "image/gif" // for image
 	_ "image/jpeg"
 	_ "image/png"
-	"io"
 
 	minio "github.com/minio/minio-go"
 	"github.com/pkg/errors"
@@ -134,7 +133,10 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 		return nil, errors.WithStack(err)
 	}
 
-	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), minio.PutObjectOptions{})
+	opt := minio.PutObjectOptions{
+		ContentType: "image/" + ext,
+	}
+	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), opt)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -159,15 +161,15 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 }
 
 func generateFilename(ext string) (string, error) {
-	r := io.LimitReader(rand.Reader, 256)
-	d := base64.NewDecoder(base64.RawURLEncoding, r)
-	b := make([]byte, 256)
-	_, err := d.Read(b)
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
 
-	return string(b) + "." + ext, nil
+	res := base64.RawURLEncoding.EncodeToString(b)
+
+	return string(res) + "." + ext, nil
 }
 
 var selectQuery = map[model.ProfileScope]string{

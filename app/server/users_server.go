@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"image"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	validator "github.com/mwitkow/go-proto-validators"
+	"github.com/pkg/errors"
 	"github.com/volatiletech/null"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -48,6 +50,8 @@ var (
 	ErrPageSizeOutOfRange = status.Error(codes.OutOfRange, "page size must be 1 <= size <= 100")
 	// ErrIconSizeTooLarge will be returned when icon is too large
 	ErrIconSizeTooLarge = validator.FieldError("Image", fmt.Errorf("image must be smaller than 1MiB"))
+	// ErrInvalidImageFormat will be returned when image format is invalid
+	ErrInvalidImageFormat = status.Error(codes.InvalidArgument, "invalid iamge format")
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
@@ -159,6 +163,9 @@ func (s *userServiceServerImpl) UpdateUserIcon(ctx context.Context, req *api_pb.
 	us := s.UserStore(ctx)
 	u, err := us.UpdateIcon(id, icon)
 	if err != nil {
+		if err := errors.Cause(err); err == image.ErrFormat {
+			return nil, ErrInvalidImageFormat
+		}
 		return nil, err
 	}
 
@@ -191,7 +198,7 @@ func userToResponse(user *record.User, includeEmail bool, cfg *config.Config) *a
 		FullName: user.FullName,
 	}
 	if user.AvatarFilename.Valid {
-		u.IconUrl = cfg.MinioPublicURL + "/" + user.AvatarFilename.String
+		u.IconUrl = cfg.MinioPublicURL + "/" + cfg.MinioBucketName + "/" + user.AvatarFilename.String
 	}
 	if r := user.R; r != nil && r.Profile != nil {
 		p := r.Profile
