@@ -836,7 +836,7 @@ func testEntriesSelect(t *testing.T) {
 }
 
 var (
-	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `character varying`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `ImageFilename`: `character varying`, `BlogID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
+	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `character varying`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `BlogID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `ImageURL`: `character varying`}
 	_            = bytes.MinRead
 )
 

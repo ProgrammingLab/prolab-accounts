@@ -24,97 +24,74 @@ import (
 
 // Entry is an object representing the database table.
 type Entry struct {
-	ID            int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Title         string      `boil:"title" json:"title" toml:"title" yaml:"title"`
-	Description   string      `boil:"description" json:"description" toml:"description" yaml:"description"`
-	Content       string      `boil:"content" json:"content" toml:"content" yaml:"content"`
-	Link          string      `boil:"link" json:"link" toml:"link" yaml:"link"`
-	AuthorID      int64       `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
-	GUID          string      `boil:"guid" json:"guid" toml:"guid" yaml:"guid"`
-	ImageFilename null.String `boil:"image_filename" json:"image_filename,omitempty" toml:"image_filename" yaml:"image_filename,omitempty"`
-	BlogID        null.Int64  `boil:"blog_id" json:"blog_id,omitempty" toml:"blog_id" yaml:"blog_id,omitempty"`
-	CreatedAt     time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt     time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID          int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Title       string     `boil:"title" json:"title" toml:"title" yaml:"title"`
+	Description string     `boil:"description" json:"description" toml:"description" yaml:"description"`
+	Content     string     `boil:"content" json:"content" toml:"content" yaml:"content"`
+	Link        string     `boil:"link" json:"link" toml:"link" yaml:"link"`
+	AuthorID    int64      `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
+	GUID        string     `boil:"guid" json:"guid" toml:"guid" yaml:"guid"`
+	BlogID      null.Int64 `boil:"blog_id" json:"blog_id,omitempty" toml:"blog_id" yaml:"blog_id,omitempty"`
+	CreatedAt   time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt   time.Time  `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ImageURL    string     `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
 
 	R *entryR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L entryL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var EntryColumns = struct {
-	ID            string
-	Title         string
-	Description   string
-	Content       string
-	Link          string
-	AuthorID      string
-	GUID          string
-	ImageFilename string
-	BlogID        string
-	CreatedAt     string
-	UpdatedAt     string
+	ID          string
+	Title       string
+	Description string
+	Content     string
+	Link        string
+	AuthorID    string
+	GUID        string
+	BlogID      string
+	CreatedAt   string
+	UpdatedAt   string
+	ImageURL    string
 }{
-	ID:            "id",
-	Title:         "title",
-	Description:   "description",
-	Content:       "content",
-	Link:          "link",
-	AuthorID:      "author_id",
-	GUID:          "guid",
-	ImageFilename: "image_filename",
-	BlogID:        "blog_id",
-	CreatedAt:     "created_at",
-	UpdatedAt:     "updated_at",
+	ID:          "id",
+	Title:       "title",
+	Description: "description",
+	Content:     "content",
+	Link:        "link",
+	AuthorID:    "author_id",
+	GUID:        "guid",
+	BlogID:      "blog_id",
+	CreatedAt:   "created_at",
+	UpdatedAt:   "updated_at",
+	ImageURL:    "image_url",
 }
 
 // Generated where
 
-type whereHelpernull_String struct{ field string }
-
-func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var EntryWhere = struct {
-	ID            whereHelperint64
-	Title         whereHelperstring
-	Description   whereHelperstring
-	Content       whereHelperstring
-	Link          whereHelperstring
-	AuthorID      whereHelperint64
-	GUID          whereHelperstring
-	ImageFilename whereHelpernull_String
-	BlogID        whereHelpernull_Int64
-	CreatedAt     whereHelpertime_Time
-	UpdatedAt     whereHelpertime_Time
+	ID          whereHelperint64
+	Title       whereHelperstring
+	Description whereHelperstring
+	Content     whereHelperstring
+	Link        whereHelperstring
+	AuthorID    whereHelperint64
+	GUID        whereHelperstring
+	BlogID      whereHelpernull_Int64
+	CreatedAt   whereHelpertime_Time
+	UpdatedAt   whereHelpertime_Time
+	ImageURL    whereHelperstring
 }{
-	ID:            whereHelperint64{field: `id`},
-	Title:         whereHelperstring{field: `title`},
-	Description:   whereHelperstring{field: `description`},
-	Content:       whereHelperstring{field: `content`},
-	Link:          whereHelperstring{field: `link`},
-	AuthorID:      whereHelperint64{field: `author_id`},
-	GUID:          whereHelperstring{field: `guid`},
-	ImageFilename: whereHelpernull_String{field: `image_filename`},
-	BlogID:        whereHelpernull_Int64{field: `blog_id`},
-	CreatedAt:     whereHelpertime_Time{field: `created_at`},
-	UpdatedAt:     whereHelpertime_Time{field: `updated_at`},
+	ID:          whereHelperint64{field: `id`},
+	Title:       whereHelperstring{field: `title`},
+	Description: whereHelperstring{field: `description`},
+	Content:     whereHelperstring{field: `content`},
+	Link:        whereHelperstring{field: `link`},
+	AuthorID:    whereHelperint64{field: `author_id`},
+	GUID:        whereHelperstring{field: `guid`},
+	BlogID:      whereHelpernull_Int64{field: `blog_id`},
+	CreatedAt:   whereHelpertime_Time{field: `created_at`},
+	UpdatedAt:   whereHelpertime_Time{field: `updated_at`},
+	ImageURL:    whereHelperstring{field: `image_url`},
 }
 
 // EntryRels is where relationship names are stored.
@@ -141,8 +118,8 @@ func (*entryR) NewStruct() *entryR {
 type entryL struct{}
 
 var (
-	entryColumns               = []string{"id", "title", "description", "content", "link", "author_id", "guid", "image_filename", "blog_id", "created_at", "updated_at"}
-	entryColumnsWithoutDefault = []string{"title", "description", "content", "link", "author_id", "guid", "image_filename", "blog_id", "created_at", "updated_at"}
+	entryColumns               = []string{"id", "title", "description", "content", "link", "author_id", "guid", "blog_id", "created_at", "updated_at", "image_url"}
+	entryColumnsWithoutDefault = []string{"title", "description", "content", "link", "author_id", "guid", "blog_id", "created_at", "updated_at", "image_url"}
 	entryColumnsWithDefault    = []string{"id"}
 	entryPrimaryKeyColumns     = []string{"id"}
 )
