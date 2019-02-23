@@ -5,6 +5,7 @@ if [ ! -z "$1" ] && [ $1 != '-y' ]; then
     exit 1
 fi
 
+docker-compose exec pg psql -c 'create database accounts;' -U postgres
 docker-compose exec pg psql -c 'create database hydra;' -U postgres
 
 docker-compose -f db/docker-compose.yml build
