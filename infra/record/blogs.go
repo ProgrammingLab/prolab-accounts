@@ -138,14 +138,17 @@ var BlogWhere = struct {
 
 // BlogRels is where relationship names are stored.
 var BlogRels = struct {
-	User string
+	User    string
+	Entries string
 }{
-	User: "User",
+	User:    "User",
+	Entries: "Entries",
 }
 
 // blogR is where relationships are stored.
 type blogR struct {
-	User *User
+	User    *User
+	Entries EntrySlice
 }
 
 // NewStruct creates a new relationship struct
@@ -452,6 +455,27 @@ func (o *Blog) User(mods ...qm.QueryMod) userQuery {
 	return query
 }
 
+// Entries retrieves all the entry's Entries with an executor.
+func (o *Blog) Entries(mods ...qm.QueryMod) entryQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"entries\".\"blog_id\"=?", o.ID),
+	)
+
+	query := Entries(queryMods...)
+	queries.SetFrom(query.Query, "\"entries\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"entries\".*"})
+	}
+
+	return query
+}
+
 // LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
 func (blogL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBlog interface{}, mods queries.Applicator) error {
@@ -557,6 +581,101 @@ func (blogL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool
 	return nil
 }
 
+// LoadEntries allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (blogL) LoadEntries(ctx context.Context, e boil.ContextExecutor, singular bool, maybeBlog interface{}, mods queries.Applicator) error {
+	var slice []*Blog
+	var object *Blog
+
+	if singular {
+		object = maybeBlog.(*Blog)
+	} else {
+		slice = *maybeBlog.(*[]*Blog)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &blogR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &blogR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ID) {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`entries`), qm.WhereIn(`blog_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load entries")
+	}
+
+	var resultSlice []*Entry
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice entries")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on entries")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for entries")
+	}
+
+	if len(entryAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Entries = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &entryR{}
+			}
+			foreign.R.Blog = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if queries.Equal(local.ID, foreign.BlogID) {
+				local.R.Entries = append(local.R.Entries, foreign)
+				if foreign.R == nil {
+					foreign.R = &entryR{}
+				}
+				foreign.R.Blog = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetUser of the blog to the related item.
 // Sets o.R.User to related.
 // Adds o to related.R.Blogs.
@@ -632,6 +751,129 @@ func (o *Blog) RemoveUser(ctx context.Context, exec boil.ContextExecutor, relate
 		related.R.Blogs = related.R.Blogs[:ln-1]
 		break
 	}
+	return nil
+}
+
+// AddEntries adds the given related objects to the existing relationships
+// of the blog, optionally inserting them as new records.
+// Appends related to o.R.Entries.
+// Sets related.R.Blog appropriately.
+func (o *Blog) AddEntries(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Entry) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			queries.Assign(&rel.BlogID, o.ID)
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"entries\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"blog_id"}),
+				strmangle.WhereClause("\"", "\"", 2, entryPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			queries.Assign(&rel.BlogID, o.ID)
+		}
+	}
+
+	if o.R == nil {
+		o.R = &blogR{
+			Entries: related,
+		}
+	} else {
+		o.R.Entries = append(o.R.Entries, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &entryR{
+				Blog: o,
+			}
+		} else {
+			rel.R.Blog = o
+		}
+	}
+	return nil
+}
+
+// SetEntries removes all previously related items of the
+// blog replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Blog's Entries accordingly.
+// Replaces o.R.Entries with related.
+// Sets related.R.Blog's Entries accordingly.
+func (o *Blog) SetEntries(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Entry) error {
+	query := "update \"entries\" set \"blog_id\" = null where \"blog_id\" = $1"
+	values := []interface{}{o.ID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.Entries {
+			queries.SetScanner(&rel.BlogID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.Blog = nil
+		}
+
+		o.R.Entries = nil
+	}
+	return o.AddEntries(ctx, exec, insert, related...)
+}
+
+// RemoveEntries relationships from objects passed in.
+// Removes related items from R.Entries (uses pointer comparison, removal does not keep order)
+// Sets related.R.Blog.
+func (o *Blog) RemoveEntries(ctx context.Context, exec boil.ContextExecutor, related ...*Entry) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.BlogID, nil)
+		if rel.R != nil {
+			rel.R.Blog = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("blog_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.Entries {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.Entries)
+			if ln > 1 && i < ln-1 {
+				o.R.Entries[i] = o.R.Entries[ln-1]
+			}
+			o.R.Entries = o.R.Entries[:ln-1]
+			break
+		}
+	}
+
 	return nil
 }
 
