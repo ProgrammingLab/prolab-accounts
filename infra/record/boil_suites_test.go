@@ -12,6 +12,7 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("Blogs", testBlogs)
 	t.Run("Departments", testDepartments)
 	t.Run("Profiles", testProfiles)
 	t.Run("Roles", testRoles)
@@ -19,6 +20,7 @@ func TestParent(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("Blogs", testBlogsDelete)
 	t.Run("Departments", testDepartmentsDelete)
 	t.Run("Profiles", testProfilesDelete)
 	t.Run("Roles", testRolesDelete)
@@ -26,6 +28,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("Blogs", testBlogsQueryDeleteAll)
 	t.Run("Departments", testDepartmentsQueryDeleteAll)
 	t.Run("Profiles", testProfilesQueryDeleteAll)
 	t.Run("Roles", testRolesQueryDeleteAll)
@@ -33,6 +36,7 @@ func TestQueryDeleteAll(t *testing.T) {
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("Blogs", testBlogsSliceDeleteAll)
 	t.Run("Departments", testDepartmentsSliceDeleteAll)
 	t.Run("Profiles", testProfilesSliceDeleteAll)
 	t.Run("Roles", testRolesSliceDeleteAll)
@@ -40,6 +44,7 @@ func TestSliceDeleteAll(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
+	t.Run("Blogs", testBlogsExists)
 	t.Run("Departments", testDepartmentsExists)
 	t.Run("Profiles", testProfilesExists)
 	t.Run("Roles", testRolesExists)
@@ -47,6 +52,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	t.Run("Blogs", testBlogsFind)
 	t.Run("Departments", testDepartmentsFind)
 	t.Run("Profiles", testProfilesFind)
 	t.Run("Roles", testRolesFind)
@@ -54,6 +60,7 @@ func TestFind(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
+	t.Run("Blogs", testBlogsBind)
 	t.Run("Departments", testDepartmentsBind)
 	t.Run("Profiles", testProfilesBind)
 	t.Run("Roles", testRolesBind)
@@ -61,6 +68,7 @@ func TestBind(t *testing.T) {
 }
 
 func TestOne(t *testing.T) {
+	t.Run("Blogs", testBlogsOne)
 	t.Run("Departments", testDepartmentsOne)
 	t.Run("Profiles", testProfilesOne)
 	t.Run("Roles", testRolesOne)
@@ -68,6 +76,7 @@ func TestOne(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Run("Blogs", testBlogsAll)
 	t.Run("Departments", testDepartmentsAll)
 	t.Run("Profiles", testProfilesAll)
 	t.Run("Roles", testRolesAll)
@@ -75,6 +84,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+	t.Run("Blogs", testBlogsCount)
 	t.Run("Departments", testDepartmentsCount)
 	t.Run("Profiles", testProfilesCount)
 	t.Run("Roles", testRolesCount)
@@ -82,6 +92,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("Blogs", testBlogsHooks)
 	t.Run("Departments", testDepartmentsHooks)
 	t.Run("Profiles", testProfilesHooks)
 	t.Run("Roles", testRolesHooks)
@@ -89,6 +100,8 @@ func TestHooks(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("Blogs", testBlogsInsert)
+	t.Run("Blogs", testBlogsInsertWhitelist)
 	t.Run("Departments", testDepartmentsInsert)
 	t.Run("Departments", testDepartmentsInsertWhitelist)
 	t.Run("Profiles", testProfilesInsert)
@@ -102,6 +115,7 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("BlogToUserUsingUser", testBlogToOneUserUsingUser)
 	t.Run("ProfileToDepartmentUsingDepartment", testProfileToOneDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingRole", testProfileToOneRoleUsingRole)
 	t.Run("UserToProfileUsingProfile", testUserToOneProfileUsingProfile)
@@ -117,11 +131,13 @@ func TestToMany(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManyProfiles)
 	t.Run("ProfileToUsers", testProfileToManyUsers)
 	t.Run("RoleToProfiles", testRoleToManyProfiles)
+	t.Run("UserToBlogs", testUserToManyBlogs)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("BlogToUserUsingBlogs", testBlogToOneSetOpUserUsingUser)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneSetOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneSetOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneSetOpProfileUsingProfile)
@@ -130,6 +146,7 @@ func TestToOneSet(t *testing.T) {
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
+	t.Run("BlogToUserUsingBlogs", testBlogToOneRemoveOpUserUsingUser)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneRemoveOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneRemoveOpProfileUsingProfile)
@@ -149,6 +166,7 @@ func TestToManyAdd(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManyAddOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyAddOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyAddOpProfiles)
+	t.Run("UserToBlogs", testUserToManyAddOpBlogs)
 }
 
 // TestToManySet tests cannot be run in parallel
@@ -157,6 +175,7 @@ func TestToManySet(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManySetOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManySetOpUsers)
 	t.Run("RoleToProfiles", testRoleToManySetOpProfiles)
+	t.Run("UserToBlogs", testUserToManySetOpBlogs)
 }
 
 // TestToManyRemove tests cannot be run in parallel
@@ -165,9 +184,11 @@ func TestToManyRemove(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManyRemoveOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyRemoveOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyRemoveOpProfiles)
+	t.Run("UserToBlogs", testUserToManyRemoveOpBlogs)
 }
 
 func TestReload(t *testing.T) {
+	t.Run("Blogs", testBlogsReload)
 	t.Run("Departments", testDepartmentsReload)
 	t.Run("Profiles", testProfilesReload)
 	t.Run("Roles", testRolesReload)
@@ -175,6 +196,7 @@ func TestReload(t *testing.T) {
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("Blogs", testBlogsReloadAll)
 	t.Run("Departments", testDepartmentsReloadAll)
 	t.Run("Profiles", testProfilesReloadAll)
 	t.Run("Roles", testRolesReloadAll)
@@ -182,6 +204,7 @@ func TestReloadAll(t *testing.T) {
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("Blogs", testBlogsSelect)
 	t.Run("Departments", testDepartmentsSelect)
 	t.Run("Profiles", testProfilesSelect)
 	t.Run("Roles", testRolesSelect)
@@ -189,6 +212,7 @@ func TestSelect(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("Blogs", testBlogsUpdate)
 	t.Run("Departments", testDepartmentsUpdate)
 	t.Run("Profiles", testProfilesUpdate)
 	t.Run("Roles", testRolesUpdate)
@@ -196,6 +220,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("Blogs", testBlogsSliceUpdateAll)
 	t.Run("Departments", testDepartmentsSliceUpdateAll)
 	t.Run("Profiles", testProfilesSliceUpdateAll)
 	t.Run("Roles", testRolesSliceUpdateAll)

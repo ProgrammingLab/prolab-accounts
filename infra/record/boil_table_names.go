@@ -4,11 +4,13 @@
 package record
 
 var TableNames = struct {
+	Blogs       string
 	Departments string
 	Profiles    string
 	Roles       string
 	Users       string
 }{
+	Blogs:       "blogs",
 	Departments: "departments",
 	Profiles:    "profiles",
 	Roles:       "roles",
