@@ -1,0 +1,173 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "entries.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/entries": {
+      "get": {
+        "operationId": "ListEntries",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListEntriesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "EntryService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsEntry": {
+      "type": "object",
+      "properties": {
+        "entry_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/prolab_accountsUser"
+        },
+        "image_url": {
+          "type": "string"
+        },
+        "published_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "prolab_accountsListEntriesResponse": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsEntry"
+          }
+        },
+        "next_page_token": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "prolab_accountsProfileScope": {
+      "type": "string",
+      "enum": [
+        "MEMBERS_ONLY",
+        "PUBLIC"
+      ],
+      "default": "MEMBERS_ONLY"
+    },
+    "prolab_accountsUser": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "icon_url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "role": {
+          "type": "string"
+        },
+        "twitter_screen_name": {
+          "type": "string"
+        },
+        "github_user_name": {
+          "type": "string"
+        },
+        "department": {
+          "$ref": "#/definitions/typeDepartment"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
+        }
+      }
+    },
+    "typeDepartment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

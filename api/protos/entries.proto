@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "users.proto";
+
+service EntryService {
+  rpc ListEntries (ListEntriesRequest) returns (ListEntriesResponse) {
+    option (google.api.http) = {
+      get: "/entries"
+    };
+  }
+}
+
+message Entry {
+  uint32 entry_id = 1;
+  string title = 2;
+  string description = 3;
+  string content = 4;
+  string link = 5;
+  User author = 6;
+  string image_url = 7;
+  google.protobuf.Timestamp published_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message ListEntriesRequest {
+  uint32 page_token = 1;
+  int32 page_size = 2 [(validator.field) = {int_gt: -1, int_lt: 101}];
+}
+
+message ListEntriesResponse {
+  repeated Entry entries = 1;
+  uint32 next_page_token = 2;
+}
