@@ -18,7 +18,7 @@ type ClientComponent interface {
 func NewClientComponent(cfg *config.Config) (ClientComponent, error) {
 	h, err := newHydraClient(cfg)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 
 	return &clientComponentImpl{

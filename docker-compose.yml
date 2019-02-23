@@ -85,6 +85,26 @@ services:
     ports:
       - "127.0.0.1:6379:6379"
 
+  minio:
+    image: minio/minio
+    command: server /data
+    hostname: minio
+    environment:
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY} 
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_BROWSER=${MINIO_BROWSER}
+    restart: always
+    volumes:
+      - minio-data:/data
+    logging:
+      options:
+        max-size: 5m
+        max-file: "10"
+    ports:
+      - "127.0.0.1:9100:9000"
+
 volumes:
   pg-data:
+    driver: local
+  minio-data:
     driver: local

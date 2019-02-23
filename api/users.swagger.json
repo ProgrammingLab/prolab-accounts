@@ -29,9 +29,11 @@
         "tags": [
           "UserService"
         ]
-      },
-      "patch": {
-        "operationId": "UpdateUser",
+      }
+    },
+    "/user/icon": {
+      "post": {
+        "operationId": "UpdateUserIcon",
         "responses": {
           "200": {
             "description": "",
@@ -46,7 +48,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsUser"
+              "$ref": "#/definitions/prolab_accountsUpdateUserIconRequest"
             }
           }
         ],
@@ -66,6 +68,32 @@
             }
           }
         },
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/user/profile": {
+      "patch": {
+        "operationId": "UpdateUserProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateUserProfileRequest"
+            }
+          }
+        ],
         "tags": [
           "UserService"
         ]
@@ -171,6 +199,59 @@
         }
       }
     },
+    "prolab_accountsProfileScope": {
+      "type": "string",
+      "enum": [
+        "MEMBERS_ONLY",
+        "PUBLIC"
+      ],
+      "default": "MEMBERS_ONLY"
+    },
+    "prolab_accountsUpdateUserIconRequest": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "prolab_accountsUpdateUserProfileRequest": {
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "twitter_screen_name": {
+          "type": "string"
+        },
+        "github_user_name": {
+          "type": "string"
+        },
+        "department_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
+        }
+      }
+    },
     "prolab_accountsUser": {
       "type": "object",
       "properties": {
@@ -187,7 +268,7 @@
         "full_name": {
           "type": "string"
         },
-        "avatar_url": {
+        "icon_url": {
           "type": "string"
         },
         "description": {
@@ -201,9 +282,6 @@
           "type": "boolean",
           "format": "boolean"
         },
-        "short_department": {
-          "type": "string"
-        },
         "role": {
           "type": "string"
         },
@@ -215,6 +293,9 @@
         },
         "department": {
           "$ref": "#/definitions/typeDepartment"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
         }
       }
     },

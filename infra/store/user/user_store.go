@@ -1,28 +1,42 @@
 package userstore
 
 import (
+	"bytes"
 	"context"
+	"crypto/rand"
 	"database/sql"
+	"encoding/base64"
+	"image"
+	_ "image/gif" // for image
+	_ "image/jpeg"
+	_ "image/png"
 
+	minio "github.com/minio/minio-go"
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 type userStoreImpl struct {
-	ctx context.Context
-	db  *sql.DB
+	ctx        context.Context
+	db         *sql.DB
+	cli        *minio.Client
+	bucketName string
 }
 
 // NewUserStore returns new user store
-func NewUserStore(ctx context.Context, db *sql.DB) store.UserStore {
+func NewUserStore(ctx context.Context, db *sql.DB, cli *minio.Client, bucket string) store.UserStore {
 	return &userStoreImpl{
-		ctx: ctx,
-		db:  db,
+		ctx:        ctx,
+		db:         db,
+		cli:        cli,
+		bucketName: bucket,
 	}
 }
 
@@ -31,8 +45,13 @@ func (s *userStoreImpl) CreateUser(user *record.User) error {
 	return errors.WithStack(err)
 }
 
-func (s *userStoreImpl) GetUser(userID model.UserID) (*record.User, error) {
-	u, err := record.Users(qm.Where("id = ?", userID)).One(s.ctx, s.db)
+func (s *userStoreImpl) GetUserWithPrivate(userID model.UserID) (*record.User, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("id = ?", userID),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -64,6 +83,98 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 		return u, 0, nil
 	}
 	return u[:limit], model.UserID(u[limit].ID), nil
+}
+
+func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u *record.User, err error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	defer func() {
+		if err = util.ErrorFromRecover(recover()); err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	u, err = record.FindUser(s.ctx, tx, int64(userID))
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	u.FullName = fullName
+	_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
+}
+
+func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.User, error) {
+	r := bytes.NewReader(icon)
+	_, ext, err := image.DecodeConfig(r)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	name, err := generateFilename(ext)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("id = ?", userID),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	opt := minio.PutObjectOptions{
+		ContentType: "image/" + ext,
+	}
+	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), opt)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	old := u.AvatarFilename
+	u.AvatarFilename = null.StringFrom(name)
+	_, err = u.Update(s.ctx, s.db, boil.Whitelist(record.UserColumns.AvatarFilename, record.UserColumns.UpdatedAt))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if !old.Valid {
+		return u, nil
+	}
+
+	err = s.cli.RemoveObject(s.bucketName, old.String)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
+}
+
+func generateFilename(ext string) (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	res := base64.RawURLEncoding.EncodeToString(b)
+
+	return string(res) + "." + ext, nil
 }
 
 var selectQuery = map[model.ProfileScope]string{
