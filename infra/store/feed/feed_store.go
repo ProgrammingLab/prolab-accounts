@@ -28,8 +28,8 @@ var (
 	ErrFeedURLNotFound = fmt.Errorf("feed url not found")
 
 	feedURLGetters = []feedURLGetter{
-		getFeedURLWithSuffixes,
 		getMediumFeed,
+		getFeedURLWithSuffixes,
 	}
 )
 
