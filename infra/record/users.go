@@ -579,7 +579,7 @@ func (userL) LoadBlogs(ctx context.Context, e boil.ContextExecutor, singular boo
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -634,7 +634,7 @@ func (userL) LoadBlogs(ctx context.Context, e boil.ContextExecutor, singular boo
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.UserID) {
+			if local.ID == foreign.UserID {
 				local.R.Blogs = append(local.R.Blogs, foreign)
 				if foreign.R == nil {
 					foreign.R = &blogR{}
@@ -829,7 +829,7 @@ func (o *User) AddBlogs(ctx context.Context, exec boil.ContextExecutor, insert b
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -850,7 +850,7 @@ func (o *User) AddBlogs(ctx context.Context, exec boil.ContextExecutor, insert b
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
 		}
 	}
 
@@ -871,76 +871,6 @@ func (o *User) AddBlogs(ctx context.Context, exec boil.ContextExecutor, insert b
 			rel.R.User = o
 		}
 	}
-	return nil
-}
-
-// SetBlogs removes all previously related items of the
-// user replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.User's Blogs accordingly.
-// Replaces o.R.Blogs with related.
-// Sets related.R.User's Blogs accordingly.
-func (o *User) SetBlogs(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Blog) error {
-	query := "update \"blogs\" set \"user_id\" = null where \"user_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, query)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.Blogs {
-			queries.SetScanner(&rel.UserID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.User = nil
-		}
-
-		o.R.Blogs = nil
-	}
-	return o.AddBlogs(ctx, exec, insert, related...)
-}
-
-// RemoveBlogs relationships from objects passed in.
-// Removes related items from R.Blogs (uses pointer comparison, removal does not keep order)
-// Sets related.R.User.
-func (o *User) RemoveBlogs(ctx context.Context, exec boil.ContextExecutor, related ...*Blog) error {
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.UserID, nil)
-		if rel.R != nil {
-			rel.R.User = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.Blogs {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.Blogs)
-			if ln > 1 && i < ln-1 {
-				o.R.Blogs[i] = o.R.Blogs[ln-1]
-			}
-			o.R.Blogs = o.R.Blogs[:ln-1]
-			break
-		}
-	}
-
 	return nil
 }
 

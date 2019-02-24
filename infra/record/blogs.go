@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -24,12 +23,12 @@ import (
 
 // Blog is an object representing the database table.
 type Blog struct {
-	ID        int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	URL       string     `boil:"url" json:"url" toml:"url" yaml:"url"`
-	FeedURL   string     `boil:"feed_url" json:"feed_url" toml:"feed_url" yaml:"feed_url"`
-	UserID    null.Int64 `boil:"user_id" json:"user_id,omitempty" toml:"user_id" yaml:"user_id,omitempty"`
-	CreatedAt time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time  `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	URL       string    `boil:"url" json:"url" toml:"url" yaml:"url"`
+	FeedURL   string    `boil:"feed_url" json:"feed_url" toml:"feed_url" yaml:"feed_url"`
+	UserID    int64     `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *blogR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L blogL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -71,29 +70,6 @@ func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.f
 func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
 func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
 
-type whereHelpernull_Int64 struct{ field string }
-
-func (w whereHelpernull_Int64) EQ(x null.Int64) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_Int64) NEQ(x null.Int64) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_Int64) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_Int64) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_Int64) LT(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_Int64) LTE(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_Int64) GT(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_Int64) GTE(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 type whereHelpertime_Time struct{ field string }
 
 func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
@@ -119,14 +95,14 @@ var BlogWhere = struct {
 	ID        whereHelperint64
 	URL       whereHelperstring
 	FeedURL   whereHelperstring
-	UserID    whereHelpernull_Int64
+	UserID    whereHelperint64
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint64{field: `id`},
 	URL:       whereHelperstring{field: `url`},
 	FeedURL:   whereHelperstring{field: `feed_url`},
-	UserID:    whereHelpernull_Int64{field: `user_id`},
+	UserID:    whereHelperint64{field: `user_id`},
 	CreatedAt: whereHelpertime_Time{field: `created_at`},
 	UpdatedAt: whereHelpertime_Time{field: `updated_at`},
 }
@@ -488,9 +464,7 @@ func (blogL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool
 		if object.R == nil {
 			object.R = &blogR{}
 		}
-		if !queries.IsNil(object.UserID) {
-			args = append(args, object.UserID)
-		}
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -500,14 +474,12 @@ func (blogL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.UserID) {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.UserID) {
-				args = append(args, obj.UserID)
-			}
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -562,7 +534,7 @@ func (blogL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.UserID, foreign.ID) {
+			if local.UserID == foreign.ID {
 				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
@@ -602,7 +574,7 @@ func (blogL) LoadEntries(ctx context.Context, e boil.ContextExecutor, singular b
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -657,7 +629,7 @@ func (blogL) LoadEntries(ctx context.Context, e boil.ContextExecutor, singular b
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.BlogID) {
+			if local.ID == foreign.BlogID {
 				local.R.Entries = append(local.R.Entries, foreign)
 				if foreign.R == nil {
 					foreign.R = &entryR{}
@@ -698,7 +670,7 @@ func (o *Blog) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bo
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.UserID, related.ID)
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &blogR{
 			User: related,
@@ -718,37 +690,6 @@ func (o *Blog) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bo
 	return nil
 }
 
-// RemoveUser relationship.
-// Sets o.R.User to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *Blog) RemoveUser(ctx context.Context, exec boil.ContextExecutor, related *User) error {
-	var err error
-
-	queries.SetScanner(&o.UserID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.R.User = nil
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.Blogs {
-		if queries.Equal(o.UserID, ri.UserID) {
-			continue
-		}
-
-		ln := len(related.R.Blogs)
-		if ln > 1 && i < ln-1 {
-			related.R.Blogs[i] = related.R.Blogs[ln-1]
-		}
-		related.R.Blogs = related.R.Blogs[:ln-1]
-		break
-	}
-	return nil
-}
-
 // AddEntries adds the given related objects to the existing relationships
 // of the blog, optionally inserting them as new records.
 // Appends related to o.R.Entries.
@@ -757,7 +698,7 @@ func (o *Blog) AddEntries(ctx context.Context, exec boil.ContextExecutor, insert
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.BlogID, o.ID)
+			rel.BlogID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -778,7 +719,7 @@ func (o *Blog) AddEntries(ctx context.Context, exec boil.ContextExecutor, insert
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.BlogID, o.ID)
+			rel.BlogID = o.ID
 		}
 	}
 
@@ -799,76 +740,6 @@ func (o *Blog) AddEntries(ctx context.Context, exec boil.ContextExecutor, insert
 			rel.R.Blog = o
 		}
 	}
-	return nil
-}
-
-// SetEntries removes all previously related items of the
-// blog replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.Blog's Entries accordingly.
-// Replaces o.R.Entries with related.
-// Sets related.R.Blog's Entries accordingly.
-func (o *Blog) SetEntries(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Entry) error {
-	query := "update \"entries\" set \"blog_id\" = null where \"blog_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, query)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.Entries {
-			queries.SetScanner(&rel.BlogID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.Blog = nil
-		}
-
-		o.R.Entries = nil
-	}
-	return o.AddEntries(ctx, exec, insert, related...)
-}
-
-// RemoveEntries relationships from objects passed in.
-// Removes related items from R.Entries (uses pointer comparison, removal does not keep order)
-// Sets related.R.Blog.
-func (o *Blog) RemoveEntries(ctx context.Context, exec boil.ContextExecutor, related ...*Entry) error {
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.BlogID, nil)
-		if rel.R != nil {
-			rel.R.Blog = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("blog_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.Entries {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.Entries)
-			if ln > 1 && i < ln-1 {
-				o.R.Entries[i] = o.R.Entries[ln-1]
-			}
-			o.R.Entries = o.R.Entries[:ln-1]
-			break
-		}
-	}
-
 	return nil
 }
 

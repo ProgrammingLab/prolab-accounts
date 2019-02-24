@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -24,17 +23,17 @@ import (
 
 // Entry is an object representing the database table.
 type Entry struct {
-	ID          int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Title       string     `boil:"title" json:"title" toml:"title" yaml:"title"`
-	Description string     `boil:"description" json:"description" toml:"description" yaml:"description"`
-	Content     string     `boil:"content" json:"content" toml:"content" yaml:"content"`
-	Link        string     `boil:"link" json:"link" toml:"link" yaml:"link"`
-	AuthorID    int64      `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
-	GUID        string     `boil:"guid" json:"guid" toml:"guid" yaml:"guid"`
-	BlogID      null.Int64 `boil:"blog_id" json:"blog_id,omitempty" toml:"blog_id" yaml:"blog_id,omitempty"`
-	CreatedAt   time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt   time.Time  `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
-	ImageURL    string     `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
+	ID          int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Title       string    `boil:"title" json:"title" toml:"title" yaml:"title"`
+	Description string    `boil:"description" json:"description" toml:"description" yaml:"description"`
+	Content     string    `boil:"content" json:"content" toml:"content" yaml:"content"`
+	Link        string    `boil:"link" json:"link" toml:"link" yaml:"link"`
+	AuthorID    int64     `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
+	GUID        string    `boil:"guid" json:"guid" toml:"guid" yaml:"guid"`
+	BlogID      int64     `boil:"blog_id" json:"blog_id" toml:"blog_id" yaml:"blog_id"`
+	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt   time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ImageURL    string    `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
 
 	R *entryR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L entryL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -76,7 +75,7 @@ var EntryWhere = struct {
 	Link        whereHelperstring
 	AuthorID    whereHelperint64
 	GUID        whereHelperstring
-	BlogID      whereHelpernull_Int64
+	BlogID      whereHelperint64
 	CreatedAt   whereHelpertime_Time
 	UpdatedAt   whereHelpertime_Time
 	ImageURL    whereHelperstring
@@ -88,7 +87,7 @@ var EntryWhere = struct {
 	Link:        whereHelperstring{field: `link`},
 	AuthorID:    whereHelperint64{field: `author_id`},
 	GUID:        whereHelperstring{field: `guid`},
-	BlogID:      whereHelpernull_Int64{field: `blog_id`},
+	BlogID:      whereHelperint64{field: `blog_id`},
 	CreatedAt:   whereHelpertime_Time{field: `created_at`},
 	UpdatedAt:   whereHelpertime_Time{field: `updated_at`},
 	ImageURL:    whereHelperstring{field: `image_url`},
@@ -545,9 +544,7 @@ func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular boo
 		if object.R == nil {
 			object.R = &entryR{}
 		}
-		if !queries.IsNil(object.BlogID) {
-			args = append(args, object.BlogID)
-		}
+		args = append(args, object.BlogID)
 
 	} else {
 	Outer:
@@ -557,14 +554,12 @@ func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular boo
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.BlogID) {
+				if a == obj.BlogID {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.BlogID) {
-				args = append(args, obj.BlogID)
-			}
+			args = append(args, obj.BlogID)
 
 		}
 	}
@@ -619,7 +614,7 @@ func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular boo
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.BlogID, foreign.ID) {
+			if local.BlogID == foreign.ID {
 				local.R.Blog = foreign
 				if foreign.R == nil {
 					foreign.R = &blogR{}
@@ -707,7 +702,7 @@ func (o *Entry) SetBlog(ctx context.Context, exec boil.ContextExecutor, insert b
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.BlogID, related.ID)
+	o.BlogID = related.ID
 	if o.R == nil {
 		o.R = &entryR{
 			Blog: related,
@@ -724,37 +719,6 @@ func (o *Entry) SetBlog(ctx context.Context, exec boil.ContextExecutor, insert b
 		related.R.Entries = append(related.R.Entries, o)
 	}
 
-	return nil
-}
-
-// RemoveBlog relationship.
-// Sets o.R.Blog to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *Entry) RemoveBlog(ctx context.Context, exec boil.ContextExecutor, related *Blog) error {
-	var err error
-
-	queries.SetScanner(&o.BlogID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("blog_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.R.Blog = nil
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.Entries {
-		if queries.Equal(o.BlogID, ri.BlogID) {
-			continue
-		}
-
-		ln := len(related.R.Entries)
-		if ln > 1 && i < ln-1 {
-			related.R.Entries[i] = related.R.Entries[ln-1]
-		}
-		related.R.Entries = related.R.Entries[:ln-1]
-		break
-	}
 	return nil
 }
 

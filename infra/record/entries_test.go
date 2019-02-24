@@ -554,7 +554,7 @@ func testEntryToOneBlogUsingBlog(t *testing.T) {
 	var foreign Blog
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, entryDBTypes, true, entryColumnsWithDefault...); err != nil {
+	if err := randomize.Struct(seed, &local, entryDBTypes, false, entryColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Entry struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, blogDBTypes, false, blogColumnsWithDefault...); err != nil {
@@ -565,7 +565,7 @@ func testEntryToOneBlogUsingBlog(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	queries.Assign(&local.BlogID, foreign.ID)
+	local.BlogID = foreign.ID
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -575,7 +575,7 @@ func testEntryToOneBlogUsingBlog(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !queries.Equal(check.ID, foreign.ID) {
+	if check.ID != foreign.ID {
 		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
 	}
 
@@ -694,7 +694,7 @@ func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
 		if x.R.Entries[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if !queries.Equal(a.BlogID, x.ID) {
+		if a.BlogID != x.ID {
 			t.Error("foreign key was wrong value", a.BlogID)
 		}
 
@@ -705,60 +705,9 @@ func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
 			t.Fatal("failed to reload", err)
 		}
 
-		if !queries.Equal(a.BlogID, x.ID) {
+		if a.BlogID != x.ID {
 			t.Error("foreign key was wrong value", a.BlogID, x.ID)
 		}
-	}
-}
-
-func testEntryToOneRemoveOpBlogUsingBlog(t *testing.T) {
-	var err error
-
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Entry
-	var b Blog
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, entryDBTypes, false, strmangle.SetComplement(entryPrimaryKeyColumns, entryColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &b, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = a.SetBlog(ctx, tx, true, &b); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = a.RemoveBlog(ctx, tx, &b); err != nil {
-		t.Error("failed to remove relationship")
-	}
-
-	count, err := a.Blog().Count(ctx, tx)
-	if err != nil {
-		t.Error(err)
-	}
-	if count != 0 {
-		t.Error("want no relationships remaining")
-	}
-
-	if a.R.Blog != nil {
-		t.Error("R struct entry should be nil")
-	}
-
-	if !queries.IsValuerNil(a.BlogID) {
-		t.Error("foreign key value should be nil")
-	}
-
-	if len(b.R.Entries) != 0 {
-		t.Error("failed to remove a from b's relationships")
 	}
 }
 

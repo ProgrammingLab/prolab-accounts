@@ -6,7 +6,7 @@ create_table :entries, force: :cascade do |t|
   t.bigint :author_id, null: false
   t.string :guid, null: false
   t.string :image_url, null: false
-  t.references :blog, foreign_key: true
+  t.references :blog, foreign_key: true, null: false
   t.timestamps
 
   t.index [:guid], unique: true

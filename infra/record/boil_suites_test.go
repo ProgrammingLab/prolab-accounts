@@ -165,8 +165,6 @@ func TestToOneSet(t *testing.T) {
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
-	t.Run("BlogToUserUsingBlogs", testBlogToOneRemoveOpUserUsingUser)
-	t.Run("EntryToBlogUsingEntries", testEntryToOneRemoveOpBlogUsingBlog)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneRemoveOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneRemoveOpProfileUsingProfile)
@@ -194,21 +192,17 @@ func TestToManyAdd(t *testing.T) {
 // TestToManySet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManySet(t *testing.T) {
-	t.Run("BlogToEntries", testBlogToManySetOpEntries)
 	t.Run("DepartmentToProfiles", testDepartmentToManySetOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManySetOpUsers)
 	t.Run("RoleToProfiles", testRoleToManySetOpProfiles)
-	t.Run("UserToBlogs", testUserToManySetOpBlogs)
 }
 
 // TestToManyRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyRemove(t *testing.T) {
-	t.Run("BlogToEntries", testBlogToManyRemoveOpEntries)
 	t.Run("DepartmentToProfiles", testDepartmentToManyRemoveOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyRemoveOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyRemoveOpProfiles)
-	t.Run("UserToBlogs", testUserToManyRemoveOpBlogs)
 }
 
 func TestReload(t *testing.T) {
