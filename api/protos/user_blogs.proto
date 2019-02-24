@@ -9,16 +9,6 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service UserBlogService {
-  rpc ListUserBlogs (ListUserBlogsRequest) returns (ListUserBlogsResponse) {
-    option (google.api.http) = {
-      get: "/user/blogs"
-    };
-  }
-  rpc GetUserBlog (GetUserBlogRequest) returns (Blog) {
-    option (google.api.http) = {
-      get: "/user/blogs/{blog_id}"
-    };
-  }
   rpc CreateUserBlog (CreateUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
       post: "/user/blogs"
@@ -42,17 +32,6 @@ message Blog {
   uint32 blog_id = 1;
   string url = 2;
   string feed_url = 3;
-}
-
-message ListUserBlogsRequest {
-}
-
-message ListUserBlogsResponse {
-  repeated Blog user_blogs = 1;
-}
-
-message GetUserBlogRequest {
-  uint32 blog_id = 1;
 }
 
 message CreateUserBlogRequest {

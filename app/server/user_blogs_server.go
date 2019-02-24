@@ -29,16 +29,6 @@ type userBlogServiceServerImpl struct {
 	di.StoreComponent
 }
 
-func (s *userBlogServiceServerImpl) ListUserBlogs(ctx context.Context, req *api_pb.ListUserBlogsRequest) (*api_pb.ListUserBlogsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *userBlogServiceServerImpl) GetUserBlog(ctx context.Context, req *api_pb.GetUserBlogRequest) (*api_pb.Blog, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
 func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api_pb.CreateUserBlogRequest) (*api_pb.Blog, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")

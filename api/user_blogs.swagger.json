@@ -16,20 +16,6 @@
   ],
   "paths": {
     "/user/blogs": {
-      "get": {
-        "operationId": "ListUserBlogs",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/prolab_accountsListUserBlogsResponse"
-            }
-          }
-        },
-        "tags": [
-          "UserBlogService"
-        ]
-      },
       "post": {
         "operationId": "CreateUserBlog",
         "responses": {
@@ -89,29 +75,6 @@
       }
     },
     "/user/blogs/{blog_id}": {
-      "get": {
-        "operationId": "GetUserBlog",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/prolab_accountsBlog"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "blog_id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "UserBlogService"
-        ]
-      },
       "delete": {
         "operationId": "DeleteUserBlog",
         "responses": {
@@ -150,17 +113,6 @@
         },
         "feed_url": {
           "type": "string"
-        }
-      }
-    },
-    "prolab_accountsListUserBlogsResponse": {
-      "type": "object",
-      "properties": {
-        "user_blogs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/prolab_accountsBlog"
-          }
         }
       }
     },

@@ -20,22 +20,6 @@ var _ = math.Inf
 func (this *Blog) Validate() error {
 	return nil
 }
-func (this *ListUserBlogsRequest) Validate() error {
-	return nil
-}
-func (this *ListUserBlogsResponse) Validate() error {
-	for _, item := range this.UserBlogs {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("UserBlogs", err)
-			}
-		}
-	}
-	return nil
-}
-func (this *GetUserBlogRequest) Validate() error {
-	return nil
-}
 func (this *CreateUserBlogRequest) Validate() error {
 	if this.Blog != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Blog); err != nil {
