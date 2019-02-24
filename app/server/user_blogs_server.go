@@ -15,6 +15,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 // UserBlogServiceServer is a composite interface of api_pb.UserBlogServiceServer and grapiserver.Server.
@@ -88,6 +89,11 @@ func (s *userBlogServiceServerImpl) UpdateUserBlog(ctx context.Context, req *api
 	}
 
 	bs := s.UserBlogStore(ctx)
+
+	if err := s.canWrite(ctx, userID, b.ID); err != nil {
+		return nil, err
+	}
+
 	err = bs.UpdateUserBlog(b)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
@@ -100,8 +106,39 @@ func (s *userBlogServiceServerImpl) UpdateUserBlog(ctx context.Context, req *api
 }
 
 func (s *userBlogServiceServerImpl) DeleteUserBlog(ctx context.Context, req *api_pb.DeleteUserBlogRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	userID, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	blogID := int64(req.GetBlogId())
+	bs := s.UserBlogStore(ctx)
+
+	if err := s.canWrite(ctx, userID, blogID); err != nil {
+		return nil, err
+	}
+
+	err := bs.DeleteUserBlog(blogID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *userBlogServiceServerImpl) canWrite(ctx context.Context, userID model.UserID, blogID int64) error {
+	bs := s.UserBlogStore(ctx)
+	b, err := bs.GetUserBlog(int64(blogID))
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return util.ErrNotFound
+		}
+		return err
+	}
+	if b.UserID != int64(userID) {
+		return util.ErrNotFound
+	}
+	return nil
 }
 
 type blogRequest interface {

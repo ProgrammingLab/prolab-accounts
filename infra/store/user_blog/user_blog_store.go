@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
@@ -23,6 +24,14 @@ func NewUserBlogStore(ctx context.Context, db *sql.DB) store.UserBlogStore {
 		ctx: ctx,
 		db:  db,
 	}
+}
+
+func (s *userBlogStoreImpl) GetUserBlog(blogID int64) (*record.Blog, error) {
+	b, err := record.FindBlog(s.ctx, s.db, int64(blogID))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return b, nil
 }
 
 func (s *userBlogStoreImpl) CreateUserBlog(blog *record.Blog) error {
@@ -72,5 +81,10 @@ func (s *userBlogStoreImpl) UpdateUserBlog(blog *record.Blog) error {
 }
 
 func (s *userBlogStoreImpl) DeleteUserBlog(blogID int64) error {
-	panic("not implemented")
+	_, err := record.Blogs(qm.Where("id = ?", blogID)).DeleteAll(s.ctx, s.db)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }
