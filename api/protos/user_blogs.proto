@@ -14,25 +14,57 @@ service UserBlogService {
       get: "/user/blogs"
     };
   }
-  rpc UpdateUserBlogs (UpdateUserBlogsRequest) returns (ListUserBlogsResponse) {
+  rpc GetUserBlog (GetUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
-      patch: "/user/blogs"
-      body: "*"
+      get: "/user/blogs/{blog_id}"
+    };
+  }
+  rpc CreateUserBlog (CreateUserBlogRequest) returns (Blog) {
+    option (google.api.http) = {
+      post: "/user/blogs"
+      body: "blog"
+    };
+  }
+  rpc UpdateUserBlog (UpdateUserBlogRequest) returns (Blog) {
+    option (google.api.http) = {
+      patch: "/user/blogs/{blog.blog_id}"
+      body: "blog"
+    };
+  }
+  rpc DeleteUserBlog (DeleteUserBlogRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/user/blogs/{blog_id}"
     };
   }
 }
 
 message Blog {
   uint32 blog_id = 1;
+  string url = 2;
+  string feed_url = 3;
 }
 
 message ListUserBlogsRequest {
 }
 
 message ListUserBlogsResponse {
-  repeated Blog blogs = 1;
+  repeated Blog user_blogs = 1;
 }
 
-message UpdateUserBlogsRequest {
-  repeated Blog blogs = 1;
+message GetUserBlogRequest {
+  uint32 blog_id = 1;
+}
+
+message CreateUserBlogRequest {
+  Blog blog = 1;
+  bool auto_detect_feed = 2;
+}
+
+message UpdateUserBlogRequest {
+  Blog blog = 1;
+  bool auto_detect_feed = 2;
+}
+
+message DeleteUserBlogRequest {
+  uint32 blog_id = 1;
 }

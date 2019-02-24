@@ -30,13 +30,13 @@
           "UserBlogService"
         ]
       },
-      "patch": {
-        "operationId": "UpdateUserBlogs",
+      "post": {
+        "operationId": "CreateUserBlog",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/prolab_accountsListUserBlogsResponse"
+              "$ref": "#/definitions/prolab_accountsBlog"
             }
           }
         },
@@ -46,8 +46,89 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsUpdateUserBlogsRequest"
+              "$ref": "#/definitions/prolab_accountsBlog"
             }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    },
+    "/user/blogs/{blog.blog_id}": {
+      "patch": {
+        "operationId": "UpdateUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "blog.blog_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    },
+    "/user/blogs/{blog_id}": {
+      "get": {
+        "operationId": "GetUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "blog_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "blog_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -63,13 +144,19 @@
         "blog_id": {
           "type": "integer",
           "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        },
+        "feed_url": {
+          "type": "string"
         }
       }
     },
     "prolab_accountsListUserBlogsResponse": {
       "type": "object",
       "properties": {
-        "blogs": {
+        "user_blogs": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/prolab_accountsBlog"
@@ -77,16 +164,10 @@
         }
       }
     },
-    "prolab_accountsUpdateUserBlogsRequest": {
+    "protobufEmpty": {
       "type": "object",
-      "properties": {
-        "blogs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/prolab_accountsBlog"
-          }
-        }
-      }
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     }
   }
 }

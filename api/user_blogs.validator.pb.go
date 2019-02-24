@@ -24,22 +24,34 @@ func (this *ListUserBlogsRequest) Validate() error {
 	return nil
 }
 func (this *ListUserBlogsResponse) Validate() error {
-	for _, item := range this.Blogs {
+	for _, item := range this.UserBlogs {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Blogs", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("UserBlogs", err)
 			}
 		}
 	}
 	return nil
 }
-func (this *UpdateUserBlogsRequest) Validate() error {
-	for _, item := range this.Blogs {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Blogs", err)
-			}
+func (this *GetUserBlogRequest) Validate() error {
+	return nil
+}
+func (this *CreateUserBlogRequest) Validate() error {
+	if this.Blog != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Blog); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Blog", err)
 		}
 	}
+	return nil
+}
+func (this *UpdateUserBlogRequest) Validate() error {
+	if this.Blog != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Blog); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Blog", err)
+		}
+	}
+	return nil
+}
+func (this *DeleteUserBlogRequest) Validate() error {
 	return nil
 }

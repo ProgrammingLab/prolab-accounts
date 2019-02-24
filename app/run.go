@@ -53,6 +53,7 @@ func Run() error {
 			server.NewSessionServiceServer(store),
 			server.NewUserServiceServer(store, cfg),
 			server.NewOAuthServiceServer(cli, store),
+			server.NewUserBlogServiceServer(store),
 		),
 	)
 	return s.Serve()
