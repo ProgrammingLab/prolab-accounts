@@ -25,7 +25,6 @@ import (
 // Blog is an object representing the database table.
 type Blog struct {
 	ID        int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      string     `boil:"name" json:"name" toml:"name" yaml:"name"`
 	URL       string     `boil:"url" json:"url" toml:"url" yaml:"url"`
 	FeedURL   string     `boil:"feed_url" json:"feed_url" toml:"feed_url" yaml:"feed_url"`
 	UserID    null.Int64 `boil:"user_id" json:"user_id,omitempty" toml:"user_id" yaml:"user_id,omitempty"`
@@ -38,7 +37,6 @@ type Blog struct {
 
 var BlogColumns = struct {
 	ID        string
-	Name      string
 	URL       string
 	FeedURL   string
 	UserID    string
@@ -46,7 +44,6 @@ var BlogColumns = struct {
 	UpdatedAt string
 }{
 	ID:        "id",
-	Name:      "name",
 	URL:       "url",
 	FeedURL:   "feed_url",
 	UserID:    "user_id",
@@ -120,7 +117,6 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 
 var BlogWhere = struct {
 	ID        whereHelperint64
-	Name      whereHelperstring
 	URL       whereHelperstring
 	FeedURL   whereHelperstring
 	UserID    whereHelpernull_Int64
@@ -128,7 +124,6 @@ var BlogWhere = struct {
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint64{field: `id`},
-	Name:      whereHelperstring{field: `name`},
 	URL:       whereHelperstring{field: `url`},
 	FeedURL:   whereHelperstring{field: `feed_url`},
 	UserID:    whereHelpernull_Int64{field: `user_id`},
@@ -160,8 +155,8 @@ func (*blogR) NewStruct() *blogR {
 type blogL struct{}
 
 var (
-	blogColumns               = []string{"id", "name", "url", "feed_url", "user_id", "created_at", "updated_at"}
-	blogColumnsWithoutDefault = []string{"name", "url", "feed_url", "user_id", "created_at", "updated_at"}
+	blogColumns               = []string{"id", "url", "feed_url", "user_id", "created_at", "updated_at"}
+	blogColumnsWithoutDefault = []string{"url", "feed_url", "user_id", "created_at", "updated_at"}
 	blogColumnsWithDefault    = []string{"id"}
 	blogPrimaryKeyColumns     = []string{"id"}
 )

@@ -1056,7 +1056,7 @@ func testBlogsSelect(t *testing.T) {
 }
 
 var (
-	blogDBTypes = map[string]string{`ID`: `bigint`, `Name`: `character varying`, `URL`: `character varying`, `FeedURL`: `character varying`, `UserID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
+	blogDBTypes = map[string]string{`ID`: `bigint`, `URL`: `character varying`, `FeedURL`: `character varying`, `UserID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
 	_           = bytes.MinRead
 )
 
