@@ -3,6 +3,7 @@ package feedstore
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/mmcdole/gofeed"
@@ -20,7 +21,7 @@ func NewFeedStore(ctx context.Context) store.FeedStore {
 	}
 }
 
-type feedURLGetter func(blogURL string) (feed string, err error)
+type feedURLGetter func(blogURL string, cli *http.Client) (feed string, err error)
 
 var (
 	// ErrFeedURLNotFound will be returned when feed url not found
@@ -34,7 +35,7 @@ var (
 
 func (s *feedStoreImpl) GetFeedURL(url string) (string, error) {
 	for _, g := range feedURLGetters {
-		u, err := g(url)
+		u, err := g(url, &http.Client{})
 		if err == nil {
 			return u, nil
 		}

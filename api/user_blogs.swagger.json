@@ -32,7 +32,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsBlog"
+              "$ref": "#/definitions/prolab_accountsCreateUserBlogRequest"
             }
           }
         ],
@@ -65,7 +65,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsBlog"
+              "$ref": "#/definitions/prolab_accountsUpdateUserBlogRequest"
             }
           }
         ],
@@ -113,6 +113,30 @@
         },
         "feed_url": {
           "type": "string"
+        }
+      }
+    },
+    "prolab_accountsCreateUserBlogRequest": {
+      "type": "object",
+      "properties": {
+        "blog": {
+          "$ref": "#/definitions/prolab_accountsBlog"
+        },
+        "auto_detect_feed": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "prolab_accountsUpdateUserBlogRequest": {
+      "type": "object",
+      "properties": {
+        "blog": {
+          "$ref": "#/definitions/prolab_accountsBlog"
+        },
+        "auto_detect_feed": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },

@@ -12,13 +12,13 @@ service UserBlogService {
   rpc CreateUserBlog (CreateUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
       post: "/user/blogs"
-      body: "blog"
+      body: "*"
     };
   }
   rpc UpdateUserBlog (UpdateUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
       patch: "/user/blogs/{blog.blog_id}"
-      body: "blog"
+      body: "*"
     };
   }
   rpc DeleteUserBlog (DeleteUserBlogRequest) returns (google.protobuf.Empty) {

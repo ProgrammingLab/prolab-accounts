@@ -1,6 +1,8 @@
 package store
 
-import "github.com/mmcdole/gofeed"
+import (
+	"github.com/mmcdole/gofeed"
+)
 
 // FeedStore provides feed
 type FeedStore interface {
