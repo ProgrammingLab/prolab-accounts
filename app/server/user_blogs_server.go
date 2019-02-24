@@ -3,10 +3,6 @@ package server
 import (
 	"context"
 
-	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
-	"github.com/ProgrammingLab/prolab-accounts/app/util"
-	"github.com/ProgrammingLab/prolab-accounts/infra/record"
-
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"google.golang.org/grpc/codes"
@@ -14,6 +10,9 @@ import (
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
+	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 )
 
 // UserBlogServiceServer is a composite interface of api_pb.UserBlogServiceServer and grapiserver.Server.
@@ -72,7 +71,7 @@ func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api
 	}
 
 	bs := s.UserBlogStore(ctx)
-	err := bs.CreateUserBlog(userID, b)
+	err := bs.CreateUserBlog(b)
 	if err != nil {
 		return nil, err
 	}
