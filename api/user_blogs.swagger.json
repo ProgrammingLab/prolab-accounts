@@ -1,0 +1,92 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_blogs.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user/blogs": {
+      "get": {
+        "operationId": "ListUserBlogs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListUserBlogsResponse"
+            }
+          }
+        },
+        "tags": [
+          "UserBlogService"
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateUserBlogs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListUserBlogsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateUserBlogsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsBlog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "prolab_accountsListUserBlogsResponse": {
+      "type": "object",
+      "properties": {
+        "blogs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsBlog"
+          }
+        }
+      }
+    },
+    "prolab_accountsUpdateUserBlogsRequest": {
+      "type": "object",
+      "properties": {
+        "blogs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsBlog"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service UserBlogService {
+  rpc ListUserBlogs (ListUserBlogsRequest) returns (ListUserBlogsResponse) {
+    option (google.api.http) = {
+      get: "/user/blogs"
+    };
+  }
+  rpc UpdateUserBlogs (UpdateUserBlogsRequest) returns (ListUserBlogsResponse) {
+    option (google.api.http) = {
+      patch: "/user/blogs"
+      body: "*"
+    };
+  }
+}
+
+message Blog {
+  uint32 blog_id = 1;
+}
+
+message ListUserBlogsRequest {
+}
+
+message ListUserBlogsResponse {
+  repeated Blog blogs = 1;
+}
+
+message UpdateUserBlogsRequest {
+  repeated Blog blogs = 1;
+}
