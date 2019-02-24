@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -46,22 +48,9 @@ func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api
 	}
 
 	blog := req.GetBlog()
-	var feedURL string
-	if req.GetAutoDetectFeed() {
-		fs := s.FeedStore(ctx)
-		u, err := fs.GetFeedURL(blog.GetUrl())
-		if err != nil {
-			return nil, ErrFeedURLDetectAutomatically
-		}
-		feedURL = u
-	} else {
-		u := blog.GetFeedUrl()
-		fs := s.FeedStore(ctx)
-		err := fs.IsValidFeedURL(u)
-		if err != nil {
-			return nil, ErrInvalidFeedURL
-		}
-		feedURL = u
+	feedURL, err := getFeedURL(ctx, s, req)
+	if err != nil {
+		return nil, err
 	}
 
 	b := &record.Blog{
@@ -71,7 +60,7 @@ func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api
 	}
 
 	bs := s.UserBlogStore(ctx)
-	err := bs.CreateUserBlog(b)
+	err = bs.CreateUserBlog(b)
 	if err != nil {
 		return nil, err
 	}
@@ -80,13 +69,64 @@ func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api
 }
 
 func (s *userBlogServiceServerImpl) UpdateUserBlog(ctx context.Context, req *api_pb.UpdateUserBlogRequest) (*api_pb.Blog, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	userID, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	blog := req.GetBlog()
+	feedURL, err := getFeedURL(ctx, s, req)
+	if err != nil {
+		return nil, err
+	}
+
+	b := &record.Blog{
+		ID:      int64(blog.GetBlogId()),
+		URL:     blog.GetUrl(),
+		FeedURL: feedURL,
+		UserID:  int64(userID),
+	}
+
+	bs := s.UserBlogStore(ctx)
+	err = bs.UpdateUserBlog(b)
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return blogToResponse(b), nil
 }
 
 func (s *userBlogServiceServerImpl) DeleteUserBlog(ctx context.Context, req *api_pb.DeleteUserBlogRequest) (*empty.Empty, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+}
+
+type blogRequest interface {
+	GetBlog() *api_pb.Blog
+	GetAutoDetectFeed() bool
+}
+
+func getFeedURL(ctx context.Context, s di.StoreComponent, req blogRequest) (string, error) {
+	blog := req.GetBlog()
+	if req.GetAutoDetectFeed() {
+		fs := s.FeedStore(ctx)
+		u, err := fs.GetFeedURL(blog.GetUrl())
+		if err != nil {
+			return "", ErrFeedURLDetectAutomatically
+		}
+		return u, nil
+	}
+
+	u := blog.GetFeedUrl()
+	fs := s.FeedStore(ctx)
+	err := fs.IsValidFeedURL(u)
+	if err != nil {
+		return "", ErrInvalidFeedURL
+	}
+	return u, nil
 }
 
 func blogToResponse(blog *record.Blog) *api_pb.Blog {

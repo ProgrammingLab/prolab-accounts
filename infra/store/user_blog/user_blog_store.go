@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
 
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 )
@@ -35,7 +36,39 @@ func (s *userBlogStoreImpl) CreateUserBlog(blog *record.Blog) error {
 }
 
 func (s *userBlogStoreImpl) UpdateUserBlog(blog *record.Blog) error {
-	panic("not implemented")
+	tx, err := s.db.Begin()
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	defer func() {
+		if err = util.ErrorFromRecover(recover()); err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	exists, err := record.FindBlog(s.ctx, tx, blog.ID)
+	if err != nil {
+		_ = tx.Rollback()
+		return errors.WithStack(err)
+	}
+	if exists.UserID != blog.UserID {
+		_ = tx.Rollback()
+		return sql.ErrNoRows
+	}
+
+	_, err = blog.Update(s.ctx, tx, boil.Infer())
+	if err != nil {
+		_ = tx.Rollback()
+		return errors.WithStack(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		_ = tx.Rollback()
+		return errors.WithStack(err)
+	}
+
+	return nil
 }
 
 func (s *userBlogStoreImpl) DeleteUserBlog(blogID int64) error {
