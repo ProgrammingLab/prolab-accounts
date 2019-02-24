@@ -6,6 +6,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/mmcdole/gofeed"
+	"github.com/pkg/errors"
 )
 
 type feedStoreImpl struct {
@@ -42,6 +43,16 @@ func (s *feedStoreImpl) GetFeedURL(url string) (string, error) {
 	return "", ErrFeedURLNotFound
 }
 
+func (s *feedStoreImpl) IsValidFeedURL(feedURL string) error {
+	_, err := s.GetFeed(feedURL)
+	return err
+}
+
 func (s *feedStoreImpl) GetFeed(feedURL string) (*gofeed.Feed, error) {
-	panic("not implemented")
+	p := gofeed.NewParser()
+	f, err := p.ParseURL(feedURL)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return f, nil
 }
