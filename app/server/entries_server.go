@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"math"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -35,8 +36,17 @@ type entryServiceServerImpl struct {
 }
 
 func (s *entryServiceServerImpl) ListEntries(ctx context.Context, req *api_pb.ListEntriesRequest) (*api_pb.ListEntriesResponse, error) {
+	size := req.GetPageSize()
+	if size == 0 {
+		size = 50
+	}
+	maxID := req.GetPageToken()
+	if maxID == 0 {
+		maxID = math.MaxUint32
+	}
+
 	es := s.EntryStore(ctx)
-	entries, err := es.ListPublicEntries()
+	entries, next, err := es.ListPublicEntries(int64(maxID), int(size))
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
 			return &api_pb.ListEntriesResponse{}, nil
@@ -46,7 +56,8 @@ func (s *entryServiceServerImpl) ListEntries(ctx context.Context, req *api_pb.Li
 
 	resp := entriesToResponse(entries, false, s.cfg)
 	return &api_pb.ListEntriesResponse{
-		Entries: resp,
+		Entries:       resp,
+		NextPageToken: uint32(next),
 	}, nil
 }
 

@@ -32,23 +32,36 @@ func NewEntryStore(ctx context.Context, db *sql.DB) store.EntryStore {
 	}
 }
 
-func (s *entryStoreImpl) ListPublicEntries() ([]*record.Entry, error) {
+func (s *entryStoreImpl) ListPublicEntries(maxEntryID int64, limit int) ([]*record.Entry, int64, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.EntryRels.Author),
 		qm.Load(record.EntryRels.Blog),
 		qm.InnerJoin("users on users.id = entries.author_id"),
 		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
 		qm.Where("profiles.profile_scope = ?", model.Public),
+		qm.Where("entries.id <= ?", maxEntryID),
+		qm.Limit(limit + 1),
+		qm.OrderBy("entries.id desc"),
 	}
 
 	e, err := record.Entries(mods...).All(s.ctx, s.db)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, 0, errors.WithStack(err)
 	}
-	return e, nil
+
+	if len(e) <= limit {
+		return e, 0, nil
+	}
+	return e[:limit], e[limit].ID, nil
 }
 
 func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n int64, err error) {
+	rev := make([]*gofeed.Item, len(feed.Items))
+	for i, item := range feed.Items {
+		rev[len(rev)-1-i] = item
+	}
+	feed.Items = rev
+
 	tx, err := s.db.Begin()
 	if err != nil {
 		return 0, errors.WithStack(err)

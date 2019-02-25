@@ -7,6 +7,6 @@ import (
 
 // EntryStore accesses entry data
 type EntryStore interface {
-	ListPublicEntries() ([]*record.Entry, error)
+	ListPublicEntries(maxEntryID int64, limit int) ([]*record.Entry, int64, error)
 	CreateEntries(blog *record.Blog, feed *gofeed.Feed) (int64, error)
 }
