@@ -6,7 +6,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
-	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
@@ -89,9 +88,33 @@ func (s *userBlogStoreImpl) UpdateUserBlog(blog *record.Blog) (err error) {
 	return nil
 }
 
-func (s *userBlogStoreImpl) DeleteUserBlog(blogID int64) error {
-	_, err := record.Blogs(qm.Where("id = ?", blogID)).DeleteAll(s.ctx, s.db)
+func (s *userBlogStoreImpl) DeleteUserBlog(blogID int64) (err error) {
+	tx, err := s.db.Begin()
 	if err != nil {
+		return errors.WithStack(err)
+	}
+	defer func() {
+		if e := util.ErrorFromRecover(recover()); e != nil {
+			_ = tx.Rollback()
+			err = e
+		}
+	}()
+
+	_, err = record.Entries(record.EntryWhere.BlogID.EQ(blogID)).DeleteAll(s.ctx, tx)
+	if err != nil {
+		_ = tx.Rollback()
+		return errors.WithStack(err)
+	}
+
+	_, err = record.Blogs(record.BlogWhere.ID.EQ(blogID)).DeleteAll(s.ctx, tx)
+	if err != nil {
+		_ = tx.Rollback()
+		return errors.WithStack(err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		_ = tx.Rollback()
 		return errors.WithStack(err)
 	}
 
