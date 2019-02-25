@@ -34,7 +34,7 @@ func (s *userBlogStoreImpl) ListUserBlogs() ([]*record.Blog, error) {
 }
 
 func (s *userBlogStoreImpl) GetUserBlog(blogID int64) (*record.Blog, error) {
-	b, err := record.FindBlog(s.ctx, s.db, int64(blogID))
+	b, err := record.FindBlog(s.ctx, s.db, blogID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
