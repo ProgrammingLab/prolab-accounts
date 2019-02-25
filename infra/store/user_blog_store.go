@@ -6,6 +6,7 @@ import (
 
 // UserBlogStore accesses users data
 type UserBlogStore interface {
+	ListUserBlogs() ([]*record.Blog, error)
 	GetUserBlog(blogID int64) (*record.Blog, error)
 	CreateUserBlog(blog *record.Blog) error
 	UpdateUserBlog(blog *record.Blog) error

@@ -26,6 +26,14 @@ func NewUserBlogStore(ctx context.Context, db *sql.DB) store.UserBlogStore {
 	}
 }
 
+func (s *userBlogStoreImpl) ListUserBlogs() ([]*record.Blog, error) {
+	b, err := record.Blogs().All(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return b, nil
+}
+
 func (s *userBlogStoreImpl) GetUserBlog(blogID int64) (*record.Blog, error) {
 	b, err := record.FindBlog(s.ctx, s.db, int64(blogID))
 	if err != nil {
@@ -44,14 +52,15 @@ func (s *userBlogStoreImpl) CreateUserBlog(blog *record.Blog) error {
 	return nil
 }
 
-func (s *userBlogStoreImpl) UpdateUserBlog(blog *record.Blog) error {
+func (s *userBlogStoreImpl) UpdateUserBlog(blog *record.Blog) (err error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	defer func() {
-		if err = util.ErrorFromRecover(recover()); err != nil {
+		if e := util.ErrorFromRecover(recover()); e != nil {
 			_ = tx.Rollback()
+			err = e
 		}
 	}()
 
