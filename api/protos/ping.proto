@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+
+service PingService {
+  rpc Ping (PingRequest) returns (Pong) {
+    option (google.api.http) = {
+      get: "/ping"
+    };
+  }
+}
+
+message PingRequest {}
+
+message Pong {
+  string pong = 1;
+}
