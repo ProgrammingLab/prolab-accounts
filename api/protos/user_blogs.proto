@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service UserBlogService {
+  rpc CreateUserBlog (CreateUserBlogRequest) returns (Blog) {
+    option (google.api.http) = {
+      post: "/user/blogs"
+      body: "*"
+    };
+  }
+  rpc UpdateUserBlog (UpdateUserBlogRequest) returns (Blog) {
+    option (google.api.http) = {
+      patch: "/user/blogs/{blog.blog_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUserBlog (DeleteUserBlogRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/user/blogs/{blog_id}"
+    };
+  }
+}
+
+message Blog {
+  uint32 blog_id = 1;
+  string url = 2;
+  string feed_url = 3;
+}
+
+message CreateUserBlogRequest {
+  Blog blog = 1;
+  bool auto_detect_feed = 2;
+}
+
+message UpdateUserBlogRequest {
+  Blog blog = 1;
+  bool auto_detect_feed = 2;
+}
+
+message DeleteUserBlogRequest {
+  uint32 blog_id = 1;
+}

@@ -10,7 +10,9 @@ import (
 
 var (
 	// ErrUnauthenticated represents unauthenticated error
-	ErrUnauthenticated = status.Error(codes.Unauthenticated, "Unauthenticated")
+	ErrUnauthenticated = status.Error(codes.Unauthenticated, "unauthenticated")
+	// ErrNotFound represents not found error
+	ErrNotFound = status.Error(codes.NotFound, "not found")
 )
 
 // CodeFromHTTPStatus converts corresponding HTTP response status into the gRPC error code.

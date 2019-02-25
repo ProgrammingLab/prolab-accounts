@@ -11,6 +11,7 @@ type Config struct {
 	DataBaseURL     string `envconfig:"database_url" required:"true"`
 	RedisAddr       string `envconfig:"redis_addr" required:"true"`
 	DebugLog        bool   `envconfig:"debug_log"`
+	JobIntervalSec  int    `envconfig:"job_interval_sec" required:"true"`
 	HydraAdminURL   string `envconfig:"hydra_admin_url" required:"true"`
 	MinioPublicURL  string `envconfig:"minio_public_url" required:"true"`
 	MinioEndpoint   string `envconfig:"minio_endpoint" required:"true"`

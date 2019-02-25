@@ -1,0 +1,149 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "user_blogs.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user/blogs": {
+      "post": {
+        "operationId": "CreateUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsCreateUserBlogRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    },
+    "/user/blogs/{blog.blog_id}": {
+      "patch": {
+        "operationId": "UpdateUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "blog.blog_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateUserBlogRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    },
+    "/user/blogs/{blog_id}": {
+      "delete": {
+        "operationId": "DeleteUserBlog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "blog_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsBlog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        },
+        "feed_url": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsCreateUserBlogRequest": {
+      "type": "object",
+      "properties": {
+        "blog": {
+          "$ref": "#/definitions/prolab_accountsBlog"
+        },
+        "auto_detect_feed": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "prolab_accountsUpdateUserBlogRequest": {
+      "type": "object",
+      "properties": {
+        "blog": {
+          "$ref": "#/definitions/prolab_accountsBlog"
+        },
+        "auto_detect_feed": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    }
+  }
+}

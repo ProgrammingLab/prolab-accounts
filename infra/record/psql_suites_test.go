@@ -6,7 +6,11 @@ package record
 import "testing"
 
 func TestUpsert(t *testing.T) {
+	t.Run("Blogs", testBlogsUpsert)
+
 	t.Run("Departments", testDepartmentsUpsert)
+
+	t.Run("Entries", testEntriesUpsert)
 
 	t.Run("Profiles", testProfilesUpsert)
 

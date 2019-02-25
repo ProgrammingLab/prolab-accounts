@@ -11,9 +11,13 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
+	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
+	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
+	userblogstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user_blog"
 )
 
 // StoreComponent is an interface of stores
@@ -21,6 +25,10 @@ type StoreComponent interface {
 	UserStore(ctx context.Context) store.UserStore
 	SessionStore(ctx context.Context) store.SessionStore
 	ProfileStore(ctx context.Context) store.ProfileStore
+	UserBlogStore(ctx context.Context) store.UserBlogStore
+	FeedStore(ctx context.Context) store.FeedStore
+	EntryStore(ctx context.Context) store.EntryStore
+	HeartbeatStore(ctx context.Context) store.HeartbeatStore
 }
 
 // NewStoreComponent returns new store component
@@ -132,4 +140,20 @@ func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStor
 
 func (s *storeComponentImpl) ProfileStore(ctx context.Context) store.ProfileStore {
 	return profilestore.NewProfileStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) UserBlogStore(ctx context.Context) store.UserBlogStore {
+	return userblogstore.NewUserBlogStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) FeedStore(ctx context.Context) store.FeedStore {
+	return feedstore.NewFeedStore(ctx)
+}
+
+func (s *storeComponentImpl) EntryStore(ctx context.Context) store.EntryStore {
+	return entrystore.NewEntryStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.HeartbeatStore {
+	return heartbeatstore.NewHeartbeatStore(ctx, s.client, s.cfg)
 }

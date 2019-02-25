@@ -9,6 +9,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
+	"github.com/ProgrammingLab/prolab-accounts/app/job"
 	"github.com/ProgrammingLab/prolab-accounts/app/server"
 )
 
@@ -53,7 +54,14 @@ func Run() error {
 			server.NewSessionServiceServer(store),
 			server.NewUserServiceServer(store, cfg),
 			server.NewOAuthServiceServer(cli, store),
+			server.NewUserBlogServiceServer(store),
+			server.NewEntryServiceServer(store, cfg),
+			server.NewPingServiceServer(store),
 		),
 	)
+
+	job.Start(store, cfg)
+	defer job.Close()
+
 	return s.Serve()
 }
