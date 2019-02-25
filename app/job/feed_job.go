@@ -2,6 +2,7 @@ package job
 
 import (
 	"context"
+	"time"
 
 	"google.golang.org/grpc/grpclog"
 
@@ -32,6 +33,8 @@ func feedJob(ctx context.Context, store di.StoreComponent) error {
 			return err
 		}
 		grpclog.Infof("feed job: created %v entries", n)
+
+		<-time.After(100 * time.Millisecond)
 	}
 
 	return nil
