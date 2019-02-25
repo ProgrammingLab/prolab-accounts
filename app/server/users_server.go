@@ -186,6 +186,10 @@ func usersToResponse(users []*record.User, includeEmail bool, cfg *config.Config
 }
 
 func userToResponse(user *record.User, includeEmail bool, cfg *config.Config) *api_pb.User {
+	if user == nil {
+		return nil
+	}
+
 	var email string
 	if includeEmail {
 		email = user.Email

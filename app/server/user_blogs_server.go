@@ -167,6 +167,10 @@ func getFeedURL(ctx context.Context, s di.StoreComponent, req blogRequest) (stri
 }
 
 func blogToResponse(blog *record.Blog) *api_pb.Blog {
+	if blog == nil {
+		return nil
+	}
+
 	return &api_pb.Blog{
 		BlogId:  uint32(blog.ID),
 		Url:     blog.URL,

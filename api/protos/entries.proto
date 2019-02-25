@@ -10,6 +10,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
+import "user_blogs.proto";
 import "users.proto";
 
 service EntryService {
@@ -30,6 +31,7 @@ message Entry {
   string image_url = 7;
   google.protobuf.Timestamp published_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  Blog blog = 10;
 }
 
 message ListEntriesRequest {

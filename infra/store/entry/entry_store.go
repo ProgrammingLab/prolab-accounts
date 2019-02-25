@@ -16,6 +16,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 type entryStoreImpl struct {
@@ -29,6 +30,22 @@ func NewEntryStore(ctx context.Context, db *sql.DB) store.EntryStore {
 		ctx: ctx,
 		db:  db,
 	}
+}
+
+func (s *entryStoreImpl) ListPublicEntries() ([]*record.Entry, error) {
+	mods := []qm.QueryMod{
+		qm.Load(record.EntryRels.Author),
+		qm.Load(record.EntryRels.Blog),
+		qm.InnerJoin("users on users.id = entries.author_id"),
+		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
+		qm.Where("profiles.profile_scope = ?", model.Public),
+	}
+
+	e, err := record.Entries(mods...).All(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return e, nil
 }
 
 func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n int64, err error) {

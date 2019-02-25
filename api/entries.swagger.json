@@ -49,6 +49,21 @@
     }
   },
   "definitions": {
+    "prolab_accountsBlog": {
+      "type": "object",
+      "properties": {
+        "blog_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "url": {
+          "type": "string"
+        },
+        "feed_url": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsEntry": {
       "type": "object",
       "properties": {
@@ -81,6 +96,9 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "blog": {
+          "$ref": "#/definitions/prolab_accountsBlog"
         }
       }
     },
