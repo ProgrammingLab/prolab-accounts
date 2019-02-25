@@ -79,10 +79,12 @@ func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n 
 			AuthorID:    blog.UserID,
 			GUID:        guid,
 			BlogID:      blog.ID,
-			PublishedAt: null.TimeFromPtr(item.PublishedParsed),
 		}
 		if i := item.Image; i != nil {
 			e.ImageURL = i.URL
+		}
+		if t := item.PublishedParsed; t != nil {
+			e.PublishedAt = null.TimeFrom(t.In(boil.GetLocation()))
 		}
 
 		err = e.Insert(s.ctx, tx, boil.Infer())
