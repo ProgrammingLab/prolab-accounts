@@ -13,6 +13,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
+	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
@@ -27,6 +28,7 @@ type StoreComponent interface {
 	UserBlogStore(ctx context.Context) store.UserBlogStore
 	FeedStore(ctx context.Context) store.FeedStore
 	EntryStore(ctx context.Context) store.EntryStore
+	HeartbeatStore(ctx context.Context) store.HeartbeatStore
 }
 
 // NewStoreComponent returns new store component
@@ -150,4 +152,8 @@ func (s *storeComponentImpl) FeedStore(ctx context.Context) store.FeedStore {
 
 func (s *storeComponentImpl) EntryStore(ctx context.Context) store.EntryStore {
 	return entrystore.NewEntryStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.HeartbeatStore {
+	return heartbeatstore.NewHeartbeatStore(ctx, s.client, s.cfg)
 }

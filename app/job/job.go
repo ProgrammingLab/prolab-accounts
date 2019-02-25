@@ -16,6 +16,7 @@ var (
 	stop    = make(chan struct{})
 	jobs    = []Job{
 		feedJob,
+		heartbeatJob,
 	}
 )
 
