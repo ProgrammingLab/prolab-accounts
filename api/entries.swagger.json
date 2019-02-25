@@ -31,7 +31,7 @@
             "name": "page_token",
             "in": "query",
             "required": false,
-            "type": "integer",
+            "type": "string",
             "format": "int64"
           },
           {
@@ -112,7 +112,7 @@
           }
         },
         "next_page_token": {
-          "type": "integer",
+          "type": "string",
           "format": "int64"
         }
       }
