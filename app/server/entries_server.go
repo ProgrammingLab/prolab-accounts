@@ -35,7 +35,7 @@ type entryServiceServerImpl struct {
 	cfg *config.Config
 }
 
-func (s *entryServiceServerImpl) ListEntries(ctx context.Context, req *api_pb.ListEntriesRequest) (*api_pb.ListEntriesResponse, error) {
+func (s *entryServiceServerImpl) ListPublicEntries(ctx context.Context, req *api_pb.ListEntriesRequest) (*api_pb.ListEntriesResponse, error) {
 	size := req.GetPageSize()
 	if size == 0 {
 		size = 50

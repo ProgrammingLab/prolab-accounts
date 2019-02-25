@@ -14,9 +14,9 @@ import "user_blogs.proto";
 import "users.proto";
 
 service EntryService {
-  rpc ListEntries (ListEntriesRequest) returns (ListEntriesResponse) {
+  rpc ListPublicEntries (ListEntriesRequest) returns (ListEntriesResponse) {
     option (google.api.http) = {
-      get: "/entries"
+      get: "/entries/public"
     };
   }
 }
