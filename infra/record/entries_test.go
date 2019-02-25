@@ -494,57 +494,6 @@ func testEntriesInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testEntryToOneUserUsingAuthor(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var local Entry
-	var foreign User
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, entryDBTypes, false, entryColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Entry struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, userDBTypes, false, userColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize User struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	local.AuthorID = foreign.ID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.Author().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if check.ID != foreign.ID {
-		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
-	}
-
-	slice := EntrySlice{&local}
-	if err = local.L.LoadAuthor(ctx, tx, false, (*[]*Entry)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Author == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.Author = nil
-	if err = local.L.LoadAuthor(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Author == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
 func testEntryToOneBlogUsingBlog(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
@@ -596,63 +545,57 @@ func testEntryToOneBlogUsingBlog(t *testing.T) {
 	}
 }
 
-func testEntryToOneSetOpUserUsingAuthor(t *testing.T) {
-	var err error
-
+func testEntryToOneUserUsingAuthor(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Entry
-	var b, c User
+	var local Entry
+	var foreign User
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, entryDBTypes, false, strmangle.SetComplement(entryPrimaryKeyColumns, entryColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &local, entryDBTypes, false, entryColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Entry struct: %s", err)
 	}
-	if err = randomize.Struct(seed, &b, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &foreign, userDBTypes, false, userColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize User struct: %s", err)
 	}
 
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	for i, x := range []*User{&b, &c} {
-		err = a.SetAuthor(ctx, tx, i != 0, x)
-		if err != nil {
-			t.Fatal(err)
-		}
+	local.AuthorID = foreign.ID
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
 
-		if a.R.Author != x {
-			t.Error("relationship struct not set to correct value")
-		}
+	check, err := local.Author().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		if x.R.AuthorEntries[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if a.AuthorID != x.ID {
-			t.Error("foreign key was wrong value", a.AuthorID)
-		}
+	if check.ID != foreign.ID {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
 
-		zero := reflect.Zero(reflect.TypeOf(a.AuthorID))
-		reflect.Indirect(reflect.ValueOf(&a.AuthorID)).Set(zero)
+	slice := EntrySlice{&local}
+	if err = local.L.LoadAuthor(ctx, tx, false, (*[]*Entry)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Author == nil {
+		t.Error("struct should have been eager loaded")
+	}
 
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if a.AuthorID != x.ID {
-			t.Error("foreign key was wrong value", a.AuthorID, x.ID)
-		}
+	local.R.Author = nil
+	if err = local.L.LoadAuthor(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Author == nil {
+		t.Error("struct should have been eager loaded")
 	}
 }
+
 func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
 	var err error
 
@@ -707,6 +650,63 @@ func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
 
 		if a.BlogID != x.ID {
 			t.Error("foreign key was wrong value", a.BlogID, x.ID)
+		}
+	}
+}
+func testEntryToOneSetOpUserUsingAuthor(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Entry
+	var b, c User
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, entryDBTypes, false, strmangle.SetComplement(entryPrimaryKeyColumns, entryColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, userDBTypes, false, strmangle.SetComplement(userPrimaryKeyColumns, userColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*User{&b, &c} {
+		err = a.SetAuthor(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Author != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.AuthorEntries[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.AuthorID != x.ID {
+			t.Error("foreign key was wrong value", a.AuthorID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.AuthorID))
+		reflect.Indirect(reflect.ValueOf(&a.AuthorID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.AuthorID != x.ID {
+			t.Error("foreign key was wrong value", a.AuthorID, x.ID)
 		}
 	}
 }
@@ -785,7 +785,7 @@ func testEntriesSelect(t *testing.T) {
 }
 
 var (
-	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `character varying`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `BlogID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `ImageURL`: `character varying`}
+	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `text`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `BlogID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `ImageURL`: `character varying`}
 	_            = bytes.MinRead
 )
 

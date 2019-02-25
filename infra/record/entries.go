@@ -95,17 +95,17 @@ var EntryWhere = struct {
 
 // EntryRels is where relationship names are stored.
 var EntryRels = struct {
-	Author string
 	Blog   string
+	Author string
 }{
-	Author: "Author",
 	Blog:   "Blog",
+	Author: "Author",
 }
 
 // entryR is where relationships are stored.
 type entryR struct {
-	Author *User
 	Blog   *Blog
+	Author *User
 }
 
 // NewStruct creates a new relationship struct
@@ -398,20 +398,6 @@ func (q entryQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	return count > 0, nil
 }
 
-// Author pointed to by the foreign key.
-func (o *Entry) Author(mods ...qm.QueryMod) userQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("id=?", o.AuthorID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Users(queryMods...)
-	queries.SetFrom(query.Query, "\"users\"")
-
-	return query
-}
-
 // Blog pointed to by the foreign key.
 func (o *Entry) Blog(mods ...qm.QueryMod) blogQuery {
 	queryMods := []qm.QueryMod{
@@ -426,105 +412,18 @@ func (o *Entry) Blog(mods ...qm.QueryMod) blogQuery {
 	return query
 }
 
-// LoadAuthor allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (entryL) LoadAuthor(ctx context.Context, e boil.ContextExecutor, singular bool, maybeEntry interface{}, mods queries.Applicator) error {
-	var slice []*Entry
-	var object *Entry
-
-	if singular {
-		object = maybeEntry.(*Entry)
-	} else {
-		slice = *maybeEntry.(*[]*Entry)
+// Author pointed to by the foreign key.
+func (o *Entry) Author(mods ...qm.QueryMod) userQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.AuthorID),
 	}
 
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &entryR{}
-		}
-		args = append(args, object.AuthorID)
+	queryMods = append(queryMods, mods...)
 
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &entryR{}
-			}
+	query := Users(queryMods...)
+	queries.SetFrom(query.Query, "\"users\"")
 
-			for _, a := range args {
-				if a == obj.AuthorID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.AuthorID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(qm.From(`users`), qm.WhereIn(`id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load User")
-	}
-
-	var resultSlice []*User
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice User")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for users")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for users")
-	}
-
-	if len(entryAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Author = foreign
-		if foreign.R == nil {
-			foreign.R = &userR{}
-		}
-		foreign.R.AuthorEntries = append(foreign.R.AuthorEntries, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.AuthorID == foreign.ID {
-				local.R.Author = foreign
-				if foreign.R == nil {
-					foreign.R = &userR{}
-				}
-				foreign.R.AuthorEntries = append(foreign.R.AuthorEntries, local)
-				break
-			}
-		}
-	}
-
-	return nil
+	return query
 }
 
 // LoadBlog allows an eager lookup of values, cached into the
@@ -628,48 +527,102 @@ func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular boo
 	return nil
 }
 
-// SetAuthor of the entry to the related item.
-// Sets o.R.Author to related.
-// Adds o to related.R.AuthorEntries.
-func (o *Entry) SetAuthor(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
+// LoadAuthor allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (entryL) LoadAuthor(ctx context.Context, e boil.ContextExecutor, singular bool, maybeEntry interface{}, mods queries.Applicator) error {
+	var slice []*Entry
+	var object *Entry
 
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"entries\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"author_id"}),
-		strmangle.WhereClause("\"", "\"", 2, entryPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, updateQuery)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.AuthorID = related.ID
-	if o.R == nil {
-		o.R = &entryR{
-			Author: related,
-		}
+	if singular {
+		object = maybeEntry.(*Entry)
 	} else {
-		o.R.Author = related
+		slice = *maybeEntry.(*[]*Entry)
 	}
 
-	if related.R == nil {
-		related.R = &userR{
-			AuthorEntries: EntrySlice{o},
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &entryR{}
 		}
+		args = append(args, object.AuthorID)
+
 	} else {
-		related.R.AuthorEntries = append(related.R.AuthorEntries, o)
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &entryR{}
+			}
+
+			for _, a := range args {
+				if a == obj.AuthorID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.AuthorID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`users`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load User")
+	}
+
+	var resultSlice []*User
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice User")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for users")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for users")
+	}
+
+	if len(entryAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Author = foreign
+		if foreign.R == nil {
+			foreign.R = &userR{}
+		}
+		foreign.R.AuthorEntries = append(foreign.R.AuthorEntries, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.AuthorID == foreign.ID {
+				local.R.Author = foreign
+				if foreign.R == nil {
+					foreign.R = &userR{}
+				}
+				foreign.R.AuthorEntries = append(foreign.R.AuthorEntries, local)
+				break
+			}
+		}
 	}
 
 	return nil
@@ -717,6 +670,53 @@ func (o *Entry) SetBlog(ctx context.Context, exec boil.ContextExecutor, insert b
 		}
 	} else {
 		related.R.Entries = append(related.R.Entries, o)
+	}
+
+	return nil
+}
+
+// SetAuthor of the entry to the related item.
+// Sets o.R.Author to related.
+// Adds o to related.R.AuthorEntries.
+func (o *Entry) SetAuthor(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"entries\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"author_id"}),
+		strmangle.WhereClause("\"", "\"", 2, entryPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.AuthorID = related.ID
+	if o.R == nil {
+		o.R = &entryR{
+			Author: related,
+		}
+	} else {
+		o.R.Author = related
+	}
+
+	if related.R == nil {
+		related.R = &userR{
+			AuthorEntries: EntrySlice{o},
+		}
+	} else {
+		related.R.AuthorEntries = append(related.R.AuthorEntries, o)
 	}
 
 	return nil

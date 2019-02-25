@@ -129,8 +129,8 @@ func TestInsert(t *testing.T) {
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
 	t.Run("BlogToUserUsingUser", testBlogToOneUserUsingUser)
-	t.Run("EntryToUserUsingAuthor", testEntryToOneUserUsingAuthor)
 	t.Run("EntryToBlogUsingBlog", testEntryToOneBlogUsingBlog)
+	t.Run("EntryToUserUsingAuthor", testEntryToOneUserUsingAuthor)
 	t.Run("ProfileToDepartmentUsingDepartment", testProfileToOneDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingRole", testProfileToOneRoleUsingRole)
 	t.Run("UserToProfileUsingProfile", testUserToOneProfileUsingProfile)
@@ -155,8 +155,8 @@ func TestToMany(t *testing.T) {
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
 	t.Run("BlogToUserUsingBlogs", testBlogToOneSetOpUserUsingUser)
-	t.Run("EntryToUserUsingAuthorEntries", testEntryToOneSetOpUserUsingAuthor)
 	t.Run("EntryToBlogUsingEntries", testEntryToOneSetOpBlogUsingBlog)
+	t.Run("EntryToUserUsingAuthorEntries", testEntryToOneSetOpUserUsingAuthor)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneSetOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneSetOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneSetOpProfileUsingProfile)
