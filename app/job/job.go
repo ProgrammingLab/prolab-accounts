@@ -20,7 +20,7 @@ var (
 )
 
 // Job represents job for worker
-type Job func(ctx context.Context, store di.StoreComponent) error
+type Job func(ctx context.Context, store di.StoreComponent, debug bool) error
 
 // Start starts the worker
 func Start(store di.StoreComponent, cfg *config.Config) {
@@ -30,7 +30,7 @@ func Start(store di.StoreComponent, cfg *config.Config) {
 	started = true
 
 	go func() {
-		run(store, time.Duration(cfg.JobIntervalSec)*time.Second)
+		run(store, cfg)
 	}()
 }
 
@@ -40,12 +40,14 @@ func Close() {
 	stop <- struct{}{}
 }
 
-func run(store di.StoreComponent, interval time.Duration) {
+func run(store di.StoreComponent, cfg *config.Config) {
+	interval := time.Duration(cfg.JobIntervalSec) * time.Second
+
 	defer func() {
 		if err := util.ErrorFromRecover(recover()); err != nil {
 			grpclog.Errorf("job panic: %+v", err)
 			grpclog.Infoln("worker is restarting...")
-			run(store, interval)
+			run(store, cfg)
 		}
 	}()
 
@@ -55,7 +57,7 @@ func run(store di.StoreComponent, interval time.Duration) {
 		select {
 		case <-time.After(interval):
 			for _, j := range jobs {
-				err := j(context.Background(), store)
+				err := j(context.Background(), store, cfg.DebugLog)
 				if err != nil {
 					grpclog.Errorf("job error: %+v", err)
 				}

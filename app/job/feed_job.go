@@ -9,7 +9,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
-func feedJob(ctx context.Context, store di.StoreComponent) error {
+func feedJob(ctx context.Context, store di.StoreComponent, debug bool) error {
 	bs := store.UserBlogStore(ctx)
 	blogs, err := bs.ListUserBlogs()
 	if err != nil {
@@ -32,7 +32,9 @@ func feedJob(ctx context.Context, store di.StoreComponent) error {
 		if err != nil {
 			return err
 		}
-		grpclog.Infof("feed job: created %v entries", n)
+		if debug {
+			grpclog.Infof("feed job: created %v entries", n)
+		}
 
 		<-time.After(100 * time.Millisecond)
 	}
