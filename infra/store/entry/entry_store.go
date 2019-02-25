@@ -6,10 +6,10 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/binary"
+	"time"
 
 	"github.com/mmcdole/gofeed"
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
@@ -32,27 +32,27 @@ func NewEntryStore(ctx context.Context, db *sql.DB) store.EntryStore {
 	}
 }
 
-func (s *entryStoreImpl) ListPublicEntries(maxEntryID int64, limit int) ([]*record.Entry, int64, error) {
+func (s *entryStoreImpl) ListPublicEntries(before time.Time, limit int) ([]*record.Entry, time.Time, error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.EntryRels.Author),
 		qm.Load(record.EntryRels.Blog),
 		qm.InnerJoin("users on users.id = entries.author_id"),
 		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
 		qm.Where("profiles.profile_scope = ?", model.Public),
-		qm.Where("entries.id <= ?", maxEntryID),
+		qm.Where("entries.published_at <= ?", before),
 		qm.Limit(limit + 1),
-		qm.OrderBy("entries.id desc"),
+		qm.OrderBy("entries.published_at desc"),
 	}
 
 	e, err := record.Entries(mods...).All(s.ctx, s.db)
 	if err != nil {
-		return nil, 0, errors.WithStack(err)
+		return nil, time.Time{}, errors.WithStack(err)
 	}
 
 	if len(e) <= limit {
-		return e, 0, nil
+		return e, time.Unix(0, 0), nil
 	}
-	return e[:limit], e[limit].ID, nil
+	return e[:limit], e[limit].PublishedAt, nil
 }
 
 func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n int64, err error) {
@@ -113,8 +113,10 @@ func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n 
 		if i := item.Image; i != nil {
 			e.ImageURL = i.URL
 		}
-		if t := item.PublishedParsed; t != nil {
-			e.PublishedAt = null.TimeFrom(t.In(boil.GetLocation()))
+		if t := item.PublishedParsed; t == nil {
+			e.PublishedAt = time.Now().In(boil.GetLocation())
+		} else {
+			e.PublishedAt = t.In(boil.GetLocation())
 		}
 
 		err = e.Insert(s.ctx, tx, boil.Infer())

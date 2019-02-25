@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -35,7 +34,7 @@ type Entry struct {
 	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt   time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	ImageURL    string    `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
-	PublishedAt null.Time `boil:"published_at" json:"published_at,omitempty" toml:"published_at" yaml:"published_at,omitempty"`
+	PublishedAt time.Time `boil:"published_at" json:"published_at" toml:"published_at" yaml:"published_at"`
 
 	R *entryR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L entryL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -71,29 +70,6 @@ var EntryColumns = struct {
 
 // Generated where
 
-type whereHelpernull_Time struct{ field string }
-
-func (w whereHelpernull_Time) EQ(x null.Time) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_Time) NEQ(x null.Time) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_Time) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_Time) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_Time) LT(x null.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_Time) LTE(x null.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_Time) GT(x null.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_Time) GTE(x null.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var EntryWhere = struct {
 	ID          whereHelperint64
 	Title       whereHelperstring
@@ -106,7 +82,7 @@ var EntryWhere = struct {
 	CreatedAt   whereHelpertime_Time
 	UpdatedAt   whereHelpertime_Time
 	ImageURL    whereHelperstring
-	PublishedAt whereHelpernull_Time
+	PublishedAt whereHelpertime_Time
 }{
 	ID:          whereHelperint64{field: `id`},
 	Title:       whereHelperstring{field: `title`},
@@ -119,7 +95,7 @@ var EntryWhere = struct {
 	CreatedAt:   whereHelpertime_Time{field: `created_at`},
 	UpdatedAt:   whereHelpertime_Time{field: `updated_at`},
 	ImageURL:    whereHelperstring{field: `image_url`},
-	PublishedAt: whereHelpernull_Time{field: `published_at`},
+	PublishedAt: whereHelpertime_Time{field: `published_at`},
 }
 
 // EntryRels is where relationship names are stored.
