@@ -6,10 +6,10 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/binary"
+	"time"
 
 	"github.com/mmcdole/gofeed"
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
@@ -113,8 +113,10 @@ func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n 
 		if i := item.Image; i != nil {
 			e.ImageURL = i.URL
 		}
-		if t := item.PublishedParsed; t != nil {
-			e.PublishedAt = null.TimeFrom(t.In(boil.GetLocation()))
+		if t := item.PublishedParsed; t == nil {
+			e.PublishedAt = time.Now().In(boil.GetLocation())
+		} else {
+			e.PublishedAt = t.In(boil.GetLocation())
 		}
 
 		err = e.Insert(s.ctx, tx, boil.Infer())

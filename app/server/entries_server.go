@@ -79,9 +79,7 @@ func entryToResponse(entry *record.Entry, includeEmail bool, cfg *config.Config)
 		Link:        entry.Link,
 		ImageUrl:    entry.ImageURL,
 		UpdatedAt:   timeToResponse(entry.UpdatedAt),
-	}
-	if t := entry.PublishedAt; t.Valid {
-		e.PublishedAt = timeToResponse(t.Time)
+		PublishedAt: timeToResponse(entry.PublishedAt),
 	}
 	if r := entry.R; r != nil {
 		e.Author = userToResponse(r.Author, includeEmail, cfg)
