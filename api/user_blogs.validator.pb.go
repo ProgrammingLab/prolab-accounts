@@ -20,6 +20,9 @@ var _ = math.Inf
 func (this *Blog) Validate() error {
 	return nil
 }
+func (this *FindFeedURLRequest) Validate() error {
+	return nil
+}
 func (this *CreateUserBlogRequest) Validate() error {
 	if this.Blog != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Blog); err != nil {

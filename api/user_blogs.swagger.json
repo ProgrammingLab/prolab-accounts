@@ -32,7 +32,33 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsCreateUserBlogRequest"
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        ],
+        "tags": [
+          "UserBlogService"
+        ]
+      }
+    },
+    "/user/blogs/feed_url": {
+      "post": {
+        "operationId": "FindFeedURL",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsBlog"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsFindFeedURLRequest"
             }
           }
         ],
@@ -65,7 +91,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsUpdateUserBlogRequest"
+              "$ref": "#/definitions/prolab_accountsBlog"
             }
           }
         ],
@@ -116,27 +142,11 @@
         }
       }
     },
-    "prolab_accountsCreateUserBlogRequest": {
+    "prolab_accountsFindFeedURLRequest": {
       "type": "object",
       "properties": {
-        "blog": {
-          "$ref": "#/definitions/prolab_accountsBlog"
-        },
-        "auto_detect_feed": {
-          "type": "boolean",
-          "format": "boolean"
-        }
-      }
-    },
-    "prolab_accountsUpdateUserBlogRequest": {
-      "type": "object",
-      "properties": {
-        "blog": {
-          "$ref": "#/definitions/prolab_accountsBlog"
-        },
-        "auto_detect_feed": {
-          "type": "boolean",
-          "format": "boolean"
+        "url": {
+          "type": "string"
         }
       }
     },
