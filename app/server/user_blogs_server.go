@@ -42,6 +42,11 @@ var (
 	ErrInvalidFeedURL = status.Error(codes.InvalidArgument, "feed url is invalid")
 )
 
+func (s *userBlogServiceServerImpl) FindFeedURL(ctx context.Context, req *api_pb.FindFeedURLRequest) (*api_pb.Blog, error) {
+	// TODO: Not yet implemented.
+	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+}
+
 func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api_pb.CreateUserBlogRequest) (*api_pb.Blog, error) {
 	userID, ok := interceptor.GetCurrentUserID(ctx)
 	if !ok {
@@ -49,15 +54,16 @@ func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api
 	}
 
 	blog := req.GetBlog()
-	feedURL, err := getFeedURL(ctx, s, req)
-	if err != nil {
-		return nil, err
-	}
-
 	b := &record.Blog{
 		URL:     blog.GetUrl(),
-		FeedURL: feedURL,
+		FeedURL: blog.GetFeedUrl(),
 		UserID:  int64(userID),
+	}
+
+	fs := s.FeedStore(ctx)
+	_, err := fs.GetFeed(b.FeedURL)
+	if err != nil {
+		return nil, ErrInvalidFeedURL
 	}
 
 	bs := s.UserBlogStore(ctx)
@@ -76,24 +82,24 @@ func (s *userBlogServiceServerImpl) UpdateUserBlog(ctx context.Context, req *api
 	}
 
 	blog := req.GetBlog()
-	feedURL, err := getFeedURL(ctx, s, req)
-	if err != nil {
-		return nil, err
-	}
-
 	b := &record.Blog{
 		ID:      int64(blog.GetBlogId()),
 		URL:     blog.GetUrl(),
-		FeedURL: feedURL,
+		FeedURL: blog.GetFeedUrl(),
 		UserID:  int64(userID),
 	}
 
-	bs := s.UserBlogStore(ctx)
+	fs := s.FeedStore(ctx)
+	_, err := fs.GetFeed(b.FeedURL)
+	if err != nil {
+		return nil, ErrInvalidFeedURL
+	}
 
 	if err := s.canWrite(ctx, userID, b.ID); err != nil {
 		return nil, err
 	}
 
+	bs := s.UserBlogStore(ctx)
 	err = bs.UpdateUserBlog(b)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
