@@ -43,8 +43,20 @@ var (
 )
 
 func (s *userBlogServiceServerImpl) FindFeedURL(ctx context.Context, req *api_pb.FindFeedURLRequest) (*api_pb.Blog, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	fs := s.FeedStore(ctx)
+	u, err := fs.GetFeedURL(req.GetUrl())
+	if err != nil {
+		return nil, ErrFeedURLDetectAutomatically
+	}
+	return &api_pb.Blog{
+		Url:     req.GetUrl(),
+		FeedUrl: u,
+	}, nil
 }
 
 func (s *userBlogServiceServerImpl) CreateUserBlog(ctx context.Context, req *api_pb.CreateUserBlogRequest) (*api_pb.Blog, error) {
@@ -150,26 +162,6 @@ func (s *userBlogServiceServerImpl) canWrite(ctx context.Context, userID model.U
 type blogRequest interface {
 	GetBlog() *api_pb.Blog
 	GetAutoDetectFeed() bool
-}
-
-func getFeedURL(ctx context.Context, s di.StoreComponent, req blogRequest) (string, error) {
-	blog := req.GetBlog()
-	if req.GetAutoDetectFeed() {
-		fs := s.FeedStore(ctx)
-		u, err := fs.GetFeedURL(blog.GetUrl())
-		if err != nil {
-			return "", ErrFeedURLDetectAutomatically
-		}
-		return u, nil
-	}
-
-	u := blog.GetFeedUrl()
-	fs := s.FeedStore(ctx)
-	err := fs.IsValidFeedURL(u)
-	if err != nil {
-		return "", ErrInvalidFeedURL
-	}
-	return u, nil
 }
 
 func blogToResponse(blog *record.Blog) *api_pb.Blog {
