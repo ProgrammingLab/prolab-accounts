@@ -9,16 +9,22 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service UserBlogService {
+  rpc FindFeedURL (FindFeedURLRequest) returns (Blog) {
+    option (google.api.http) = {
+      post: "/user/blogs/feed_url"
+      body: "*"
+    };
+  }
   rpc CreateUserBlog (CreateUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
       post: "/user/blogs"
-      body: "*"
+      body: "blog"
     };
   }
   rpc UpdateUserBlog (UpdateUserBlogRequest) returns (Blog) {
     option (google.api.http) = {
       patch: "/user/blogs/{blog.blog_id}"
-      body: "*"
+      body: "blog"
     };
   }
   rpc DeleteUserBlog (DeleteUserBlogRequest) returns (google.protobuf.Empty) {
@@ -34,14 +40,16 @@ message Blog {
   string feed_url = 3;
 }
 
+message FindFeedURLRequest {
+  string url = 1;
+}
+
 message CreateUserBlogRequest {
   Blog blog = 1;
-  bool auto_detect_feed = 2;
 }
 
 message UpdateUserBlogRequest {
   Blog blog = 1;
-  bool auto_detect_feed = 2;
 }
 
 message DeleteUserBlogRequest {
