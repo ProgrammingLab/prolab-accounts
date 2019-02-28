@@ -77,8 +77,16 @@ func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb
 }
 
 func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUserRequest) (*api_pb.User, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	us := s.UserStore(ctx)
+	u, err := us.GetPublicUserByName(req.GetUserName())
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return userToResponse(u, false, s.cfg), nil
 }
 
 func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.CreateUserRequest) (*api_pb.User, error) {
@@ -208,6 +216,7 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 		u.Left = p.Left
 		u.TwitterScreenName = p.TwitterScreenName.String
 		u.GithubUserName = p.GithubUserName.String
+		u.ProfileScope = profileScopeToResponse(model.ProfileScope(p.ProfileScope.Int))
 
 		if r := p.R; p.R != nil {
 			if role := r.Role; role != nil {
@@ -224,4 +233,16 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 	}
 
 	return u
+}
+
+func profileScopeToResponse(scope model.ProfileScope) api_pb.ProfileScope {
+	switch scope {
+	case model.MembersOnly:
+		return api_pb.ProfileScope_MEMBERS_ONLY
+	case model.Public:
+		return api_pb.ProfileScope_PUBLIC
+	default:
+		//unknow
+		return -1
+	}
 }

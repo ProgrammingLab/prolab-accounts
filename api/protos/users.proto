@@ -14,12 +14,12 @@ import "type/department.proto";
 service UserService {
   rpc ListPublicUsers (ListUsersRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
-      get: "/users/public"
+      get: "/users"
     };
   }
   rpc GetUser (GetUserRequest) returns (User) {
     option (google.api.http) = {
-      get: "/users/{user_id}"
+      get: "/users/{user_name}"
     };
   }
   rpc CreateUser (CreateUserRequest) returns (User) {
@@ -84,7 +84,7 @@ message ListUsersResponse {
 }
 
 message GetUserRequest {
-  uint32 user_id = 1;
+  string user_name = 1;
 }
 
 message CreateUserRequest {

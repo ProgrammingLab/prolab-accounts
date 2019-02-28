@@ -100,32 +100,6 @@
       }
     },
     "/users": {
-      "post": {
-        "operationId": "CreateUser",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/prolab_accountsUser"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/prolab_accountsUser"
-            }
-          }
-        ],
-        "tags": [
-          "UserService"
-        ]
-      }
-    },
-    "/users/public": {
       "get": {
         "operationId": "ListPublicUsers",
         "responses": {
@@ -155,9 +129,33 @@
         "tags": [
           "UserService"
         ]
+      },
+      "post": {
+        "operationId": "CreateUser",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
       }
     },
-    "/users/{user_id}": {
+    "/users/{user_name}": {
       "get": {
         "operationId": "GetUser",
         "responses": {
@@ -170,11 +168,10 @@
         },
         "parameters": [
           {
-            "name": "user_id",
+            "name": "user_name",
             "in": "path",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         ],
         "tags": [

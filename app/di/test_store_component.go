@@ -6,6 +6,8 @@ import (
 	"log"
 	"strings"
 
+	"github.com/volatiletech/sqlboiler/boil"
+
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 )
@@ -13,6 +15,8 @@ import (
 // MustCreateTestStoreComponent creates test store component or exits
 func MustCreateTestStoreComponent(cfg *config.Config) *TestStoreComponent {
 	db := mustConnectTestRDB(cfg)
+
+	boil.SetDB(db)
 
 	return &TestStoreComponent{
 		storeComponentImpl: &storeComponentImpl{
