@@ -24,7 +24,7 @@ type Config struct {
 // LoadConfig loads config
 func LoadConfig(filenames ...string) (*Config, error) {
 	// do not care if .env does not exist.
-	godotenv.Overload(filenames...)
+	_ = godotenv.Overload(filenames...)
 
 	c := &Config{}
 	err := envconfig.Process("", c)
