@@ -8,6 +8,7 @@ import (
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 func Test_EntriesServer_ListPublicEntries(t *testing.T) {
@@ -58,6 +59,9 @@ func Test_EntriesServer_ListPublicEntries(t *testing.T) {
 		}
 		if got, want := e.Author.Description, ""; got != want {
 			t.Errorf("Author.Description is %v, want %v", got, want)
+		}
+		if got, want := userProfileScope(model.UserID(e.Author.UserId)), model.Public; got != want {
+			t.Errorf("Author's profile scope is %v, want %v", got, want)
 		}
 	}
 }
