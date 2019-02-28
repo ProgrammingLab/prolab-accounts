@@ -1,0 +1,85 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "roles.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/roles": {
+      "get": {
+        "operationId": "ListRoles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListRolesResponse"
+            }
+          }
+        },
+        "tags": [
+          "RoleService"
+        ]
+      }
+    },
+    "/roles/{role_id}": {
+      "get": {
+        "operationId": "GetRole",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsRole"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "RoleService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsListRolesResponse": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsRole"
+          }
+        }
+      }
+    },
+    "prolab_accountsRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

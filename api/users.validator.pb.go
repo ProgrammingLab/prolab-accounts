@@ -21,6 +21,11 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *User) Validate() error {
+	if this.Role != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
+		}
+	}
 	if this.Department != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Department); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Department", err)

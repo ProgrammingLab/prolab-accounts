@@ -9,6 +9,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "roles.proto";
 import "type/department.proto";
 
 service UserService {
@@ -61,7 +62,7 @@ message User {
   string description = 6;
   int32 grade = 7;
   bool left = 8;
-  string role = 11;
+  Role role = 11;
   string twitter_screen_name = 12;
   string github_user_name = 13;
   type.Department department = 14;

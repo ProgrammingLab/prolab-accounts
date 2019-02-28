@@ -204,6 +204,18 @@
       ],
       "default": "MEMBERS_ONLY"
     },
+    "prolab_accountsRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsUpdateUserIconRequest": {
       "type": "object",
       "properties": {
@@ -280,7 +292,7 @@
           "format": "boolean"
         },
         "role": {
-          "type": "string"
+          "$ref": "#/definitions/prolab_accountsRole"
         },
         "twitter_screen_name": {
           "type": "string"
