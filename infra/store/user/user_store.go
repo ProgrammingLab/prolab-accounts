@@ -45,6 +45,21 @@ func (s *userStoreImpl) CreateUser(user *record.User) error {
 	return errors.WithStack(err)
 }
 
+func (s *userStoreImpl) GetPublicUserByName(name string) (*record.User, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile", record.ProfileWhere.ProfileScope.EQ(null.IntFrom(int(model.Public)))),
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		record.UserWhere.Name.EQ(name),
+	}
+	u, err := record.Users(mods...).One(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
+}
+
 func (s *userStoreImpl) GetUserWithPrivate(userID model.UserID) (*record.User, error) {
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
