@@ -9,8 +9,8 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "departments.proto";
 import "roles.proto";
-import "type/department.proto";
 
 service UserService {
   rpc ListPublicUsers (ListUsersRequest) returns (ListUsersResponse) {
@@ -65,7 +65,7 @@ message User {
   Role role = 11;
   string twitter_screen_name = 12;
   string github_user_name = 13;
-  type.Department department = 14;
+  Department department = 14;
   ProfileScope profile_scope = 15;
 }
 
