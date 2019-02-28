@@ -11,12 +11,13 @@ import (
 )
 
 // MustCreateTestStoreComponent creates test store component or exits
-func MustCreateTestStoreComponent(cfg *config.Config) TestStoreComponent {
+func MustCreateTestStoreComponent(cfg *config.Config) *TestStoreComponent {
 	db := mustConnectTestRDB(cfg)
 
-	return TestStoreComponent{
+	return &TestStoreComponent{
 		storeComponentImpl: &storeComponentImpl{
-			db: db,
+			db:  db,
+			cfg: cfg,
 		},
 	}
 }
