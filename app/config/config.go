@@ -9,6 +9,7 @@ import (
 // Config represents app config
 type Config struct {
 	DataBaseURL     string `envconfig:"database_url" required:"true"`
+	TestDataBaseURL string `envconfig:"test_database_url" required:"true"`
 	RedisAddr       string `envconfig:"redis_addr" required:"true"`
 	DebugLog        bool   `envconfig:"debug_log"`
 	JobIntervalSec  int    `envconfig:"job_interval_sec" required:"true"`
@@ -21,9 +22,9 @@ type Config struct {
 }
 
 // LoadConfig loads config
-func LoadConfig() (*Config, error) {
+func LoadConfig(filenames ...string) (*Config, error) {
 	// do not care if .env does not exist.
-	godotenv.Overload()
+	_ = godotenv.Overload(filenames...)
 
 	c := &Config{}
 	err := envconfig.Process("", c)
