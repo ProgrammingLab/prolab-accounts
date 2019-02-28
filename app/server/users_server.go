@@ -177,29 +177,26 @@ func (s *userServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func usersToResponse(users []*record.User, includeEmail bool, cfg *config.Config) []*api_pb.User {
+func usersToResponse(users []*record.User, includePrivate bool, cfg *config.Config) []*api_pb.User {
 	res := make([]*api_pb.User, 0, len(users))
 	for _, u := range users {
-		res = append(res, userToResponse(u, includeEmail, cfg))
+		res = append(res, userToResponse(u, includePrivate, cfg))
 	}
 	return res
 }
 
-func userToResponse(user *record.User, includeEmail bool, cfg *config.Config) *api_pb.User {
+func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) *api_pb.User {
 	if user == nil {
 		return nil
 	}
 
-	var email string
-	if includeEmail {
-		email = user.Email
-	}
-
 	u := &api_pb.User{
-		UserId:   uint32(user.ID),
-		Name:     user.Name,
-		Email:    email,
-		FullName: user.FullName,
+		UserId: uint32(user.ID),
+		Name:   user.Name,
+	}
+	if includePrivate {
+		u.Email = user.Email
+		u.FullName = user.FullName
 	}
 	if user.AvatarFilename.Valid {
 		u.IconUrl = cfg.MinioPublicURL + "/" + cfg.MinioBucketName + "/" + user.AvatarFilename.String

@@ -63,16 +63,16 @@ func (s *entryServiceServerImpl) ListPublicEntries(ctx context.Context, req *api
 	}, nil
 }
 
-func entriesToResponse(entries []*record.Entry, includeEmail bool, cfg *config.Config) []*api_pb.Entry {
+func entriesToResponse(entries []*record.Entry, includePrivate bool, cfg *config.Config) []*api_pb.Entry {
 	res := make([]*api_pb.Entry, 0, len(entries))
 	for _, e := range entries {
-		res = append(res, entryToResponse(e, includeEmail, cfg))
+		res = append(res, entryToResponse(e, includePrivate, cfg))
 	}
 
 	return res
 }
 
-func entryToResponse(entry *record.Entry, includeEmail bool, cfg *config.Config) *api_pb.Entry {
+func entryToResponse(entry *record.Entry, includePrivate bool, cfg *config.Config) *api_pb.Entry {
 	e := &api_pb.Entry{
 		EntryId:     uint32(entry.ID),
 		Title:       entry.Title,
@@ -84,7 +84,7 @@ func entryToResponse(entry *record.Entry, includeEmail bool, cfg *config.Config)
 		PublishedAt: timeToResponse(entry.PublishedAt),
 	}
 	if r := entry.R; r != nil {
-		e.Author = userToResponse(r.Author, includeEmail, cfg)
+		e.Author = userToResponse(r.Author, includePrivate, cfg)
 		e.Blog = blogToResponse(r.Blog)
 	}
 

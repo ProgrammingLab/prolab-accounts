@@ -50,6 +50,9 @@ func Test_EntriesServer_ListPublicEntries(t *testing.T) {
 	}
 
 	for _, e := range resp.Entries {
+		if got, want := e.Author.Email, ""; got != want {
+			t.Errorf("Author.Email is %v, want %v", got, want)
+		}
 		if got, want := e.Author.FullName, ""; got != want {
 			t.Errorf("Author.FullName is %v, want %v", got, want)
 		}
