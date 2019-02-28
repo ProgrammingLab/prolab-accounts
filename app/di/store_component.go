@@ -15,6 +15,7 @@ import (
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
+	rolestore "github.com/ProgrammingLab/prolab-accounts/infra/store/role"
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
 	userblogstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user_blog"
@@ -28,6 +29,7 @@ type StoreComponent interface {
 	UserBlogStore(ctx context.Context) store.UserBlogStore
 	FeedStore(ctx context.Context) store.FeedStore
 	EntryStore(ctx context.Context) store.EntryStore
+	RoleStore(ctx context.Context) store.RoleStore
 	HeartbeatStore(ctx context.Context) store.HeartbeatStore
 }
 
@@ -152,6 +154,10 @@ func (s *storeComponentImpl) FeedStore(ctx context.Context) store.FeedStore {
 
 func (s *storeComponentImpl) EntryStore(ctx context.Context) store.EntryStore {
 	return entrystore.NewEntryStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) RoleStore(ctx context.Context) store.RoleStore {
+	return rolestore.NewRoleStore(ctx, s.db)
 }
 
 func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.HeartbeatStore {

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service RoleService {
+  rpc ListRoles (ListRolesRequest) returns (ListRolesResponse) {
+    option (google.api.http) = {
+      get: "/roles"
+    };
+  }
+  rpc GetRole (GetRoleRequest) returns (Role) {
+    option (google.api.http) = {
+      get: "/roles/{role_id}"
+    };
+  }
+}
+
+message Role {
+  uint32 role_id = 1;
+  string name = 2;
+}
+
+message ListRolesRequest {
+}
+
+message ListRolesResponse {
+  repeated Role roles = 1;
+}
+
+message GetRoleRequest {
+  uint32 role_id = 1;
+}

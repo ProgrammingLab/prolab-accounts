@@ -57,6 +57,7 @@ func Run() error {
 			server.NewUserBlogServiceServer(store),
 			server.NewEntryServiceServer(store, cfg),
 			server.NewPingServiceServer(store),
+			server.NewRoleServiceServer(store),
 		),
 	)
 
