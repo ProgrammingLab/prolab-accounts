@@ -49,7 +49,7 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *r
 			ID:        int64(userID),
 			ProfileID: null.Int64From(profile.ID),
 		}
-		_, err = u.Update(s.ctx, tx, boil.Infer())
+		_, err = u.Update(s.ctx, tx, boil.Whitelist("profile_id", "updated_at"))
 		if err != nil {
 			_ = tx.Rollback()
 			return errors.WithStack(err)
