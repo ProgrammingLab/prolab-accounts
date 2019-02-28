@@ -58,6 +58,7 @@ func Run() error {
 			server.NewEntryServiceServer(store, cfg),
 			server.NewPingServiceServer(store),
 			server.NewRoleServiceServer(store),
+			server.NewDepartmentServiceServer(store),
 		),
 	)
 
