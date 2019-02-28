@@ -220,7 +220,7 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 
 		if r := p.R; p.R != nil {
 			if role := r.Role; role != nil {
-				u.Role = role.Name.String
+				u.Role = roleToResponse(role)
 			}
 			if dep := r.Department; dep != nil {
 				u.Department = &type_pb.Department{
