@@ -5,11 +5,10 @@ import (
 	"log"
 	"testing"
 
-	"github.com/ProgrammingLab/prolab-accounts/model"
-
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 func Test_EntriesServer_ListPublicEntries(t *testing.T) {
