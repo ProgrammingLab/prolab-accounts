@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service DepartmentService {
+  rpc ListDepartments (ListDepartmentsRequest) returns (ListDepartmentsResponse) {
+    option (google.api.http) = {
+      get: "/departments"
+    };
+  }
+  rpc GetDepartment (GetDepartmentRequest) returns (Department) {
+    option (google.api.http) = {
+      get: "/departments/{department_id}"
+    };
+  }
+}
+
+message Department {
+  uint32 department_id = 1;
+  string name = 2;
+  string short_name = 3;
+}
+
+message ListDepartmentsRequest {
+}
+
+message ListDepartmentsResponse {
+  repeated Department departments = 1;
+}
+
+message GetDepartmentRequest {
+  uint32 department_id = 1;
+}

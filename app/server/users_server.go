@@ -15,7 +15,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
-	type_pb "github.com/ProgrammingLab/prolab-accounts/api/type"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
@@ -223,11 +222,7 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 				u.Role = roleToResponse(role)
 			}
 			if dep := r.Department; dep != nil {
-				u.Department = &type_pb.Department{
-					Id:        uint32(dep.ID),
-					Name:      dep.Name,
-					ShortName: dep.ShortName,
-				}
+				u.Department = departmentToResponse(dep)
 			}
 		}
 	}

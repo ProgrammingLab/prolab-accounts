@@ -64,6 +64,21 @@
         }
       }
     },
+    "prolab_accountsDepartment": {
+      "type": "object",
+      "properties": {
+        "department_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsEntry": {
       "type": "object",
       "properties": {
@@ -177,25 +192,10 @@
           "type": "string"
         },
         "department": {
-          "$ref": "#/definitions/typeDepartment"
+          "$ref": "#/definitions/prolab_accountsDepartment"
         },
         "profile_scope": {
           "$ref": "#/definitions/prolab_accountsProfileScope"
-        }
-      }
-    },
-    "typeDepartment": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "short_name": {
-          "type": "string"
         }
       }
     }
