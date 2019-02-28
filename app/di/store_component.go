@@ -11,6 +11,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	departmentstore "github.com/ProgrammingLab/prolab-accounts/infra/store/department"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
@@ -31,6 +32,7 @@ type StoreComponent interface {
 	EntryStore(ctx context.Context) store.EntryStore
 	RoleStore(ctx context.Context) store.RoleStore
 	HeartbeatStore(ctx context.Context) store.HeartbeatStore
+	DepartmentStore(ctx context.Context) store.DepartmentStore
 }
 
 // NewStoreComponent returns new store component
@@ -158,6 +160,10 @@ func (s *storeComponentImpl) EntryStore(ctx context.Context) store.EntryStore {
 
 func (s *storeComponentImpl) RoleStore(ctx context.Context) store.RoleStore {
 	return rolestore.NewRoleStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) DepartmentStore(ctx context.Context) store.DepartmentStore {
+	return departmentstore.NewDepartmentStore(ctx, s.db)
 }
 
 func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.HeartbeatStore {
