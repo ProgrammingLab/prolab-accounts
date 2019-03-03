@@ -46,6 +46,7 @@ func Run() error {
 			runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 		),
 		grapiserver.WithGrpcServerUnaryInterceptors(
+			interceptor.RecoverUnaryServerInterceptor(),
 			interceptor.ErrorUnaryServerInterceptor(),
 			interceptor.ValidationUnaryServerInterceptor(),
 			authorizator.UnaryServerInterceptor(),
