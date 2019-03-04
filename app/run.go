@@ -60,6 +60,7 @@ func Run() error {
 			server.NewPingServiceServer(store),
 			server.NewRoleServiceServer(store),
 			server.NewDepartmentServiceServer(store),
+			server.NewInvitationServiceServer(),
 		),
 	)
 
