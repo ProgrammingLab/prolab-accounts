@@ -4,6 +4,7 @@ create_table :users, force: :cascade do |t|
   t.string :full_name, null: false
   t.string :avatar_filename
   t.string :password_digest, null: false
+  t.integer :authority, default: 0,  null: false
   t.references :profile, foreign_key: true
   t.timestamps
   t.index [:name], unique: true

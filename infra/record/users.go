@@ -33,6 +33,7 @@ type User struct {
 	ProfileID      null.Int64  `boil:"profile_id" json:"profile_id,omitempty" toml:"profile_id" yaml:"profile_id,omitempty"`
 	CreatedAt      time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	Authority      int         `boil:"authority" json:"authority" toml:"authority" yaml:"authority"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -48,6 +49,7 @@ var UserColumns = struct {
 	ProfileID      string
 	CreatedAt      string
 	UpdatedAt      string
+	Authority      string
 }{
 	ID:             "id",
 	Name:           "name",
@@ -58,6 +60,7 @@ var UserColumns = struct {
 	ProfileID:      "profile_id",
 	CreatedAt:      "created_at",
 	UpdatedAt:      "updated_at",
+	Authority:      "authority",
 }
 
 // Generated where
@@ -72,6 +75,7 @@ var UserWhere = struct {
 	ProfileID      whereHelpernull_Int64
 	CreatedAt      whereHelpertime_Time
 	UpdatedAt      whereHelpertime_Time
+	Authority      whereHelperint
 }{
 	ID:             whereHelperint64{field: `id`},
 	Name:           whereHelperstring{field: `name`},
@@ -82,6 +86,7 @@ var UserWhere = struct {
 	ProfileID:      whereHelpernull_Int64{field: `profile_id`},
 	CreatedAt:      whereHelpertime_Time{field: `created_at`},
 	UpdatedAt:      whereHelpertime_Time{field: `updated_at`},
+	Authority:      whereHelperint{field: `authority`},
 }
 
 // UserRels is where relationship names are stored.
@@ -114,9 +119,9 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at"}
+	userColumns               = []string{"id", "name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at", "authority"}
 	userColumnsWithoutDefault = []string{"name", "email", "full_name", "avatar_filename", "password_digest", "profile_id", "created_at", "updated_at"}
-	userColumnsWithDefault    = []string{"id"}
+	userColumnsWithDefault    = []string{"id", "authority"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
 
