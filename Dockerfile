@@ -1,4 +1,4 @@
-FROM golang:1.11.1-stretch as builder
+FROM golang:1.12-stretch as builder
 
 WORKDIR /go/src/github.com/ProgrammingLab/prolab-accounts
 
