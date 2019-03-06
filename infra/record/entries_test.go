@@ -494,57 +494,6 @@ func testEntriesInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testEntryToOneBlogUsingBlog(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var local Entry
-	var foreign Blog
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, entryDBTypes, false, entryColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Entry struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, blogDBTypes, false, blogColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Blog struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	local.BlogID = foreign.ID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.Blog().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if check.ID != foreign.ID {
-		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
-	}
-
-	slice := EntrySlice{&local}
-	if err = local.L.LoadBlog(ctx, tx, false, (*[]*Entry)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Blog == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.Blog = nil
-	if err = local.L.LoadBlog(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Blog == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
 func testEntryToOneUserUsingAuthor(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
@@ -596,63 +545,57 @@ func testEntryToOneUserUsingAuthor(t *testing.T) {
 	}
 }
 
-func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
-	var err error
-
+func testEntryToOneBlogUsingBlog(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a Entry
-	var b, c Blog
+	var local Entry
+	var foreign Blog
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, entryDBTypes, false, strmangle.SetComplement(entryPrimaryKeyColumns, entryColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &local, entryDBTypes, false, entryColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Entry struct: %s", err)
 	}
-	if err = randomize.Struct(seed, &b, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	if err := randomize.Struct(seed, &foreign, blogDBTypes, false, blogColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Blog struct: %s", err)
 	}
 
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	for i, x := range []*Blog{&b, &c} {
-		err = a.SetBlog(ctx, tx, i != 0, x)
-		if err != nil {
-			t.Fatal(err)
-		}
+	local.BlogID = foreign.ID
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
 
-		if a.R.Blog != x {
-			t.Error("relationship struct not set to correct value")
-		}
+	check, err := local.Blog().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		if x.R.Entries[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if a.BlogID != x.ID {
-			t.Error("foreign key was wrong value", a.BlogID)
-		}
+	if check.ID != foreign.ID {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
 
-		zero := reflect.Zero(reflect.TypeOf(a.BlogID))
-		reflect.Indirect(reflect.ValueOf(&a.BlogID)).Set(zero)
+	slice := EntrySlice{&local}
+	if err = local.L.LoadBlog(ctx, tx, false, (*[]*Entry)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Blog == nil {
+		t.Error("struct should have been eager loaded")
+	}
 
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if a.BlogID != x.ID {
-			t.Error("foreign key was wrong value", a.BlogID, x.ID)
-		}
+	local.R.Blog = nil
+	if err = local.L.LoadBlog(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Blog == nil {
+		t.Error("struct should have been eager loaded")
 	}
 }
+
 func testEntryToOneSetOpUserUsingAuthor(t *testing.T) {
 	var err error
 
@@ -707,6 +650,63 @@ func testEntryToOneSetOpUserUsingAuthor(t *testing.T) {
 
 		if a.AuthorID != x.ID {
 			t.Error("foreign key was wrong value", a.AuthorID, x.ID)
+		}
+	}
+}
+func testEntryToOneSetOpBlogUsingBlog(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Entry
+	var b, c Blog
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, entryDBTypes, false, strmangle.SetComplement(entryPrimaryKeyColumns, entryColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Blog{&b, &c} {
+		err = a.SetBlog(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Blog != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Entries[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.BlogID != x.ID {
+			t.Error("foreign key was wrong value", a.BlogID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.BlogID))
+		reflect.Indirect(reflect.ValueOf(&a.BlogID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.BlogID != x.ID {
+			t.Error("foreign key was wrong value", a.BlogID, x.ID)
 		}
 	}
 }
@@ -785,7 +785,7 @@ func testEntriesSelect(t *testing.T) {
 }
 
 var (
-	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `text`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `BlogID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `ImageURL`: `character varying`, `PublishedAt`: `timestamp without time zone`}
+	entryDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Description`: `character varying`, `Content`: `text`, `Link`: `character varying`, `AuthorID`: `bigint`, `GUID`: `character varying`, `ImageURL`: `character varying`, `BlogID`: `bigint`, `PublishedAt`: `timestamp without time zone`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
 	_            = bytes.MinRead
 )
 

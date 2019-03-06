@@ -1,0 +1,146 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "invitations.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/admin/invitations": {
+      "get": {
+        "operationId": "ListInvitations",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListInvitationsResponse"
+            }
+          }
+        },
+        "tags": [
+          "InvitationService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateInvitation",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsInvitation"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsCreateInvitationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "InvitationService"
+        ]
+      }
+    },
+    "/admin/invitations/{invitation_id}": {
+      "delete": {
+        "operationId": "DeleteInvitation",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "invitation_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "InvitationService"
+        ]
+      }
+    },
+    "/invitations/{token}": {
+      "get": {
+        "operationId": "GetInvitation",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsInvitation"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "InvitationService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsCreateInvitationRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsInvitation": {
+      "type": "object",
+      "properties": {
+        "invitation_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsListInvitationsResponse": {
+      "type": "object",
+      "properties": {
+        "invitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsInvitation"
+          }
+        }
+      }
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    }
+  }
+}

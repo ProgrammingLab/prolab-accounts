@@ -25,16 +25,16 @@ import (
 // Profile is an object representing the database table.
 type Profile struct {
 	ID                int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	CreatedAt         time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt         time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	Description       string      `boil:"description" json:"description" toml:"description" yaml:"description"`
 	Grade             int         `boil:"grade" json:"grade" toml:"grade" yaml:"grade"`
 	Left              bool        `boil:"left" json:"left" toml:"left" yaml:"left"`
+	DepartmentID      null.Int64  `boil:"department_id" json:"department_id,omitempty" toml:"department_id" yaml:"department_id,omitempty"`
 	RoleID            null.Int64  `boil:"role_id" json:"role_id,omitempty" toml:"role_id" yaml:"role_id,omitempty"`
 	TwitterScreenName null.String `boil:"twitter_screen_name" json:"twitter_screen_name,omitempty" toml:"twitter_screen_name" yaml:"twitter_screen_name,omitempty"`
 	GithubUserName    null.String `boil:"github_user_name" json:"github_user_name,omitempty" toml:"github_user_name" yaml:"github_user_name,omitempty"`
 	ProfileScope      null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
-	DepartmentID      null.Int64  `boil:"department_id" json:"department_id,omitempty" toml:"department_id" yaml:"department_id,omitempty"`
-	CreatedAt         time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt         time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *profileR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L profileL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -42,28 +42,28 @@ type Profile struct {
 
 var ProfileColumns = struct {
 	ID                string
+	CreatedAt         string
+	UpdatedAt         string
 	Description       string
 	Grade             string
 	Left              string
+	DepartmentID      string
 	RoleID            string
 	TwitterScreenName string
 	GithubUserName    string
 	ProfileScope      string
-	DepartmentID      string
-	CreatedAt         string
-	UpdatedAt         string
 }{
 	ID:                "id",
+	CreatedAt:         "created_at",
+	UpdatedAt:         "updated_at",
 	Description:       "description",
 	Grade:             "grade",
 	Left:              "left",
+	DepartmentID:      "department_id",
 	RoleID:            "role_id",
 	TwitterScreenName: "twitter_screen_name",
 	GithubUserName:    "github_user_name",
 	ProfileScope:      "profile_scope",
-	DepartmentID:      "department_id",
-	CreatedAt:         "created_at",
-	UpdatedAt:         "updated_at",
 }
 
 // Generated where
@@ -157,28 +157,28 @@ func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
 
 var ProfileWhere = struct {
 	ID                whereHelperint64
+	CreatedAt         whereHelpertime_Time
+	UpdatedAt         whereHelpertime_Time
 	Description       whereHelperstring
 	Grade             whereHelperint
 	Left              whereHelperbool
+	DepartmentID      whereHelpernull_Int64
 	RoleID            whereHelpernull_Int64
 	TwitterScreenName whereHelpernull_String
 	GithubUserName    whereHelpernull_String
 	ProfileScope      whereHelpernull_Int
-	DepartmentID      whereHelpernull_Int64
-	CreatedAt         whereHelpertime_Time
-	UpdatedAt         whereHelpertime_Time
 }{
 	ID:                whereHelperint64{field: `id`},
+	CreatedAt:         whereHelpertime_Time{field: `created_at`},
+	UpdatedAt:         whereHelpertime_Time{field: `updated_at`},
 	Description:       whereHelperstring{field: `description`},
 	Grade:             whereHelperint{field: `grade`},
 	Left:              whereHelperbool{field: `left`},
+	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
 	RoleID:            whereHelpernull_Int64{field: `role_id`},
 	TwitterScreenName: whereHelpernull_String{field: `twitter_screen_name`},
 	GithubUserName:    whereHelpernull_String{field: `github_user_name`},
 	ProfileScope:      whereHelpernull_Int{field: `profile_scope`},
-	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
-	CreatedAt:         whereHelpertime_Time{field: `created_at`},
-	UpdatedAt:         whereHelpertime_Time{field: `updated_at`},
 }
 
 // ProfileRels is where relationship names are stored.
@@ -208,8 +208,8 @@ func (*profileR) NewStruct() *profileR {
 type profileL struct{}
 
 var (
-	profileColumns               = []string{"id", "description", "grade", "left", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
-	profileColumnsWithoutDefault = []string{"description", "grade", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
+	profileColumns               = []string{"id", "created_at", "updated_at", "description", "grade", "left", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
+	profileColumnsWithoutDefault = []string{"created_at", "updated_at", "description", "grade", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
 	profileColumnsWithDefault    = []string{"id", "left"}
 	profilePrimaryKeyColumns     = []string{"id"}
 )

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "users.proto";
+
+service InvitationService {
+  rpc ListInvitations (ListInvitationsRequest) returns (ListInvitationsResponse) {
+    option (google.api.http) = {
+      get: "/admin/invitations"
+    };
+  }
+  rpc GetInvitation (GetInvitationRequest) returns (Invitation) {
+    option (google.api.http) = {
+      get: "/invitations/{token}"
+    };
+  }
+  rpc CreateInvitation (CreateInvitationRequest) returns (Invitation) {
+    option (google.api.http) = {
+      post: "/admin/invitations"
+      body: "*"
+    };
+  }
+  rpc DeleteInvitation (DeleteInvitationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/invitations/{invitation_id}"
+    };
+  }
+}
+
+message Invitation {
+  uint32 invitation_id = 1;
+  string email= 2;
+}
+
+message ListInvitationsRequest {
+}
+
+message ListInvitationsResponse {
+  repeated Invitation invitations = 1;
+}
+
+message GetInvitationRequest {
+  string token = 1;
+}
+
+message CreateInvitationRequest {
+  string email= 1;
+}
+
+message DeleteInvitationRequest {
+  uint32 invitation_id = 1;
+}

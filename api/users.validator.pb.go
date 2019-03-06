@@ -7,9 +7,9 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/mwitkow/go-proto-validators"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
-	_ "github.com/golang/protobuf/ptypes/empty"
 	regexp "regexp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
@@ -48,11 +48,18 @@ func (this *ListUsersResponse) Validate() error {
 func (this *GetUserRequest) Validate() error {
 	return nil
 }
+
+var _regex_CreateUserRequest_Name = regexp.MustCompile(`^[A-Za-z0-9_]{1,20}$`)
+
 func (this *CreateUserRequest) Validate() error {
-	if this.User != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
-		}
+	if !_regex_CreateUserRequest_Name.MatchString(this.Name) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf(`value '%v' must be a string conforming to regex "^[A-Za-z0-9_]{1,20}$"`, this.Name))
+	}
+	if !(len(this.FullName) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("FullName", fmt.Errorf(`value '%v' must length be less than '128'`, this.FullName))
+	}
+	if !(len(this.RegisterationToken) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("RegisterationToken", fmt.Errorf(`value '%v' must length be less than '128'`, this.RegisterationToken))
 	}
 	return nil
 }

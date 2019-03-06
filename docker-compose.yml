@@ -12,8 +12,17 @@ services:
       - pg
       - redis
       - hydra
+      - mailhog
     ports:
       - "127.0.0.1:3000:3000"
+  
+  ridgepole:
+    build: ./db
+    volumes:
+      - ./db:/db
+    environment:
+      - DATABASE_URL=${DATABASE_URL_RIDGEPOLE}
+      - TEST_DATABASE_URL=${TEST_DATABASE_URL_RIDGEPOLE}
 
   hydra-migrate:
     image: oryd/hydra:v1.0.0-rc.6_oryOS.10-alpine
@@ -102,6 +111,14 @@ services:
         max-file: "10"
     ports:
       - "127.0.0.1:9100:9000"
+
+  mailhog:
+    image: mailhog/mailhog
+    hostname: smtp
+    restart: always
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
 
 volumes:
   pg-data:
