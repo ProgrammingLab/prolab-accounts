@@ -46,6 +46,11 @@ func (s *invitationStoreImpl) CreateInvitation(inviter model.UserID, email strin
 		return nil, err
 	}
 
+	_, err = record.Invitations(record.InvitationWhere.Email.EQ(email)).DeleteAll(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	inv := &record.Invitation{
 		Code:      code,
 		Email:     email,

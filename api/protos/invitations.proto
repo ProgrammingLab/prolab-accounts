@@ -8,6 +8,8 @@ option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
+import "users.proto";
+
 service InvitationService {
   rpc ListInvitations (ListInvitationsRequest) returns (ListInvitationsResponse) {
     option (google.api.http) = {
@@ -34,8 +36,7 @@ service InvitationService {
 
 message Invitation {
   uint32 invitation_id = 1;
-  string token = 2;
-  string email= 3; 
+  string email= 2;
 }
 
 message ListInvitationsRequest {

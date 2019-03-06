@@ -121,9 +121,6 @@
           "type": "integer",
           "format": "int64"
         },
-        "token": {
-          "type": "string"
-        },
         "email": {
           "type": "string"
         }
