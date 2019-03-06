@@ -8,9 +8,9 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	validator "github.com/mwitkow/go-proto-validators"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/null"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -42,15 +42,21 @@ type userServiceServerImpl struct {
 const (
 	// MaxIconSize represents max of icon size
 	MaxIconSize = 1024 * 1024 // 1MiB
+	// MaxPasswordLength represents max length of password
+	MaxPasswordLength = 72
 )
 
 var (
 	// ErrPageSizeOutOfRange will be returned when page size is out of range
 	ErrPageSizeOutOfRange = status.Error(codes.OutOfRange, "page size must be 1 <= size <= 100")
 	// ErrIconSizeTooLarge will be returned when icon is too large
-	ErrIconSizeTooLarge = validator.FieldError("Image", fmt.Errorf("image must be smaller than 1MiB"))
+	ErrIconSizeTooLarge = status.Error(codes.InvalidArgument, "image must be smaller than 1MiB")
 	// ErrInvalidImageFormat will be returned when image format is invalid
 	ErrInvalidImageFormat = status.Error(codes.InvalidArgument, "invalid iamge format")
+	// ErrNameAlreadyInUse is returned when name is already in use
+	ErrNameAlreadyInUse = status.Error(codes.AlreadyExists, "name is already in use")
+	// ErrTooLongPassword will be returned when password is too long
+	ErrTooLongPassword = status.Error(codes.InvalidArgument, fmt.Sprintf("length of password must be less than %v", MaxPasswordLength+1))
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
@@ -89,8 +95,52 @@ func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUser
 }
 
 func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.CreateUserRequest) (*api_pb.User, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	is := s.InvitationStore(ctx)
+	inv, err := is.GetInvitation(req.GetRegisterationToken())
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	password := req.GetPassword()
+	if MaxPasswordLength < len(password) {
+		return nil, ErrTooLongPassword
+	}
+
+	d, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	u := &record.User{
+		Name:           req.GetName(),
+		Email:          inv.Email,
+		FullName:       req.GetFullName(),
+		Authority:      int(model.Member),
+		PasswordDigest: string(d),
+	}
+	us := s.UserStore(ctx)
+	_, err = us.GetUserByName(req.GetName())
+	if err == nil {
+		return nil, ErrNameAlreadyInUse
+	}
+	if errors.Cause(err) != sql.ErrNoRows {
+		return nil, err
+	}
+
+	err = us.CreateUser(u)
+	if err != nil {
+		return nil, err
+	}
+
+	err = is.DeleteInvitation(inv.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return userToResponse(u, true, s.cfg), nil
 }
 
 func (s *userServiceServerImpl) GetCurrentUser(ctx context.Context, req *api_pb.GetCurrentUserRequest) (*api_pb.User, error) {

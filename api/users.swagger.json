@@ -146,7 +146,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/prolab_accountsUser"
+              "$ref": "#/definitions/prolab_accountsCreateUserRequest"
             }
           }
         ],
@@ -181,6 +181,23 @@
     }
   },
   "definitions": {
+    "prolab_accountsCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "registeration_token": {
+          "type": "string"
+        }
+      }
+    },
     "prolab_accountsDepartment": {
       "type": "object",
       "properties": {
