@@ -5,6 +5,7 @@ create_table :invitations, force: :cascade do |t|
   t.timestamps
 
   t.index [:code]
+  t.index [:email], unique: true
 end
 
 add_foreign_key :invitations, :users, column: :inviter_id

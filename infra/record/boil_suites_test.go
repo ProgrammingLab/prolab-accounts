@@ -145,8 +145,8 @@ func TestToOne(t *testing.T) {
 	t.Run("EntryToUserUsingAuthor", testEntryToOneUserUsingAuthor)
 	t.Run("EntryToBlogUsingBlog", testEntryToOneBlogUsingBlog)
 	t.Run("InvitationToUserUsingInviter", testInvitationToOneUserUsingInviter)
-	t.Run("ProfileToRoleUsingRole", testProfileToOneRoleUsingRole)
 	t.Run("ProfileToDepartmentUsingDepartment", testProfileToOneDepartmentUsingDepartment)
+	t.Run("ProfileToRoleUsingRole", testProfileToOneRoleUsingRole)
 	t.Run("UserToProfileUsingProfile", testUserToOneProfileUsingProfile)
 }
 
@@ -173,16 +173,16 @@ func TestToOneSet(t *testing.T) {
 	t.Run("EntryToUserUsingAuthorEntries", testEntryToOneSetOpUserUsingAuthor)
 	t.Run("EntryToBlogUsingEntries", testEntryToOneSetOpBlogUsingBlog)
 	t.Run("InvitationToUserUsingInviterInvitations", testInvitationToOneSetOpUserUsingInviter)
-	t.Run("ProfileToRoleUsingProfiles", testProfileToOneSetOpRoleUsingRole)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneSetOpDepartmentUsingDepartment)
+	t.Run("ProfileToRoleUsingProfiles", testProfileToOneSetOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneSetOpProfileUsingProfile)
 }
 
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
-	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneRemoveOpDepartmentUsingDepartment)
+	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneRemoveOpProfileUsingProfile)
 }
 
