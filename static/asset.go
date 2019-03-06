@@ -1,6 +1,7 @@
 package static
 
 import (
+	"fmt"
 	"text/template"
 
 	"github.com/gobuffalo/packr/v2"
@@ -15,9 +16,12 @@ type EmailAsset struct {
 }
 
 // GetTemplate returns email template
-func (a *EmailAsset) GetTemplate(name string) (tmpl *template.Template, ok bool) {
-	tmpl, ok = a.templates[name]
-	return
+func (a *EmailAsset) GetTemplate(name string) (*template.Template, error) {
+	tmpl, ok := a.templates[name]
+	if !ok {
+		return nil, errors.WithStack(fmt.Errorf("template %v not found", name))
+	}
+	return tmpl, nil
 }
 
 func (a *EmailAsset) addTemplate(name string, tmpl *template.Template) {

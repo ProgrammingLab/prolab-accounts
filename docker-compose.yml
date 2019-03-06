@@ -12,6 +12,7 @@ services:
       - pg
       - redis
       - hydra
+      - mailhog
     ports:
       - "127.0.0.1:3000:3000"
   
@@ -110,6 +111,14 @@ services:
         max-file: "10"
     ports:
       - "127.0.0.1:9100:9000"
+
+  mailhog:
+    image: mailhog/mailhog
+    hostname: smtp
+    restart: always
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
 
 volumes:
   pg-data:
