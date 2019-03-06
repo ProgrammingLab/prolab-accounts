@@ -46,8 +46,12 @@ func (s *invitationStoreImpl) ListInvitations() ([]*record.Invitation, error) {
 	return invs, nil
 }
 
-func (s *invitationStoreImpl) GetInvitation(id int64) (*record.Invitation, error) {
-	inv, err := record.FindInvitation(s.ctx, s.db, id)
+func (s *invitationStoreImpl) GetInvitation(code string) (*record.Invitation, error) {
+	mods := []qm.QueryMod{
+		record.InvitationWhere.Code.EQ(code),
+	}
+
+	inv, err := record.Invitations(mods...).One(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -79,7 +83,10 @@ func (s *invitationStoreImpl) CreateInvitation(inviter model.UserID, email strin
 }
 
 func (s *invitationStoreImpl) DeleteInvitation(id int64) error {
-	_, err := record.Invitations(record.InvitationWhere.ID.EQ(id)).DeleteAll(s.ctx, s.db)
+	n, err := record.Invitations(record.InvitationWhere.ID.EQ(id)).DeleteAll(s.ctx, s.db)
+	if n == 0 {
+		return errors.WithStack(sql.ErrNoRows)
+	}
 	return errors.WithStack(err)
 }
 

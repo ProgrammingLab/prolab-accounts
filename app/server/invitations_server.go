@@ -43,13 +43,34 @@ type invitationServiceServerImpl struct {
 }
 
 func (s *invitationServiceServerImpl) ListInvitations(ctx context.Context, req *api_pb.ListInvitationsRequest) (*api_pb.ListInvitationsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	_, err := s.getAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	is := s.InvitationStore(ctx)
+	invs, err := is.ListInvitations()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	resp := &api_pb.ListInvitationsResponse{
+		Invitations: invitationsToResponse(invs),
+	}
+	return resp, nil
 }
 
 func (s *invitationServiceServerImpl) GetInvitation(ctx context.Context, req *api_pb.GetInvitationRequest) (*api_pb.Invitation, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	is := s.InvitationStore(ctx)
+	inv, err := is.GetInvitation(req.GetToken())
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return invitationToResponse(inv), nil
 }
 
 func (s *invitationServiceServerImpl) CreateInvitation(ctx context.Context, req *api_pb.CreateInvitationRequest) (*api_pb.Invitation, error) {
@@ -83,8 +104,21 @@ func (s *invitationServiceServerImpl) CreateInvitation(ctx context.Context, req 
 }
 
 func (s *invitationServiceServerImpl) DeleteInvitation(ctx context.Context, req *api_pb.DeleteInvitationRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	_, err := s.getAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	is := s.InvitationStore(ctx)
+	err = is.DeleteInvitation(int64(req.GetInvitationId()))
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *invitationServiceServerImpl) getAdmin(ctx context.Context) (*record.User, error) {
@@ -103,6 +137,15 @@ func (s *invitationServiceServerImpl) getAdmin(ctx context.Context) (*record.Use
 		return nil, util.ErrUnauthenticated
 	}
 	return u, nil
+}
+
+func invitationsToResponse(invs []*record.Invitation) []*api_pb.Invitation {
+	resp := make([]*api_pb.Invitation, 0, len(invs))
+	for _, i := range invs {
+		resp = append(resp, invitationToResponse(i))
+	}
+
+	return resp
 }
 
 func invitationToResponse(inv *record.Invitation) *api_pb.Invitation {

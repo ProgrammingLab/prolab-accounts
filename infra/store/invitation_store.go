@@ -8,7 +8,7 @@ import (
 // InvitationStore provides invitations
 type InvitationStore interface {
 	ListInvitations() ([]*record.Invitation, error)
-	GetInvitation(id int64) (*record.Invitation, error)
+	GetInvitation(code string) (*record.Invitation, error)
 	CreateInvitation(inviter model.UserID, email string) (*record.Invitation, error)
 	DeleteInvitation(id int64) error
 }
