@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
 // InvitationServiceServer is a composite interface of api_pb.InvitationServiceServer and grapiserver.Server.
@@ -18,11 +19,16 @@ type InvitationServiceServer interface {
 }
 
 // NewInvitationServiceServer creates a new InvitationServiceServer instance.
-func NewInvitationServiceServer() InvitationServiceServer {
-	return &invitationServiceServerImpl{}
+func NewInvitationServiceServer(store di.StoreComponent, cli di.ClientComponent) InvitationServiceServer {
+	return &invitationServiceServerImpl{
+		StoreComponent:  store,
+		ClientComponent: cli,
+	}
 }
 
 type invitationServiceServerImpl struct {
+	di.StoreComponent
+	di.ClientComponent
 }
 
 func (s *invitationServiceServerImpl) ListInvitations(ctx context.Context, req *api_pb.ListInvitationsRequest) (*api_pb.ListInvitationsResponse, error) {
