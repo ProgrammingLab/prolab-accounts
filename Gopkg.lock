@@ -435,6 +435,14 @@
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:b0ba4d955937ac36b1d7aada24791de6c26dd3953329d05fe9af8bca9e2a1ef6"
+  name = "github.com/jordan-wright/email"
+  packages = ["."]
+  pruneopts = ""
+  revision = "94ae17dedda217a49e3b47d68f1b54b3c946e16b"
+  version = "v3.0"
+
+[[projects]]
   digest = "1:efd715c5992bad73b911a42d2fa536a89f5d6928cd967abc8a1104fd175a2b0d"
   name = "github.com/karrick/godirwalk"
   packages = ["."]
@@ -457,17 +465,6 @@
   pruneopts = ""
   revision = "f611eb38b3875cc3bd991ca91c51d06446afa14c"
   version = "v1.3.0"
-
-[[projects]]
-  digest = "1:e6b65ec5a09e42738d13762852d50a13865d9fccfd29576926e8ef05469388d9"
-  name = "github.com/kisielk/errcheck"
-  packages = [
-    ".",
-    "internal/errcheck",
-  ]
-  pruneopts = ""
-  revision = "e14f8d59a22d460d56c5ee92507cd94c78fbf274"
-  version = "v1.2.0"
 
 [[projects]]
   digest = "1:6a874e3ddfb9db2b42bd8c85b6875407c702fa868eed20634ff489bc896ccfd3"
@@ -949,15 +946,11 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
-    "go/buildutil",
     "go/gcexportdata",
     "go/internal/cgo",
     "go/internal/gcimporter",
     "go/internal/packagesdriver",
-    "go/loader",
     "go/packages",
-    "go/ssa",
-    "go/ssa/ssautil",
     "go/types/typeutil",
     "imports",
     "internal/fastwalk",
@@ -1055,52 +1048,12 @@
   version = "v2.2.1"
 
 [[projects]]
-  digest = "1:c88e3258b6ae1a1a7351f4a7e83d67482f35448e4b9a01ea4618865ed5206c50"
-  name = "honnef.co/go/tools"
-  packages = [
-    "arg",
-    "callgraph",
-    "callgraph/static",
-    "cmd/megacheck",
-    "config",
-    "deprecated",
-    "functions",
-    "internal/sharedcheck",
-    "lint",
-    "lint/lintdsl",
-    "lint/lintutil",
-    "lint/lintutil/format",
-    "simple",
-    "ssa",
-    "ssa/ssautil",
-    "ssautil",
-    "staticcheck",
-    "staticcheck/vrp",
-    "unused",
-    "version",
-  ]
-  pruneopts = ""
-  revision = "c2f93a96b099cbbec1de36336ab049ffa620e6d7"
-  version = "2019.1"
-
-[[projects]]
   branch = "master"
   digest = "1:8b4b9c29be72c176988b04d5acc665c093b1efac228835f0a4716531c1f7563e"
   name = "k8s.io/utils"
   packages = ["exec"]
   pruneopts = ""
   revision = "8a16e7dd8fb6d97d1331b0c79a16722f934b00b1"
-
-[[projects]]
-  branch = "master"
-  digest = "1:9713b184937378294a5e198f37cdd126db760eb03c6e9531c8c473366be36231"
-  name = "mvdan.cc/unparam"
-  packages = [
-    ".",
-    "check",
-  ]
-  pruneopts = ""
-  revision = "da01123e7b4fe5282512ac72e8c6cde37779bcb7"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -1125,6 +1078,7 @@
     "github.com/izumin5210/grapi/cmd/grapi-gen-type",
     "github.com/izumin5210/grapi/pkg/grapiserver",
     "github.com/joho/godotenv",
+    "github.com/jordan-wright/email",
     "github.com/kat-co/vala",
     "github.com/kelseyhightower/envconfig",
     "github.com/lib/pq",
