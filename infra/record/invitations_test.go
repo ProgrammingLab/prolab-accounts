@@ -677,7 +677,7 @@ func testInvitationsSelect(t *testing.T) {
 }
 
 var (
-	invitationDBTypes = map[string]string{`ID`: `bigint`, `Code`: `character varying`, `InviterID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
+	invitationDBTypes = map[string]string{`ID`: `bigint`, `Code`: `character varying`, `Email`: `character varying`, `InviterID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
 	_                 = bytes.MinRead
 )
 

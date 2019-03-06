@@ -25,6 +25,7 @@ import (
 type Invitation struct {
 	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Code      string    `boil:"code" json:"code" toml:"code" yaml:"code"`
+	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
 	InviterID int64     `boil:"inviter_id" json:"inviter_id" toml:"inviter_id" yaml:"inviter_id"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
@@ -36,12 +37,14 @@ type Invitation struct {
 var InvitationColumns = struct {
 	ID        string
 	Code      string
+	Email     string
 	InviterID string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "id",
 	Code:      "code",
+	Email:     "email",
 	InviterID: "inviter_id",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
@@ -52,12 +55,14 @@ var InvitationColumns = struct {
 var InvitationWhere = struct {
 	ID        whereHelperint64
 	Code      whereHelperstring
+	Email     whereHelperstring
 	InviterID whereHelperint64
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint64{field: `id`},
 	Code:      whereHelperstring{field: `code`},
+	Email:     whereHelperstring{field: `email`},
 	InviterID: whereHelperint64{field: `inviter_id`},
 	CreatedAt: whereHelpertime_Time{field: `created_at`},
 	UpdatedAt: whereHelpertime_Time{field: `updated_at`},
@@ -84,8 +89,8 @@ func (*invitationR) NewStruct() *invitationR {
 type invitationL struct{}
 
 var (
-	invitationColumns               = []string{"id", "code", "inviter_id", "created_at", "updated_at"}
-	invitationColumnsWithoutDefault = []string{"code", "inviter_id", "created_at", "updated_at"}
+	invitationColumns               = []string{"id", "code", "email", "inviter_id", "created_at", "updated_at"}
+	invitationColumnsWithoutDefault = []string{"code", "email", "inviter_id", "created_at", "updated_at"}
 	invitationColumnsWithDefault    = []string{"id"}
 	invitationPrimaryKeyColumns     = []string{"id"}
 )

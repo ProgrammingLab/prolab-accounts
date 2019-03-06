@@ -25,16 +25,16 @@ import (
 // Profile is an object representing the database table.
 type Profile struct {
 	ID                int64       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	CreatedAt         time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt         time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	Description       string      `boil:"description" json:"description" toml:"description" yaml:"description"`
 	Grade             int         `boil:"grade" json:"grade" toml:"grade" yaml:"grade"`
 	Left              bool        `boil:"left" json:"left" toml:"left" yaml:"left"`
+	DepartmentID      null.Int64  `boil:"department_id" json:"department_id,omitempty" toml:"department_id" yaml:"department_id,omitempty"`
 	RoleID            null.Int64  `boil:"role_id" json:"role_id,omitempty" toml:"role_id" yaml:"role_id,omitempty"`
 	TwitterScreenName null.String `boil:"twitter_screen_name" json:"twitter_screen_name,omitempty" toml:"twitter_screen_name" yaml:"twitter_screen_name,omitempty"`
 	GithubUserName    null.String `boil:"github_user_name" json:"github_user_name,omitempty" toml:"github_user_name" yaml:"github_user_name,omitempty"`
 	ProfileScope      null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
-	DepartmentID      null.Int64  `boil:"department_id" json:"department_id,omitempty" toml:"department_id" yaml:"department_id,omitempty"`
-	CreatedAt         time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt         time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *profileR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L profileL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -42,28 +42,28 @@ type Profile struct {
 
 var ProfileColumns = struct {
 	ID                string
+	CreatedAt         string
+	UpdatedAt         string
 	Description       string
 	Grade             string
 	Left              string
+	DepartmentID      string
 	RoleID            string
 	TwitterScreenName string
 	GithubUserName    string
 	ProfileScope      string
-	DepartmentID      string
-	CreatedAt         string
-	UpdatedAt         string
 }{
 	ID:                "id",
+	CreatedAt:         "created_at",
+	UpdatedAt:         "updated_at",
 	Description:       "description",
 	Grade:             "grade",
 	Left:              "left",
+	DepartmentID:      "department_id",
 	RoleID:            "role_id",
 	TwitterScreenName: "twitter_screen_name",
 	GithubUserName:    "github_user_name",
 	ProfileScope:      "profile_scope",
-	DepartmentID:      "department_id",
-	CreatedAt:         "created_at",
-	UpdatedAt:         "updated_at",
 }
 
 // Generated where
@@ -157,45 +157,45 @@ func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
 
 var ProfileWhere = struct {
 	ID                whereHelperint64
+	CreatedAt         whereHelpertime_Time
+	UpdatedAt         whereHelpertime_Time
 	Description       whereHelperstring
 	Grade             whereHelperint
 	Left              whereHelperbool
+	DepartmentID      whereHelpernull_Int64
 	RoleID            whereHelpernull_Int64
 	TwitterScreenName whereHelpernull_String
 	GithubUserName    whereHelpernull_String
 	ProfileScope      whereHelpernull_Int
-	DepartmentID      whereHelpernull_Int64
-	CreatedAt         whereHelpertime_Time
-	UpdatedAt         whereHelpertime_Time
 }{
 	ID:                whereHelperint64{field: `id`},
+	CreatedAt:         whereHelpertime_Time{field: `created_at`},
+	UpdatedAt:         whereHelpertime_Time{field: `updated_at`},
 	Description:       whereHelperstring{field: `description`},
 	Grade:             whereHelperint{field: `grade`},
 	Left:              whereHelperbool{field: `left`},
+	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
 	RoleID:            whereHelpernull_Int64{field: `role_id`},
 	TwitterScreenName: whereHelpernull_String{field: `twitter_screen_name`},
 	GithubUserName:    whereHelpernull_String{field: `github_user_name`},
 	ProfileScope:      whereHelpernull_Int{field: `profile_scope`},
-	DepartmentID:      whereHelpernull_Int64{field: `department_id`},
-	CreatedAt:         whereHelpertime_Time{field: `created_at`},
-	UpdatedAt:         whereHelpertime_Time{field: `updated_at`},
 }
 
 // ProfileRels is where relationship names are stored.
 var ProfileRels = struct {
-	Department string
 	Role       string
+	Department string
 	Users      string
 }{
-	Department: "Department",
 	Role:       "Role",
+	Department: "Department",
 	Users:      "Users",
 }
 
 // profileR is where relationships are stored.
 type profileR struct {
-	Department *Department
 	Role       *Role
+	Department *Department
 	Users      UserSlice
 }
 
@@ -208,8 +208,8 @@ func (*profileR) NewStruct() *profileR {
 type profileL struct{}
 
 var (
-	profileColumns               = []string{"id", "description", "grade", "left", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
-	profileColumnsWithoutDefault = []string{"description", "grade", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "department_id", "created_at", "updated_at"}
+	profileColumns               = []string{"id", "created_at", "updated_at", "description", "grade", "left", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
+	profileColumnsWithoutDefault = []string{"created_at", "updated_at", "description", "grade", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
 	profileColumnsWithDefault    = []string{"id", "left"}
 	profilePrimaryKeyColumns     = []string{"id"}
 )
@@ -489,20 +489,6 @@ func (q profileQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bo
 	return count > 0, nil
 }
 
-// Department pointed to by the foreign key.
-func (o *Profile) Department(mods ...qm.QueryMod) departmentQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("id=?", o.DepartmentID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Departments(queryMods...)
-	queries.SetFrom(query.Query, "\"departments\"")
-
-	return query
-}
-
 // Role pointed to by the foreign key.
 func (o *Profile) Role(mods ...qm.QueryMod) roleQuery {
 	queryMods := []qm.QueryMod{
@@ -513,6 +499,20 @@ func (o *Profile) Role(mods ...qm.QueryMod) roleQuery {
 
 	query := Roles(queryMods...)
 	queries.SetFrom(query.Query, "\"roles\"")
+
+	return query
+}
+
+// Department pointed to by the foreign key.
+func (o *Profile) Department(mods ...qm.QueryMod) departmentQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.DepartmentID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Departments(queryMods...)
+	queries.SetFrom(query.Query, "\"departments\"")
 
 	return query
 }
@@ -536,111 +536,6 @@ func (o *Profile) Users(mods ...qm.QueryMod) userQuery {
 	}
 
 	return query
-}
-
-// LoadDepartment allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (profileL) LoadDepartment(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
-	var slice []*Profile
-	var object *Profile
-
-	if singular {
-		object = maybeProfile.(*Profile)
-	} else {
-		slice = *maybeProfile.(*[]*Profile)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &profileR{}
-		}
-		if !queries.IsNil(object.DepartmentID) {
-			args = append(args, object.DepartmentID)
-		}
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &profileR{}
-			}
-
-			for _, a := range args {
-				if queries.Equal(a, obj.DepartmentID) {
-					continue Outer
-				}
-			}
-
-			if !queries.IsNil(obj.DepartmentID) {
-				args = append(args, obj.DepartmentID)
-			}
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(qm.From(`departments`), qm.WhereIn(`id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Department")
-	}
-
-	var resultSlice []*Department
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Department")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for departments")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for departments")
-	}
-
-	if len(profileAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Department = foreign
-		if foreign.R == nil {
-			foreign.R = &departmentR{}
-		}
-		foreign.R.Profiles = append(foreign.R.Profiles, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if queries.Equal(local.DepartmentID, foreign.ID) {
-				local.R.Department = foreign
-				if foreign.R == nil {
-					foreign.R = &departmentR{}
-				}
-				foreign.R.Profiles = append(foreign.R.Profiles, local)
-				break
-			}
-		}
-	}
-
-	return nil
 }
 
 // LoadRole allows an eager lookup of values, cached into the
@@ -748,6 +643,111 @@ func (profileL) LoadRole(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
+// LoadDepartment allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (profileL) LoadDepartment(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
+	var slice []*Profile
+	var object *Profile
+
+	if singular {
+		object = maybeProfile.(*Profile)
+	} else {
+		slice = *maybeProfile.(*[]*Profile)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &profileR{}
+		}
+		if !queries.IsNil(object.DepartmentID) {
+			args = append(args, object.DepartmentID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &profileR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.DepartmentID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.DepartmentID) {
+				args = append(args, obj.DepartmentID)
+			}
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`departments`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Department")
+	}
+
+	var resultSlice []*Department
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Department")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for departments")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for departments")
+	}
+
+	if len(profileAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Department = foreign
+		if foreign.R == nil {
+			foreign.R = &departmentR{}
+		}
+		foreign.R.Profiles = append(foreign.R.Profiles, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.DepartmentID, foreign.ID) {
+				local.R.Department = foreign
+				if foreign.R == nil {
+					foreign.R = &departmentR{}
+				}
+				foreign.R.Profiles = append(foreign.R.Profiles, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // LoadUsers allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (profileL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular bool, maybeProfile interface{}, mods queries.Applicator) error {
@@ -843,84 +843,6 @@ func (profileL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular 
 	return nil
 }
 
-// SetDepartment of the profile to the related item.
-// Sets o.R.Department to related.
-// Adds o to related.R.Profiles.
-func (o *Profile) SetDepartment(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Department) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"profiles\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"department_id"}),
-		strmangle.WhereClause("\"", "\"", 2, profilePrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, updateQuery)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	queries.Assign(&o.DepartmentID, related.ID)
-	if o.R == nil {
-		o.R = &profileR{
-			Department: related,
-		}
-	} else {
-		o.R.Department = related
-	}
-
-	if related.R == nil {
-		related.R = &departmentR{
-			Profiles: ProfileSlice{o},
-		}
-	} else {
-		related.R.Profiles = append(related.R.Profiles, o)
-	}
-
-	return nil
-}
-
-// RemoveDepartment relationship.
-// Sets o.R.Department to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *Profile) RemoveDepartment(ctx context.Context, exec boil.ContextExecutor, related *Department) error {
-	var err error
-
-	queries.SetScanner(&o.DepartmentID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("department_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.R.Department = nil
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.Profiles {
-		if queries.Equal(o.DepartmentID, ri.DepartmentID) {
-			continue
-		}
-
-		ln := len(related.R.Profiles)
-		if ln > 1 && i < ln-1 {
-			related.R.Profiles[i] = related.R.Profiles[ln-1]
-		}
-		related.R.Profiles = related.R.Profiles[:ln-1]
-		break
-	}
-	return nil
-}
-
 // SetRole of the profile to the related item.
 // Sets o.R.Role to related.
 // Adds o to related.R.Profiles.
@@ -986,6 +908,84 @@ func (o *Profile) RemoveRole(ctx context.Context, exec boil.ContextExecutor, rel
 
 	for i, ri := range related.R.Profiles {
 		if queries.Equal(o.RoleID, ri.RoleID) {
+			continue
+		}
+
+		ln := len(related.R.Profiles)
+		if ln > 1 && i < ln-1 {
+			related.R.Profiles[i] = related.R.Profiles[ln-1]
+		}
+		related.R.Profiles = related.R.Profiles[:ln-1]
+		break
+	}
+	return nil
+}
+
+// SetDepartment of the profile to the related item.
+// Sets o.R.Department to related.
+// Adds o to related.R.Profiles.
+func (o *Profile) SetDepartment(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Department) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"profiles\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"department_id"}),
+		strmangle.WhereClause("\"", "\"", 2, profilePrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.DepartmentID, related.ID)
+	if o.R == nil {
+		o.R = &profileR{
+			Department: related,
+		}
+	} else {
+		o.R.Department = related
+	}
+
+	if related.R == nil {
+		related.R = &departmentR{
+			Profiles: ProfileSlice{o},
+		}
+	} else {
+		related.R.Profiles = append(related.R.Profiles, o)
+	}
+
+	return nil
+}
+
+// RemoveDepartment relationship.
+// Sets o.R.Department to nil.
+// Removes o from all passed in related items' relationships struct (Optional).
+func (o *Profile) RemoveDepartment(ctx context.Context, exec boil.ContextExecutor, related *Department) error {
+	var err error
+
+	queries.SetScanner(&o.DepartmentID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("department_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.R.Department = nil
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Profiles {
+		if queries.Equal(o.DepartmentID, ri.DepartmentID) {
 			continue
 		}
 

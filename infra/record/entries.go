@@ -30,11 +30,11 @@ type Entry struct {
 	Link        string    `boil:"link" json:"link" toml:"link" yaml:"link"`
 	AuthorID    int64     `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
 	GUID        string    `boil:"guid" json:"guid" toml:"guid" yaml:"guid"`
+	ImageURL    string    `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
 	BlogID      int64     `boil:"blog_id" json:"blog_id" toml:"blog_id" yaml:"blog_id"`
+	PublishedAt time.Time `boil:"published_at" json:"published_at" toml:"published_at" yaml:"published_at"`
 	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt   time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
-	ImageURL    string    `boil:"image_url" json:"image_url" toml:"image_url" yaml:"image_url"`
-	PublishedAt time.Time `boil:"published_at" json:"published_at" toml:"published_at" yaml:"published_at"`
 
 	R *entryR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L entryL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -48,11 +48,11 @@ var EntryColumns = struct {
 	Link        string
 	AuthorID    string
 	GUID        string
+	ImageURL    string
 	BlogID      string
+	PublishedAt string
 	CreatedAt   string
 	UpdatedAt   string
-	ImageURL    string
-	PublishedAt string
 }{
 	ID:          "id",
 	Title:       "title",
@@ -61,11 +61,11 @@ var EntryColumns = struct {
 	Link:        "link",
 	AuthorID:    "author_id",
 	GUID:        "guid",
+	ImageURL:    "image_url",
 	BlogID:      "blog_id",
+	PublishedAt: "published_at",
 	CreatedAt:   "created_at",
 	UpdatedAt:   "updated_at",
-	ImageURL:    "image_url",
-	PublishedAt: "published_at",
 }
 
 // Generated where
@@ -78,11 +78,11 @@ var EntryWhere = struct {
 	Link        whereHelperstring
 	AuthorID    whereHelperint64
 	GUID        whereHelperstring
+	ImageURL    whereHelperstring
 	BlogID      whereHelperint64
+	PublishedAt whereHelpertime_Time
 	CreatedAt   whereHelpertime_Time
 	UpdatedAt   whereHelpertime_Time
-	ImageURL    whereHelperstring
-	PublishedAt whereHelpertime_Time
 }{
 	ID:          whereHelperint64{field: `id`},
 	Title:       whereHelperstring{field: `title`},
@@ -91,26 +91,26 @@ var EntryWhere = struct {
 	Link:        whereHelperstring{field: `link`},
 	AuthorID:    whereHelperint64{field: `author_id`},
 	GUID:        whereHelperstring{field: `guid`},
+	ImageURL:    whereHelperstring{field: `image_url`},
 	BlogID:      whereHelperint64{field: `blog_id`},
+	PublishedAt: whereHelpertime_Time{field: `published_at`},
 	CreatedAt:   whereHelpertime_Time{field: `created_at`},
 	UpdatedAt:   whereHelpertime_Time{field: `updated_at`},
-	ImageURL:    whereHelperstring{field: `image_url`},
-	PublishedAt: whereHelpertime_Time{field: `published_at`},
 }
 
 // EntryRels is where relationship names are stored.
 var EntryRels = struct {
-	Blog   string
 	Author string
+	Blog   string
 }{
-	Blog:   "Blog",
 	Author: "Author",
+	Blog:   "Blog",
 }
 
 // entryR is where relationships are stored.
 type entryR struct {
-	Blog   *Blog
 	Author *User
+	Blog   *Blog
 }
 
 // NewStruct creates a new relationship struct
@@ -122,8 +122,8 @@ func (*entryR) NewStruct() *entryR {
 type entryL struct{}
 
 var (
-	entryColumns               = []string{"id", "title", "description", "content", "link", "author_id", "guid", "blog_id", "created_at", "updated_at", "image_url", "published_at"}
-	entryColumnsWithoutDefault = []string{"title", "description", "content", "link", "author_id", "guid", "blog_id", "created_at", "updated_at", "image_url", "published_at"}
+	entryColumns               = []string{"id", "title", "description", "content", "link", "author_id", "guid", "image_url", "blog_id", "published_at", "created_at", "updated_at"}
+	entryColumnsWithoutDefault = []string{"title", "description", "content", "link", "author_id", "guid", "image_url", "blog_id", "published_at", "created_at", "updated_at"}
 	entryColumnsWithDefault    = []string{"id"}
 	entryPrimaryKeyColumns     = []string{"id"}
 )
@@ -403,20 +403,6 @@ func (q entryQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 	return count > 0, nil
 }
 
-// Blog pointed to by the foreign key.
-func (o *Entry) Blog(mods ...qm.QueryMod) blogQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("id=?", o.BlogID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Blogs(queryMods...)
-	queries.SetFrom(query.Query, "\"blogs\"")
-
-	return query
-}
-
 // Author pointed to by the foreign key.
 func (o *Entry) Author(mods ...qm.QueryMod) userQuery {
 	queryMods := []qm.QueryMod{
@@ -431,105 +417,18 @@ func (o *Entry) Author(mods ...qm.QueryMod) userQuery {
 	return query
 }
 
-// LoadBlog allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular bool, maybeEntry interface{}, mods queries.Applicator) error {
-	var slice []*Entry
-	var object *Entry
-
-	if singular {
-		object = maybeEntry.(*Entry)
-	} else {
-		slice = *maybeEntry.(*[]*Entry)
+// Blog pointed to by the foreign key.
+func (o *Entry) Blog(mods ...qm.QueryMod) blogQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.BlogID),
 	}
 
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &entryR{}
-		}
-		args = append(args, object.BlogID)
+	queryMods = append(queryMods, mods...)
 
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &entryR{}
-			}
+	query := Blogs(queryMods...)
+	queries.SetFrom(query.Query, "\"blogs\"")
 
-			for _, a := range args {
-				if a == obj.BlogID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.BlogID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(qm.From(`blogs`), qm.WhereIn(`id in ?`, args...))
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Blog")
-	}
-
-	var resultSlice []*Blog
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Blog")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for blogs")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for blogs")
-	}
-
-	if len(entryAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Blog = foreign
-		if foreign.R == nil {
-			foreign.R = &blogR{}
-		}
-		foreign.R.Entries = append(foreign.R.Entries, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.BlogID == foreign.ID {
-				local.R.Blog = foreign
-				if foreign.R == nil {
-					foreign.R = &blogR{}
-				}
-				foreign.R.Entries = append(foreign.R.Entries, local)
-				break
-			}
-		}
-	}
-
-	return nil
+	return query
 }
 
 // LoadAuthor allows an eager lookup of values, cached into the
@@ -633,48 +532,102 @@ func (entryL) LoadAuthor(ctx context.Context, e boil.ContextExecutor, singular b
 	return nil
 }
 
-// SetBlog of the entry to the related item.
-// Sets o.R.Blog to related.
-// Adds o to related.R.Entries.
-func (o *Entry) SetBlog(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Blog) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
-		}
-	}
+// LoadBlog allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (entryL) LoadBlog(ctx context.Context, e boil.ContextExecutor, singular bool, maybeEntry interface{}, mods queries.Applicator) error {
+	var slice []*Entry
+	var object *Entry
 
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"entries\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"blog_id"}),
-		strmangle.WhereClause("\"", "\"", 2, entryPrimaryKeyColumns),
-	)
-	values := []interface{}{related.ID, o.ID}
-
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, updateQuery)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.BlogID = related.ID
-	if o.R == nil {
-		o.R = &entryR{
-			Blog: related,
-		}
+	if singular {
+		object = maybeEntry.(*Entry)
 	} else {
-		o.R.Blog = related
+		slice = *maybeEntry.(*[]*Entry)
 	}
 
-	if related.R == nil {
-		related.R = &blogR{
-			Entries: EntrySlice{o},
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &entryR{}
 		}
+		args = append(args, object.BlogID)
+
 	} else {
-		related.R.Entries = append(related.R.Entries, o)
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &entryR{}
+			}
+
+			for _, a := range args {
+				if a == obj.BlogID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.BlogID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`blogs`), qm.WhereIn(`id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Blog")
+	}
+
+	var resultSlice []*Blog
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Blog")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for blogs")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for blogs")
+	}
+
+	if len(entryAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Blog = foreign
+		if foreign.R == nil {
+			foreign.R = &blogR{}
+		}
+		foreign.R.Entries = append(foreign.R.Entries, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.BlogID == foreign.ID {
+				local.R.Blog = foreign
+				if foreign.R == nil {
+					foreign.R = &blogR{}
+				}
+				foreign.R.Entries = append(foreign.R.Entries, local)
+				break
+			}
+		}
 	}
 
 	return nil
@@ -722,6 +675,53 @@ func (o *Entry) SetAuthor(ctx context.Context, exec boil.ContextExecutor, insert
 		}
 	} else {
 		related.R.AuthorEntries = append(related.R.AuthorEntries, o)
+	}
+
+	return nil
+}
+
+// SetBlog of the entry to the related item.
+// Sets o.R.Blog to related.
+// Adds o to related.R.Entries.
+func (o *Entry) SetBlog(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Blog) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"entries\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"blog_id"}),
+		strmangle.WhereClause("\"", "\"", 2, entryPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.BlogID = related.ID
+	if o.R == nil {
+		o.R = &entryR{
+			Blog: related,
+		}
+	} else {
+		o.R.Blog = related
+	}
+
+	if related.R == nil {
+		related.R = &blogR{
+			Entries: EntrySlice{o},
+		}
+	} else {
+		related.R.Entries = append(related.R.Entries, o)
 	}
 
 	return nil
