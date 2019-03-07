@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries"
 	"github.com/volatiletech/sqlboiler/queries/qm"
@@ -24,12 +23,12 @@ import (
 
 // GithubContributionDay is an object representing the database table.
 type GithubContributionDay struct {
-	ID        int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Count     int        `boil:"count" json:"count" toml:"count" yaml:"count"`
-	Date      time.Time  `boil:"date" json:"date" toml:"date" yaml:"date"`
-	UserID    null.Int64 `boil:"user_id" json:"user_id,omitempty" toml:"user_id" yaml:"user_id,omitempty"`
-	CreatedAt time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time  `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Count     int       `boil:"count" json:"count" toml:"count" yaml:"count"`
+	Date      time.Time `boil:"date" json:"date" toml:"date" yaml:"date"`
+	UserID    int64     `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *githubContributionDayR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L githubContributionDayL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -62,41 +61,18 @@ func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, 
 func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
 func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
 
-type whereHelpernull_Int64 struct{ field string }
-
-func (w whereHelpernull_Int64) EQ(x null.Int64) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, false, x)
-}
-func (w whereHelpernull_Int64) NEQ(x null.Int64) qm.QueryMod {
-	return qmhelper.WhereNullEQ(w.field, true, x)
-}
-func (w whereHelpernull_Int64) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_Int64) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
-func (w whereHelpernull_Int64) LT(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpernull_Int64) LTE(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpernull_Int64) GT(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpernull_Int64) GTE(x null.Int64) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
-
 var GithubContributionDayWhere = struct {
 	ID        whereHelperint64
 	Count     whereHelperint
 	Date      whereHelpertime_Time
-	UserID    whereHelpernull_Int64
+	UserID    whereHelperint64
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint64{field: `id`},
 	Count:     whereHelperint{field: `count`},
 	Date:      whereHelpertime_Time{field: `date`},
-	UserID:    whereHelpernull_Int64{field: `user_id`},
+	UserID:    whereHelperint64{field: `user_id`},
 	CreatedAt: whereHelpertime_Time{field: `created_at`},
 	UpdatedAt: whereHelpertime_Time{field: `updated_at`},
 }
@@ -434,9 +410,7 @@ func (githubContributionDayL) LoadUser(ctx context.Context, e boil.ContextExecut
 		if object.R == nil {
 			object.R = &githubContributionDayR{}
 		}
-		if !queries.IsNil(object.UserID) {
-			args = append(args, object.UserID)
-		}
+		args = append(args, object.UserID)
 
 	} else {
 	Outer:
@@ -446,14 +420,12 @@ func (githubContributionDayL) LoadUser(ctx context.Context, e boil.ContextExecut
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.UserID) {
+				if a == obj.UserID {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.UserID) {
-				args = append(args, obj.UserID)
-			}
+			args = append(args, obj.UserID)
 
 		}
 	}
@@ -508,7 +480,7 @@ func (githubContributionDayL) LoadUser(ctx context.Context, e boil.ContextExecut
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.UserID, foreign.ID) {
+			if local.UserID == foreign.ID {
 				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
@@ -549,7 +521,7 @@ func (o *GithubContributionDay) SetUser(ctx context.Context, exec boil.ContextEx
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.UserID, related.ID)
+	o.UserID = related.ID
 	if o.R == nil {
 		o.R = &githubContributionDayR{
 			User: related,
@@ -566,37 +538,6 @@ func (o *GithubContributionDay) SetUser(ctx context.Context, exec boil.ContextEx
 		related.R.GithubContributionDays = append(related.R.GithubContributionDays, o)
 	}
 
-	return nil
-}
-
-// RemoveUser relationship.
-// Sets o.R.User to nil.
-// Removes o from all passed in related items' relationships struct (Optional).
-func (o *GithubContributionDay) RemoveUser(ctx context.Context, exec boil.ContextExecutor, related *User) error {
-	var err error
-
-	queries.SetScanner(&o.UserID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.R.User = nil
-	if related == nil || related.R == nil {
-		return nil
-	}
-
-	for i, ri := range related.R.GithubContributionDays {
-		if queries.Equal(o.UserID, ri.UserID) {
-			continue
-		}
-
-		ln := len(related.R.GithubContributionDays)
-		if ln > 1 && i < ln-1 {
-			related.R.GithubContributionDays[i] = related.R.GithubContributionDays[ln-1]
-		}
-		related.R.GithubContributionDays = related.R.GithubContributionDays[:ln-1]
-		break
-	}
 	return nil
 }
 

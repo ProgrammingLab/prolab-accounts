@@ -197,7 +197,6 @@ func TestToOneSet(t *testing.T) {
 // TestToOneRemove tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneRemove(t *testing.T) {
-	t.Run("GithubContributionDayToUserUsingGithubContributionDays", testGithubContributionDayToOneRemoveOpUserUsingUser)
 	t.Run("ProfileToDepartmentUsingProfiles", testProfileToOneRemoveOpDepartmentUsingDepartment)
 	t.Run("ProfileToRoleUsingProfiles", testProfileToOneRemoveOpRoleUsingRole)
 	t.Run("UserToProfileUsingUsers", testUserToOneRemoveOpProfileUsingProfile)
@@ -230,7 +229,6 @@ func TestToManySet(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManySetOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManySetOpUsers)
 	t.Run("RoleToProfiles", testRoleToManySetOpProfiles)
-	t.Run("UserToGithubContributionDays", testUserToManySetOpGithubContributionDays)
 }
 
 // TestToManyRemove tests cannot be run in parallel
@@ -239,7 +237,6 @@ func TestToManyRemove(t *testing.T) {
 	t.Run("DepartmentToProfiles", testDepartmentToManyRemoveOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyRemoveOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyRemoveOpProfiles)
-	t.Run("UserToGithubContributionDays", testUserToManyRemoveOpGithubContributionDays)
 }
 
 func TestReload(t *testing.T) {

@@ -822,7 +822,7 @@ func (userL) LoadGithubContributionDays(ctx context.Context, e boil.ContextExecu
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.ID) {
+				if a == obj.ID {
 					continue Outer
 				}
 			}
@@ -877,7 +877,7 @@ func (userL) LoadGithubContributionDays(ctx context.Context, e boil.ContextExecu
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.UserID) {
+			if local.ID == foreign.UserID {
 				local.R.GithubContributionDays = append(local.R.GithubContributionDays, foreign)
 				if foreign.R == nil {
 					foreign.R = &githubContributionDayR{}
@@ -1178,7 +1178,7 @@ func (o *User) AddGithubContributionDays(ctx context.Context, exec boil.ContextE
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
@@ -1199,7 +1199,7 @@ func (o *User) AddGithubContributionDays(ctx context.Context, exec boil.ContextE
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.UserID, o.ID)
+			rel.UserID = o.ID
 		}
 	}
 
@@ -1220,76 +1220,6 @@ func (o *User) AddGithubContributionDays(ctx context.Context, exec boil.ContextE
 			rel.R.User = o
 		}
 	}
-	return nil
-}
-
-// SetGithubContributionDays removes all previously related items of the
-// user replacing them completely with the passed
-// in related items, optionally inserting them as new records.
-// Sets o.R.User's GithubContributionDays accordingly.
-// Replaces o.R.GithubContributionDays with related.
-// Sets related.R.User's GithubContributionDays accordingly.
-func (o *User) SetGithubContributionDays(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*GithubContributionDay) error {
-	query := "update \"github_contribution_days\" set \"user_id\" = null where \"user_id\" = $1"
-	values := []interface{}{o.ID}
-	if boil.DebugMode {
-		fmt.Fprintln(boil.DebugWriter, query)
-		fmt.Fprintln(boil.DebugWriter, values)
-	}
-
-	_, err := exec.ExecContext(ctx, query, values...)
-	if err != nil {
-		return errors.Wrap(err, "failed to remove relationships before set")
-	}
-
-	if o.R != nil {
-		for _, rel := range o.R.GithubContributionDays {
-			queries.SetScanner(&rel.UserID, nil)
-			if rel.R == nil {
-				continue
-			}
-
-			rel.R.User = nil
-		}
-
-		o.R.GithubContributionDays = nil
-	}
-	return o.AddGithubContributionDays(ctx, exec, insert, related...)
-}
-
-// RemoveGithubContributionDays relationships from objects passed in.
-// Removes related items from R.GithubContributionDays (uses pointer comparison, removal does not keep order)
-// Sets related.R.User.
-func (o *User) RemoveGithubContributionDays(ctx context.Context, exec boil.ContextExecutor, related ...*GithubContributionDay) error {
-	var err error
-	for _, rel := range related {
-		queries.SetScanner(&rel.UserID, nil)
-		if rel.R != nil {
-			rel.R.User = nil
-		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
-			return err
-		}
-	}
-	if o.R == nil {
-		return nil
-	}
-
-	for _, rel := range related {
-		for i, ri := range o.R.GithubContributionDays {
-			if rel != ri {
-				continue
-			}
-
-			ln := len(o.R.GithubContributionDays)
-			if ln > 1 && i < ln-1 {
-				o.R.GithubContributionDays[i] = o.R.GithubContributionDays[ln-1]
-			}
-			o.R.GithubContributionDays = o.R.GithubContributionDays[:ln-1]
-			break
-		}
-	}
-
 	return nil
 }
 
