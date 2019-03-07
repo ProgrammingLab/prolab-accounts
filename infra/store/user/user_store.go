@@ -130,7 +130,8 @@ func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u 
 		return nil, errors.WithStack(err)
 	}
 	defer func() {
-		if err = util.ErrorFromRecover(recover()); err != nil {
+		if e := util.ErrorFromRecover(recover()); e != nil {
+			err = e
 			_ = tx.Rollback()
 		}
 	}()
