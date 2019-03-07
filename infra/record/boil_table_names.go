@@ -4,19 +4,21 @@
 package record
 
 var TableNames = struct {
-	Blogs       string
-	Departments string
-	Entries     string
-	Invitations string
-	Profiles    string
-	Roles       string
-	Users       string
+	Blogs                  string
+	Departments            string
+	Entries                string
+	GithubContributionDays string
+	Invitations            string
+	Profiles               string
+	Roles                  string
+	Users                  string
 }{
-	Blogs:       "blogs",
-	Departments: "departments",
-	Entries:     "entries",
-	Invitations: "invitations",
-	Profiles:    "profiles",
-	Roles:       "roles",
-	Users:       "users",
+	Blogs:                  "blogs",
+	Departments:            "departments",
+	Entries:                "entries",
+	GithubContributionDays: "github_contribution_days",
+	Invitations:            "invitations",
+	Profiles:               "profiles",
+	Roles:                  "roles",
+	Users:                  "users",
 }

@@ -91,23 +91,26 @@ var UserWhere = struct {
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-	Profile            string
-	Blogs              string
-	AuthorEntries      string
-	InviterInvitations string
+	Profile                string
+	Blogs                  string
+	AuthorEntries          string
+	GithubContributionDays string
+	InviterInvitations     string
 }{
-	Profile:            "Profile",
-	Blogs:              "Blogs",
-	AuthorEntries:      "AuthorEntries",
-	InviterInvitations: "InviterInvitations",
+	Profile:                "Profile",
+	Blogs:                  "Blogs",
+	AuthorEntries:          "AuthorEntries",
+	GithubContributionDays: "GithubContributionDays",
+	InviterInvitations:     "InviterInvitations",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	Profile            *Profile
-	Blogs              BlogSlice
-	AuthorEntries      EntrySlice
-	InviterInvitations InvitationSlice
+	Profile                *Profile
+	Blogs                  BlogSlice
+	AuthorEntries          EntrySlice
+	GithubContributionDays GithubContributionDaySlice
+	InviterInvitations     InvitationSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -456,6 +459,27 @@ func (o *User) AuthorEntries(mods ...qm.QueryMod) entryQuery {
 	return query
 }
 
+// GithubContributionDays retrieves all the github_contribution_day's GithubContributionDays with an executor.
+func (o *User) GithubContributionDays(mods ...qm.QueryMod) githubContributionDayQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"github_contribution_days\".\"user_id\"=?", o.ID),
+	)
+
+	query := GithubContributionDays(queryMods...)
+	queries.SetFrom(query.Query, "\"github_contribution_days\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"github_contribution_days\".*"})
+	}
+
+	return query
+}
+
 // InviterInvitations retrieves all the invitation's Invitations with an executor via inviter_id column.
 func (o *User) InviterInvitations(mods ...qm.QueryMod) invitationQuery {
 	var queryMods []qm.QueryMod
@@ -772,6 +796,101 @@ func (userL) LoadAuthorEntries(ctx context.Context, e boil.ContextExecutor, sing
 	return nil
 }
 
+// LoadGithubContributionDays allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadGithubContributionDays(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.ID) {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`github_contribution_days`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load github_contribution_days")
+	}
+
+	var resultSlice []*GithubContributionDay
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice github_contribution_days")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on github_contribution_days")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for github_contribution_days")
+	}
+
+	if len(githubContributionDayAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.GithubContributionDays = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &githubContributionDayR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if queries.Equal(local.ID, foreign.UserID) {
+				local.R.GithubContributionDays = append(local.R.GithubContributionDays, foreign)
+				if foreign.R == nil {
+					foreign.R = &githubContributionDayR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // LoadInviterInvitations allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
 func (userL) LoadInviterInvitations(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
@@ -1048,6 +1167,129 @@ func (o *User) AddAuthorEntries(ctx context.Context, exec boil.ContextExecutor, 
 			rel.R.Author = o
 		}
 	}
+	return nil
+}
+
+// AddGithubContributionDays adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.GithubContributionDays.
+// Sets related.R.User appropriately.
+func (o *User) AddGithubContributionDays(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*GithubContributionDay) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			queries.Assign(&rel.UserID, o.ID)
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"github_contribution_days\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+				strmangle.WhereClause("\"", "\"", 2, githubContributionDayPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			queries.Assign(&rel.UserID, o.ID)
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			GithubContributionDays: related,
+		}
+	} else {
+		o.R.GithubContributionDays = append(o.R.GithubContributionDays, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &githubContributionDayR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
+	return nil
+}
+
+// SetGithubContributionDays removes all previously related items of the
+// user replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.User's GithubContributionDays accordingly.
+// Replaces o.R.GithubContributionDays with related.
+// Sets related.R.User's GithubContributionDays accordingly.
+func (o *User) SetGithubContributionDays(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*GithubContributionDay) error {
+	query := "update \"github_contribution_days\" set \"user_id\" = null where \"user_id\" = $1"
+	values := []interface{}{o.ID}
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, query)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	if o.R != nil {
+		for _, rel := range o.R.GithubContributionDays {
+			queries.SetScanner(&rel.UserID, nil)
+			if rel.R == nil {
+				continue
+			}
+
+			rel.R.User = nil
+		}
+
+		o.R.GithubContributionDays = nil
+	}
+	return o.AddGithubContributionDays(ctx, exec, insert, related...)
+}
+
+// RemoveGithubContributionDays relationships from objects passed in.
+// Removes related items from R.GithubContributionDays (uses pointer comparison, removal does not keep order)
+// Sets related.R.User.
+func (o *User) RemoveGithubContributionDays(ctx context.Context, exec boil.ContextExecutor, related ...*GithubContributionDay) error {
+	var err error
+	for _, rel := range related {
+		queries.SetScanner(&rel.UserID, nil)
+		if rel.R != nil {
+			rel.R.User = nil
+		}
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("user_id")); err != nil {
+			return err
+		}
+	}
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.GithubContributionDays {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.GithubContributionDays)
+			if ln > 1 && i < ln-1 {
+				o.R.GithubContributionDays[i] = o.R.GithubContributionDays[ln-1]
+			}
+			o.R.GithubContributionDays = o.R.GithubContributionDays[:ln-1]
+			break
+		}
+	}
+
 	return nil
 }
 
