@@ -2,21 +2,21 @@ package departmentstore
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 type departmentStoreImpl struct {
 	ctx context.Context
-	db  *sql.DB
+	db  *sqlutil.DB
 }
 
 // NewDepartmentStore returns new entry department store
-func NewDepartmentStore(ctx context.Context, db *sql.DB) store.DepartmentStore {
+func NewDepartmentStore(ctx context.Context, db *sqlutil.DB) store.DepartmentStore {
 	return &departmentStoreImpl{
 		ctx: ctx,
 		db:  db,

@@ -15,12 +15,13 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 type sessionStoreImpl struct {
 	ctx    context.Context
 	client *redis.Client
-	db     *sql.DB
+	db     *sqlutil.DB
 }
 
 const (
@@ -29,7 +30,7 @@ const (
 )
 
 // NewSessionStore returns new session store
-func NewSessionStore(ctx context.Context, cli *redis.Client, db *sql.DB) store.SessionStore {
+func NewSessionStore(ctx context.Context, cli *redis.Client, db *sqlutil.DB) store.SessionStore {
 	return &sessionStoreImpl{
 		ctx:    ctx,
 		client: cli,

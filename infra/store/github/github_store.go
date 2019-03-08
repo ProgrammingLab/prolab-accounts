@@ -24,10 +24,10 @@ type githubStoreImpl struct {
 }
 
 // NewGitHubStore returns new github store
-func NewGitHubStore(ctx context.Context, db *sql.DB, cli *redis.Client) store.GitHubStore {
+func NewGitHubStore(ctx context.Context, db *sqlutil.DB, cli *redis.Client) store.GitHubStore {
 	return &githubStoreImpl{
 		ctx: ctx,
-		db:  sqlutil.New(db),
+		db:  db,
 		cli: cli,
 	}
 }

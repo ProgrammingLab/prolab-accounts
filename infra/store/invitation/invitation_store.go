@@ -14,15 +14,16 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 type invitationStoreImpl struct {
 	ctx context.Context
-	db  *sql.DB
+	db  *sqlutil.DB
 }
 
 // NewInvitationStore returns new invitation store
-func NewInvitationStore(ctx context.Context, db *sql.DB) store.InvitationStore {
+func NewInvitationStore(ctx context.Context, db *sqlutil.DB) store.InvitationStore {
 	return &invitationStoreImpl{
 		ctx: ctx,
 		db:  db,
