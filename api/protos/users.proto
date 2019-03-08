@@ -28,6 +28,11 @@ service UserService {
       get: "/users/{user_name}"
     };
   }
+  rpc UpdateUserRole (UpdateRoleRequest) returns (User) {
+    option (google.api.http) = {
+      put: "/admin/users/{user_name}/role"
+    };
+  }
   rpc CreateUser (CreateUserRequest) returns (User) {
     option (google.api.http) = {
       post: "/users"
@@ -92,6 +97,11 @@ message ListUsersResponse {
 
 message GetUserRequest {
   string user_name = 1;
+}
+
+message UpdateRoleRequest {
+  string user_name = 1;
+  uint32 role_id = 2;
 }
 
 message CreateUserRequest {

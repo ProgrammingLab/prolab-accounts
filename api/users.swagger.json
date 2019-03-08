@@ -15,6 +15,30 @@
     "application/json"
   ],
   "paths": {
+    "/admin/users/{user_name}/role": {
+      "put": {
+        "operationId": "UpdateUserRole",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/private/users": {
       "get": {
         "operationId": "ListPrivateUsers",
