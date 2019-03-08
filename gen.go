@@ -2,4 +2,4 @@ package accounts
 
 //go:generate gex --build
 //go:generate gex sqlboiler psql
-//go:generate packr2
+//go:generate gex packr2
