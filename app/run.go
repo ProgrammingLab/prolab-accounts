@@ -61,6 +61,7 @@ func Run() error {
 			server.NewRoleServiceServer(store),
 			server.NewDepartmentServiceServer(store),
 			server.NewInvitationServiceServer(store, cli),
+			server.NewContributionConllectionServiceServer(store),
 		),
 	)
 

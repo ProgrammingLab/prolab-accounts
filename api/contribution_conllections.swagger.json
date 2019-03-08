@@ -1,0 +1,170 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "contribution_conllections.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/contribution_conllections": {
+      "get": {
+        "operationId": "ListContributionConllections",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListContributionConllectionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "users_count",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "ContributionConllectionService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsContributionConllection": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/prolab_accountsUser"
+        },
+        "total_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsContributionDay"
+          }
+        }
+      }
+    },
+    "prolab_accountsContributionDay": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "prolab_accountsDepartment": {
+      "type": "object",
+      "properties": {
+        "department_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsListContributionConllectionsResponse": {
+      "type": "object",
+      "properties": {
+        "contribution_conllections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsContributionConllection"
+          }
+        }
+      }
+    },
+    "prolab_accountsProfileScope": {
+      "type": "string",
+      "enum": [
+        "MEMBERS_ONLY",
+        "PUBLIC"
+      ],
+      "default": "MEMBERS_ONLY"
+    },
+    "prolab_accountsRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsUser": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "icon_url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "role": {
+          "$ref": "#/definitions/prolab_accountsRole"
+        },
+        "twitter_screen_name": {
+          "type": "string"
+        },
+        "github_user_name": {
+          "type": "string"
+        },
+        "department": {
+          "$ref": "#/definitions/prolab_accountsDepartment"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
+        }
+      }
+    }
+  }
+}
