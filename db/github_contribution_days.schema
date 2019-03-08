@@ -1,0 +1,8 @@
+create_table :github_contribution_days, force: :cascade do |t|
+  t.integer :count, null: false
+  t.date :date, null: false
+  t.references :user, foreign_key: true, null: false
+  t.timestamps
+end
+
+add_foreign_key :github_contribution_days, :users

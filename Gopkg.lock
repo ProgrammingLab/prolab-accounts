@@ -647,6 +647,26 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:c69eea49213a8eb18fc63b71e842bcf859fb2f42752acb4c69cd1dad76cee9ad"
+  name = "github.com/shurcooL/githubv4"
+  packages = ["."]
+  pruneopts = ""
+  revision = "d9689b59501712371c702f54e9573531888d52fe"
+
+[[projects]]
+  branch = "master"
+  digest = "1:78e45028a7525b961abef663e19f631dd179fde7e11c7c6eeb57a778e490c916"
+  name = "github.com/shurcooL/graphql"
+  packages = [
+    ".",
+    "ident",
+    "internal/jsonutil",
+  ]
+  pruneopts = ""
+  revision = "d48a9a75455f6af30244670bc0c9d0e38e7392b5"
+
+[[projects]]
+  branch = "master"
   digest = "1:c756d63fd19d7a0addad30ecb77014fbe82b428c34bdd4142177d0a3d8e77095"
   name = "github.com/shurcooL/httpfs"
   packages = ["vfsutil"]
@@ -1089,6 +1109,7 @@
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
+    "github.com/shurcooL/githubv4",
     "github.com/spf13/viper",
     "github.com/volatiletech/null",
     "github.com/volatiletech/sqlboiler",
@@ -1104,6 +1125,7 @@
     "golang.org/x/crypto/bcrypt",
     "golang.org/x/crypto/ssh/terminal",
     "golang.org/x/net/context",
+    "golang.org/x/oauth2",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",

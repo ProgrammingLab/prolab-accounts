@@ -14,6 +14,7 @@ import (
 	departmentstore "github.com/ProgrammingLab/prolab-accounts/infra/store/department"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
+	githubstore "github.com/ProgrammingLab/prolab-accounts/infra/store/github"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	invitationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/invitation"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
@@ -21,6 +22,7 @@ import (
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
 	userblogstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user_blog"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 // StoreComponent is an interface of stores
@@ -35,6 +37,7 @@ type StoreComponent interface {
 	HeartbeatStore(ctx context.Context) store.HeartbeatStore
 	DepartmentStore(ctx context.Context) store.DepartmentStore
 	InvitationStore(ctx context.Context) store.InvitationStore
+	GitHubStore(ctx context.Context) store.GitHubStore
 }
 
 // NewStoreComponent returns new store component
@@ -55,7 +58,7 @@ func NewStoreComponent(cfg *config.Config) (StoreComponent, error) {
 	}
 
 	return &storeComponentImpl{
-		db:       db,
+		db:       sqlutil.New(db),
 		client:   cli,
 		minioCli: min,
 		cfg:      cfg,
@@ -130,7 +133,7 @@ func connectMinio(cfg *config.Config) (*minio.Client, error) {
 }
 
 type storeComponentImpl struct {
-	db       *sql.DB
+	db       *sqlutil.DB
 	client   *redis.Client
 	minioCli *minio.Client
 	cfg      *config.Config
@@ -174,4 +177,8 @@ func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.Heartbeat
 
 func (s *storeComponentImpl) InvitationStore(ctx context.Context) store.InvitationStore {
 	return invitationstore.NewInvitationStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) GitHubStore(ctx context.Context) store.GitHubStore {
+	return githubstore.NewGitHubStore(ctx, s.db, s.client)
 }

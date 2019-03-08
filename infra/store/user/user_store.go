@@ -17,21 +17,21 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
-	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 type userStoreImpl struct {
 	ctx        context.Context
-	db         *sql.DB
+	db         *sqlutil.DB
 	cli        *minio.Client
 	bucketName string
 }
 
 // NewUserStore returns new user store
-func NewUserStore(ctx context.Context, db *sql.DB, cli *minio.Client, bucket string) store.UserStore {
+func NewUserStore(ctx context.Context, db *sqlutil.DB, cli *minio.Client, bucket string) store.UserStore {
 	return &userStoreImpl{
 		ctx:        ctx,
 		db:         db,
@@ -124,33 +124,21 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 	return u[:limit], model.UserID(u[limit].ID), nil
 }
 
-func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (u *record.User, err error) {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	defer func() {
-		if err = util.ErrorFromRecover(recover()); err != nil {
-			_ = tx.Rollback()
+func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (*record.User, error) {
+	var u *record.User
+	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
+		var err error
+		u, err = record.FindUser(s.ctx, tx, int64(userID))
+		if err != nil {
+			return errors.WithStack(err)
 		}
-	}()
-	u, err = record.FindUser(s.ctx, tx, int64(userID))
-	if err != nil {
-		_ = tx.Rollback()
-		return nil, errors.WithStack(err)
-	}
 
-	u.FullName = fullName
-	_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
+		u.FullName = fullName
+		_, err = u.Update(s.ctx, tx, boil.Whitelist(record.UserColumns.FullName, record.UserColumns.UpdatedAt))
+		return errors.WithStack(err)
+	})
 	if err != nil {
-		_ = tx.Rollback()
-		return nil, errors.WithStack(err)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		_ = tx.Rollback()
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 
 	return u, nil

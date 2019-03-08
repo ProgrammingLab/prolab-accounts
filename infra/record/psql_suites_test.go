@@ -12,6 +12,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Entries", testEntriesUpsert)
 
+	t.Run("GithubContributionDays", testGithubContributionDaysUpsert)
+
 	t.Run("Invitations", testInvitationsUpsert)
 
 	t.Run("Profiles", testProfilesUpsert)
