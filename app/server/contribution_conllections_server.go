@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"google.golang.org/grpc/grpclog"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -32,10 +31,17 @@ type contributionConllectionServiceServerImpl struct {
 	cfg *config.Config
 }
 
+const (
+	defaultContributionConllectionsLimit = 10
+)
+
 func (s *contributionConllectionServiceServerImpl) ListContributionConllections(ctx context.Context, req *api_pb.ListContributionConllectionsRequest) (*api_pb.ListContributionConllectionsResponse, error) {
 	gs := s.GitHubStore(ctx)
-	grpclog.Info(req.GetUsersCount())
-	cols, err := gs.ListContributionCollections(int(req.GetUsersCount()))
+	limit := req.GetUsersCount()
+	if limit == 0 {
+		limit = defaultContributionConllectionsLimit
+	}
+	cols, err := gs.ListContributionCollections(int(limit))
 	if err != nil {
 		return nil, err
 	}
