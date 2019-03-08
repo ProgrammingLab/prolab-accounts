@@ -67,6 +67,8 @@ func githubJob(ctx context.Context, store di.StoreComponent, cfg *config.Config)
 			if err != nil {
 				return err
 			}
+
+			time.Sleep(500 * time.Millisecond)
 		}
 	}
 

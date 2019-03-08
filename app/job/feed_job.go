@@ -37,7 +37,7 @@ func feedJob(ctx context.Context, store di.StoreComponent, cfg *config.Config) e
 			grpclog.Infof("feed job: created %v entries", n)
 		}
 
-		<-time.After(100 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 
 	return nil
