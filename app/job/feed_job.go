@@ -6,10 +6,11 @@ import (
 
 	"google.golang.org/grpc/grpclog"
 
+	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
-func feedJob(ctx context.Context, store di.StoreComponent, debug bool) error {
+func feedJob(ctx context.Context, store di.StoreComponent, cfg *config.Config) error {
 	bs := store.UserBlogStore(ctx)
 	blogs, err := bs.ListUserBlogs()
 	if err != nil {
@@ -32,7 +33,7 @@ func feedJob(ctx context.Context, store di.StoreComponent, debug bool) error {
 		if err != nil {
 			return err
 		}
-		if debug {
+		if cfg.DebugLog {
 			grpclog.Infof("feed job: created %v entries", n)
 		}
 

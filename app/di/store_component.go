@@ -14,6 +14,7 @@ import (
 	departmentstore "github.com/ProgrammingLab/prolab-accounts/infra/store/department"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
+	githubstore "github.com/ProgrammingLab/prolab-accounts/infra/store/github"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	invitationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/invitation"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
@@ -35,6 +36,7 @@ type StoreComponent interface {
 	HeartbeatStore(ctx context.Context) store.HeartbeatStore
 	DepartmentStore(ctx context.Context) store.DepartmentStore
 	InvitationStore(ctx context.Context) store.InvitationStore
+	GitHubStore(ctx context.Context) store.GitHubStore
 }
 
 // NewStoreComponent returns new store component
@@ -174,4 +176,8 @@ func (s *storeComponentImpl) HeartbeatStore(ctx context.Context) store.Heartbeat
 
 func (s *storeComponentImpl) InvitationStore(ctx context.Context) store.InvitationStore {
 	return invitationstore.NewInvitationStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) GitHubStore(ctx context.Context) store.GitHubStore {
+	return githubstore.NewGitHubStore(ctx, s.db, s.client)
 }

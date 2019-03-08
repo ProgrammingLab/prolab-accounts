@@ -22,6 +22,7 @@ type Config struct {
 	ClientRegistrationURL string `envconfig:"client_registration_url" required:"true"`
 	SMTPAddr              string `envconfig:"smtp_addr" required:"true"`
 	EmailFrom             string `envconfig:"email_from" required:"true"`
+	GitHubAccessToken     string `envconfig:"github_access_token" required:"true"`
 }
 
 // LoadConfig loads config

@@ -16,12 +16,13 @@ var (
 	stop    = make(chan struct{})
 	jobs    = []Job{
 		feedJob,
+		githubJob,
 		heartbeatJob,
 	}
 )
 
 // Job represents job for worker
-type Job func(ctx context.Context, store di.StoreComponent, debug bool) error
+type Job func(ctx context.Context, store di.StoreComponent, cfg *config.Config) error
 
 // Start starts the worker
 func Start(store di.StoreComponent, cfg *config.Config) {
@@ -58,7 +59,7 @@ func run(store di.StoreComponent, cfg *config.Config) {
 		select {
 		case <-time.After(interval):
 			for _, j := range jobs {
-				err := j(context.Background(), store, cfg.DebugLog)
+				err := j(context.Background(), store, cfg)
 				if err != nil {
 					grpclog.Errorf("job error: %+v", err)
 				}
