@@ -32,7 +32,6 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *r
 		if profile.ID == 0 {
 			err := profile.Insert(s.ctx, tx, boil.Infer())
 			if err != nil {
-				_ = tx.Rollback()
 				return errors.WithStack(err)
 			}
 			u := record.User{
@@ -41,13 +40,11 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *r
 			}
 			_, err = u.Update(s.ctx, tx, boil.Whitelist("profile_id", "updated_at"))
 			if err != nil {
-				_ = tx.Rollback()
 				return errors.WithStack(err)
 			}
 		} else {
 			_, err := profile.Update(s.ctx, tx, boil.Infer())
 			if err != nil {
-				_ = tx.Rollback()
 				return errors.WithStack(err)
 			}
 		}
