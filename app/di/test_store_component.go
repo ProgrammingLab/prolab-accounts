@@ -10,6 +10,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 // MustCreateTestStoreComponent creates test store component or exits
@@ -20,7 +21,7 @@ func MustCreateTestStoreComponent(cfg *config.Config) *TestStoreComponent {
 
 	return &TestStoreComponent{
 		storeComponentImpl: &storeComponentImpl{
-			db:  db,
+			db:  sqlutil.New(db),
 			cfg: cfg,
 		},
 	}

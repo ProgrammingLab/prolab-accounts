@@ -13,19 +13,19 @@ import (
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
-	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 type entryStoreImpl struct {
 	ctx context.Context
-	db  *sql.DB
+	db  *sqlutil.DB
 }
 
 // NewEntryStore returns new entry blog store
-func NewEntryStore(ctx context.Context, db *sql.DB) store.EntryStore {
+func NewEntryStore(ctx context.Context, db *sqlutil.DB) store.EntryStore {
 	return &entryStoreImpl{
 		ctx: ctx,
 		db:  db,
@@ -55,82 +55,71 @@ func (s *entryStoreImpl) ListPublicEntries(before time.Time, limit int) ([]*reco
 	return e[:limit], e[limit].PublishedAt, nil
 }
 
-func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (n int64, err error) {
+func (s *entryStoreImpl) CreateEntries(blog *record.Blog, feed *gofeed.Feed) (int64, error) {
 	rev := make([]*gofeed.Item, len(feed.Items))
 	for i, item := range feed.Items {
 		rev[len(rev)-1-i] = item
 	}
 	feed.Items = rev
 
-	tx, err := s.db.Begin()
-	if err != nil {
-		return 0, errors.WithStack(err)
-	}
-	defer func() {
-		if e := util.ErrorFromRecover(recover()); e != nil {
-			_ = tx.Rollback()
-			err = e
+	var n int64
+	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
+		mods := []qm.QueryMod{
+			qm.Select(record.EntryColumns.ID, record.EntryColumns.GUID),
+			qm.Where("blog_id = ?", blog.ID),
 		}
-	}()
-
-	mods := []qm.QueryMod{
-		qm.Select(record.EntryColumns.ID, record.EntryColumns.GUID),
-		qm.Where("blog_id = ?", blog.ID),
-	}
-	entries, err := record.Entries(mods...).All(s.ctx, tx)
-	if err != nil {
-		_ = tx.Rollback()
-		return 0, errors.WithStack(err)
-	}
-
-	exists := make(map[string]struct{})
-	for _, e := range entries {
-		exists[e.GUID] = struct{}{}
-	}
-
-	n = 0
-	for _, item := range feed.Items {
-		guid, err := getGUID(blog.ID, item.GUID)
+		entries, err := record.Entries(mods...).All(s.ctx, tx)
 		if err != nil {
-			_ = tx.Rollback()
-			return 0, err
+			return errors.WithStack(err)
 		}
 
-		_, ok := exists[guid]
-		if ok {
-			continue
+		exists := make(map[string]struct{})
+		for _, e := range entries {
+			exists[e.GUID] = struct{}{}
 		}
 
-		e := &record.Entry{
-			Title:       item.Title,
-			Description: item.Description,
-			Content:     item.Content,
-			Link:        item.Link,
-			AuthorID:    blog.UserID,
-			GUID:        guid,
-			BlogID:      blog.ID,
-		}
-		if i := item.Image; i != nil {
-			e.ImageURL = i.URL
-		}
-		if t := item.PublishedParsed; t == nil {
-			e.PublishedAt = time.Now().In(boil.GetLocation())
-		} else {
-			e.PublishedAt = t.In(boil.GetLocation())
+		n = 0
+		for _, item := range feed.Items {
+			guid, err := getGUID(blog.ID, item.GUID)
+			if err != nil {
+				return err
+			}
+
+			_, ok := exists[guid]
+			if ok {
+				continue
+			}
+
+			e := &record.Entry{
+				Title:       item.Title,
+				Description: item.Description,
+				Content:     item.Content,
+				Link:        item.Link,
+				AuthorID:    blog.UserID,
+				GUID:        guid,
+				BlogID:      blog.ID,
+			}
+			if i := item.Image; i != nil {
+				e.ImageURL = i.URL
+			}
+			if t := item.PublishedParsed; t == nil {
+				e.PublishedAt = time.Now().In(boil.GetLocation())
+			} else {
+				e.PublishedAt = t.In(boil.GetLocation())
+			}
+
+			err = e.Insert(s.ctx, tx, boil.Infer())
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			n++
 		}
 
-		err = e.Insert(s.ctx, tx, boil.Infer())
-		if err != nil {
-			_ = tx.Rollback()
-			return 0, errors.WithStack(err)
-		}
-		n++
-	}
+		return nil
+	})
 
-	err = tx.Commit()
 	if err != nil {
-		_ = tx.Rollback()
-		return 0, errors.WithStack(err)
+		return 0, err
 	}
 	return n, nil
 }

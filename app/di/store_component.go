@@ -22,6 +22,7 @@ import (
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
 	userstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user"
 	userblogstore "github.com/ProgrammingLab/prolab-accounts/infra/store/user_blog"
+	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
 // StoreComponent is an interface of stores
@@ -57,7 +58,7 @@ func NewStoreComponent(cfg *config.Config) (StoreComponent, error) {
 	}
 
 	return &storeComponentImpl{
-		db:       db,
+		db:       sqlutil.New(db),
 		client:   cli,
 		minioCli: min,
 		cfg:      cfg,
@@ -132,7 +133,7 @@ func connectMinio(cfg *config.Config) (*minio.Client, error) {
 }
 
 type storeComponentImpl struct {
-	db       *sql.DB
+	db       *sqlutil.DB
 	client   *redis.Client
 	minioCli *minio.Client
 	cfg      *config.Config
