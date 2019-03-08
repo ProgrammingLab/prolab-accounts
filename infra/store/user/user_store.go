@@ -105,10 +105,30 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
 		qm.Load("Profile.Department"),
-		qm.Select("profiles.*", s.selectQuery(model.Public)),
+		qm.Select("profiles.*"),
 		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
 		qm.Where("? <= users.id", minUserID),
 		qm.Where("profiles.profile_scope = ?", model.Public),
+		qm.Limit(limit + 1),
+		qm.OrderBy("users.id"),
+	}
+
+	u, err := record.Users(mods...).All(s.ctx, s.db)
+	if err != nil {
+		return nil, 0, errors.WithStack(err)
+	}
+
+	if len(u) <= limit {
+		return u, 0, nil
+	}
+	return u[:limit], model.UserID(u[limit].ID), nil
+}
+
+func (s *userStoreImpl) ListPrivateUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
+	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
+		qm.Where("? <= users.id", minUserID),
 		qm.Limit(limit + 1),
 		qm.OrderBy("users.id"),
 	}

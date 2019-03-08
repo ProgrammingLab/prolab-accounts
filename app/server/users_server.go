@@ -60,6 +60,19 @@ var (
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
+	return s.listUsers(ctx, req, false)
+}
+
+func (s *userServiceServerImpl) ListPrivateUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	return s.listUsers(ctx, req, true)
+}
+
+func (s *userServiceServerImpl) listUsers(ctx context.Context, req *api_pb.ListUsersRequest, includePrivateUsers bool) (*api_pb.ListUsersResponse, error) {
 	size := req.GetPageSize()
 	if size < 0 || 100 < size {
 		return nil, ErrPageSizeOutOfRange
@@ -69,7 +82,16 @@ func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb
 	}
 
 	us := s.UserStore(ctx)
-	u, next, err := us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+	var (
+		u    []*record.User
+		next model.UserID
+		err  error
+	)
+	if includePrivateUsers {
+		u, next, err = us.ListPrivateUsers(model.UserID(req.GetPageToken()), int(size))
+	} else {
+		u, next, err = us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+	}
 	if err != nil {
 		return nil, err
 	}
