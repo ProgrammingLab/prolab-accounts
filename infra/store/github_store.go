@@ -8,4 +8,5 @@ import (
 // GitHubStore provides github data
 type GitHubStore interface {
 	UpdateContributionDays(c *model.GitHubContributionCollection) ([]*record.GithubContributionDay, error)
+	ListContributionCollections(usersLimit int) ([]*model.GitHubContributionCollection, error)
 }
