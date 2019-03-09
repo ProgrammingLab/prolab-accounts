@@ -248,6 +248,8 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		TwitterScreenName: null.StringFrom(req.GetTwitterScreenName()),
 		GithubUserName:    null.StringFrom(req.GetGithubUserName()),
 		ProfileScope:      null.IntFrom(int(req.GetProfileScope())),
+		AtcoderUserName:   null.StringFrom(req.GetAtcoderUserName()),
+		DisplayName:       null.StringFrom(req.GetDisplayName()),
 	}
 	if id := req.GetRoleId(); id == 0 {
 		p.RoleID = null.NewInt64(0, false)
@@ -333,6 +335,8 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 		u.TwitterScreenName = p.TwitterScreenName.String
 		u.GithubUserName = p.GithubUserName.String
 		u.ProfileScope = profileScopeToResponse(model.ProfileScope(p.ProfileScope.Int))
+		u.AtcoderUserName = p.AtcoderUserName.String
+		u.DisplayName = p.DisplayName.String
 
 		if r := p.R; p.R != nil {
 			if role := r.Role; role != nil {

@@ -72,6 +72,7 @@ func (this *GetCurrentUserRequest) Validate() error {
 
 var _regex_UpdateUserProfileRequest_TwitterScreenName = regexp.MustCompile(`^[A-Za-z0-9_]{0,15}$`)
 var _regex_UpdateUserProfileRequest_GithubUserName = regexp.MustCompile(`^([a-z\d]+-)*[a-z\d]+$`)
+var _regex_UpdateUserProfileRequest_AtcoderUserName = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{2,15}$`)
 
 func (this *UpdateUserProfileRequest) Validate() error {
 	if !(len(this.FullName) < 128) {
@@ -97,6 +98,12 @@ func (this *UpdateUserProfileRequest) Validate() error {
 	}
 	if _, ok := ProfileScope_name[int32(this.ProfileScope)]; !ok {
 		return github_com_mwitkow_go_proto_validators.FieldError("ProfileScope", fmt.Errorf(`value '%v' must be a valid ProfileScope field`, this.ProfileScope))
+	}
+	if !_regex_UpdateUserProfileRequest_AtcoderUserName.MatchString(this.AtcoderUserName) {
+		return github_com_mwitkow_go_proto_validators.FieldError("AtcoderUserName", fmt.Errorf(`value '%v' must be a string conforming to regex "^[a-zA-Z][a-zA-Z0-9_]{2,15}$"`, this.AtcoderUserName))
+	}
+	if !(len(this.DisplayName) < 51) {
+		return github_com_mwitkow_go_proto_validators.FieldError("DisplayName", fmt.Errorf(`value '%v' must length be less than '51'`, this.DisplayName))
 	}
 	return nil
 }
