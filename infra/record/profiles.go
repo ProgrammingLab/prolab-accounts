@@ -35,6 +35,8 @@ type Profile struct {
 	TwitterScreenName null.String `boil:"twitter_screen_name" json:"twitter_screen_name,omitempty" toml:"twitter_screen_name" yaml:"twitter_screen_name,omitempty"`
 	GithubUserName    null.String `boil:"github_user_name" json:"github_user_name,omitempty" toml:"github_user_name" yaml:"github_user_name,omitempty"`
 	ProfileScope      null.Int    `boil:"profile_scope" json:"profile_scope,omitempty" toml:"profile_scope" yaml:"profile_scope,omitempty"`
+	DisplayName       null.String `boil:"display_name" json:"display_name,omitempty" toml:"display_name" yaml:"display_name,omitempty"`
+	AtcoderUserName   null.String `boil:"atcoder_user_name" json:"atcoder_user_name,omitempty" toml:"atcoder_user_name" yaml:"atcoder_user_name,omitempty"`
 
 	R *profileR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L profileL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -52,6 +54,8 @@ var ProfileColumns = struct {
 	TwitterScreenName string
 	GithubUserName    string
 	ProfileScope      string
+	DisplayName       string
+	AtcoderUserName   string
 }{
 	ID:                "id",
 	CreatedAt:         "created_at",
@@ -64,6 +68,8 @@ var ProfileColumns = struct {
 	TwitterScreenName: "twitter_screen_name",
 	GithubUserName:    "github_user_name",
 	ProfileScope:      "profile_scope",
+	DisplayName:       "display_name",
+	AtcoderUserName:   "atcoder_user_name",
 }
 
 // Generated where
@@ -158,6 +164,8 @@ var ProfileWhere = struct {
 	TwitterScreenName whereHelpernull_String
 	GithubUserName    whereHelpernull_String
 	ProfileScope      whereHelpernull_Int
+	DisplayName       whereHelpernull_String
+	AtcoderUserName   whereHelpernull_String
 }{
 	ID:                whereHelperint64{field: `id`},
 	CreatedAt:         whereHelpertime_Time{field: `created_at`},
@@ -170,6 +178,8 @@ var ProfileWhere = struct {
 	TwitterScreenName: whereHelpernull_String{field: `twitter_screen_name`},
 	GithubUserName:    whereHelpernull_String{field: `github_user_name`},
 	ProfileScope:      whereHelpernull_Int{field: `profile_scope`},
+	DisplayName:       whereHelpernull_String{field: `display_name`},
+	AtcoderUserName:   whereHelpernull_String{field: `atcoder_user_name`},
 }
 
 // ProfileRels is where relationship names are stored.
@@ -199,8 +209,8 @@ func (*profileR) NewStruct() *profileR {
 type profileL struct{}
 
 var (
-	profileColumns               = []string{"id", "created_at", "updated_at", "description", "grade", "left", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
-	profileColumnsWithoutDefault = []string{"created_at", "updated_at", "description", "grade", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope"}
+	profileColumns               = []string{"id", "created_at", "updated_at", "description", "grade", "left", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "display_name", "atcoder_user_name"}
+	profileColumnsWithoutDefault = []string{"created_at", "updated_at", "description", "grade", "department_id", "role_id", "twitter_screen_name", "github_user_name", "profile_scope", "display_name", "atcoder_user_name"}
 	profileColumnsWithDefault    = []string{"id", "left"}
 	profilePrimaryKeyColumns     = []string{"id"}
 )

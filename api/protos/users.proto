@@ -78,6 +78,8 @@ message User {
   string github_user_name = 13;
   Department department = 14;
   ProfileScope profile_scope = 15;
+  string atcoder_user_name = 16;
+  string display_name = 17;
 }
 
 enum ProfileScope {
@@ -124,6 +126,8 @@ message UpdateUserProfileRequest {
   string github_user_name = 7 [(validator.field) = {regex: "^([a-z\\d]+-)*[a-z\\d]+$", length_lt: 40}];
   uint32 department_id = 8;
   ProfileScope profile_scope = 9 [(validator.field) = {is_in_enum : true}];
+  string atcoder_user_name = 10 [(validator.field) = {regex: "^[a-zA-Z][a-zA-Z0-9_]{2,15}$"}];
+  string display_name = 11 [(validator.field) = {length_lt: 51}];
 }
 
 message UpdateUserIconRequest {

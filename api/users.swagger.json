@@ -380,6 +380,12 @@
         },
         "profile_scope": {
           "$ref": "#/definitions/prolab_accountsProfileScope"
+        },
+        "atcoder_user_name": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
         }
       }
     },
@@ -427,6 +433,12 @@
         },
         "profile_scope": {
           "$ref": "#/definitions/prolab_accountsProfileScope"
+        },
+        "atcoder_user_name": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
         }
       }
     },

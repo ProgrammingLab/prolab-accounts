@@ -1,5 +1,6 @@
 create_table :profiles, force: :cascade do |t|
   t.timestamps
+  t.string :display_name
   t.text :description, null: false
   t.integer :grade, null: false
   t.boolean :left, default: false, null: false
@@ -7,6 +8,7 @@ create_table :profiles, force: :cascade do |t|
   t.references :role, foreign_key: true
   t.string :twitter_screen_name
   t.string :github_user_name
+  t.string :atcoder_user_name
   t.integer :profile_scope, defualt: 0
 end
 

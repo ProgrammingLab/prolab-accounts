@@ -1216,7 +1216,7 @@ func testProfilesSelect(t *testing.T) {
 }
 
 var (
-	profileDBTypes = map[string]string{`ID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `Description`: `text`, `Grade`: `integer`, `Left`: `boolean`, `DepartmentID`: `bigint`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`, `GithubUserName`: `character varying`, `ProfileScope`: `integer`}
+	profileDBTypes = map[string]string{`ID`: `bigint`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `Description`: `text`, `Grade`: `integer`, `Left`: `boolean`, `DepartmentID`: `bigint`, `RoleID`: `bigint`, `TwitterScreenName`: `character varying`, `GithubUserName`: `character varying`, `ProfileScope`: `integer`, `DisplayName`: `character varying`, `AtcoderUserName`: `character varying`}
 	_              = bytes.MinRead
 )
 
