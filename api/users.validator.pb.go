@@ -48,6 +48,9 @@ func (this *ListUsersResponse) Validate() error {
 func (this *GetUserRequest) Validate() error {
 	return nil
 }
+func (this *UpdateRoleRequest) Validate() error {
+	return nil
+}
 
 var _regex_CreateUserRequest_Name = regexp.MustCompile(`^[A-Za-z0-9_]{1,20}$`)
 

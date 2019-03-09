@@ -18,9 +18,20 @@ service UserService {
       get: "/users"
     };
   }
+  rpc ListPrivateUsers (ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/private/users"
+    };
+  }
   rpc GetUser (GetUserRequest) returns (User) {
     option (google.api.http) = {
       get: "/users/{user_name}"
+    };
+  }
+  rpc UpdateUserRole (UpdateRoleRequest) returns (User) {
+    option (google.api.http) = {
+      put: "/admin/users/{user_name}/role"
+      body: "*"
     };
   }
   rpc CreateUser (CreateUserRequest) returns (User) {
@@ -77,6 +88,7 @@ enum ProfileScope {
 message ListUsersRequest {
   uint32 page_token = 1;
   int32 page_size = 2;
+  bool include_private_users = 3;
 }
 
 message ListUsersResponse {
@@ -86,6 +98,11 @@ message ListUsersResponse {
 
 message GetUserRequest {
   string user_name = 1;
+}
+
+message UpdateRoleRequest {
+  string user_name = 1;
+  uint32 role_id = 2;
 }
 
 message CreateUserRequest {

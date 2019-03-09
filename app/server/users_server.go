@@ -60,6 +60,19 @@ var (
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
+	return s.listUsers(ctx, req, false)
+}
+
+func (s *userServiceServerImpl) ListPrivateUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	return s.listUsers(ctx, req, true)
+}
+
+func (s *userServiceServerImpl) listUsers(ctx context.Context, req *api_pb.ListUsersRequest, includePrivateUsers bool) (*api_pb.ListUsersResponse, error) {
 	size := req.GetPageSize()
 	if size < 0 || 100 < size {
 		return nil, ErrPageSizeOutOfRange
@@ -69,7 +82,16 @@ func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb
 	}
 
 	us := s.UserStore(ctx)
-	u, next, err := us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+	var (
+		u    []*record.User
+		next model.UserID
+		err  error
+	)
+	if includePrivateUsers {
+		u, next, err = us.ListPrivateUsers(model.UserID(req.GetPageToken()), int(size))
+	} else {
+		u, next, err = us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -88,6 +110,51 @@ func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUser
 		if errors.Cause(err) == sql.ErrNoRows {
 			return nil, util.ErrNotFound
 		}
+		return nil, err
+	}
+
+	return userToResponse(u, false, s.cfg), nil
+}
+
+func (s *userServiceServerImpl) UpdateUserRole(ctx context.Context, req *api_pb.UpdateRoleRequest) (*api_pb.User, error) {
+	_, err := getAdmin(ctx, s)
+	if err != nil {
+		return nil, err
+	}
+
+	name := req.GetUserName()
+
+	us := s.UserStore(ctx)
+	u, err := us.GetUserByName(name)
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	var p *record.Profile
+	if r := u.R; r != nil {
+		p = r.Profile
+	}
+	if p == nil {
+		p = &record.Profile{}
+	}
+	roleID := int64(req.GetRoleId())
+	if roleID == 0 {
+		p.RoleID = null.Int64FromPtr(nil)
+	} else {
+		p.RoleID = null.Int64From(roleID)
+	}
+
+	ps := s.ProfileStore(ctx)
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err = us.GetUserWithPrivate(model.UserID(u.ID))
+	if err != nil {
 		return nil, err
 	}
 

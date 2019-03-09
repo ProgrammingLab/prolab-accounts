@@ -15,6 +15,77 @@
     "application/json"
   ],
   "paths": {
+    "/admin/users/{user_name}/role": {
+      "put": {
+        "operationId": "UpdateUserRole",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/private/users": {
+      "get": {
+        "operationId": "ListPrivateUsers",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListUsersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "include_private_users",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/user": {
       "get": {
         "operationId": "GetCurrentUser",
@@ -124,6 +195,13 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "include_private_users",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -245,6 +323,18 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "prolab_accountsUpdateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_name": {
+          "type": "string"
+        },
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
