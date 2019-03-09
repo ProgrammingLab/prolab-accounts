@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"google.golang.org/grpc/grpclog"
+
 	"github.com/pkg/errors"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -60,7 +62,8 @@ func githubJob(ctx context.Context, store di.StoreComponent, cfg *config.Config)
 			}
 			gu, err := getGitHubUser(ctx, cli, name.String, from, to)
 			if err != nil {
-				return err
+				grpclog.Errorf("github job: %v", err)
+				continue
 			}
 
 			err = storeGitHubContributions(ctx, store, u, gu)
