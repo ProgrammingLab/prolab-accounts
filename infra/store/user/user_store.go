@@ -109,7 +109,6 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
 		qm.Load("Profile.Department"),
-		qm.Select("profiles.*"),
 		qm.InnerJoin("profiles on profiles.id = users.profile_id"),
 		qm.Where("? <= users.id", minUserID),
 		qm.Where("profiles.profile_scope = ?", model.Public),

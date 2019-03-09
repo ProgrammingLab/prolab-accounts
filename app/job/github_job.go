@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
+	"google.golang.org/grpc/grpclog"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
@@ -60,7 +61,8 @@ func githubJob(ctx context.Context, store di.StoreComponent, cfg *config.Config)
 			}
 			gu, err := getGitHubUser(ctx, cli, name.String, from, to)
 			if err != nil {
-				return err
+				grpclog.Errorf("github job: %v", err)
+				continue
 			}
 
 			err = storeGitHubContributions(ctx, store, u, gu)
@@ -106,6 +108,10 @@ func storeGitHubContributions(ctx context.Context, store di.StoreComponent, user
 			}
 			days = append(days, gd)
 		}
+	}
+
+	if l := len(days); contributionsFromDay < l {
+		days = days[l-contributionsFromDay:]
 	}
 
 	c := &model.GitHubContributionCollection{
