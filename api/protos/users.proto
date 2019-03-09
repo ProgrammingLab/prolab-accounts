@@ -31,6 +31,7 @@ service UserService {
   rpc UpdateUserRole (UpdateRoleRequest) returns (User) {
     option (google.api.http) = {
       put: "/admin/users/{user_name}/role"
+      body: "*"
     };
   }
   rpc CreateUser (CreateUserRequest) returns (User) {

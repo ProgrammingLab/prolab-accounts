@@ -12,7 +12,6 @@ import (
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
-	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
 	"github.com/ProgrammingLab/prolab-accounts/app/util"
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/model"
@@ -43,7 +42,7 @@ type invitationServiceServerImpl struct {
 }
 
 func (s *invitationServiceServerImpl) ListInvitations(ctx context.Context, req *api_pb.ListInvitationsRequest) (*api_pb.ListInvitationsResponse, error) {
-	_, err := s.getAdmin(ctx)
+	_, err := getAdmin(ctx, s)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func (s *invitationServiceServerImpl) GetInvitation(ctx context.Context, req *ap
 }
 
 func (s *invitationServiceServerImpl) CreateInvitation(ctx context.Context, req *api_pb.CreateInvitationRequest) (*api_pb.Invitation, error) {
-	admin, err := s.getAdmin(ctx)
+	admin, err := getAdmin(ctx, s)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +103,7 @@ func (s *invitationServiceServerImpl) CreateInvitation(ctx context.Context, req 
 }
 
 func (s *invitationServiceServerImpl) DeleteInvitation(ctx context.Context, req *api_pb.DeleteInvitationRequest) (*empty.Empty, error) {
-	_, err := s.getAdmin(ctx)
+	_, err := getAdmin(ctx, s)
 	if err != nil {
 		return nil, err
 	}
@@ -119,24 +118,6 @@ func (s *invitationServiceServerImpl) DeleteInvitation(ctx context.Context, req 
 	}
 
 	return &empty.Empty{}, nil
-}
-
-func (s *invitationServiceServerImpl) getAdmin(ctx context.Context) (*record.User, error) {
-	userID, ok := interceptor.GetCurrentUserID(ctx)
-	if !ok {
-		return nil, util.ErrUnauthenticated
-	}
-
-	us := s.UserStore(ctx)
-	u, err := us.GetUserWithPrivate(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	if u.Authority != int(model.Admin) {
-		return nil, util.ErrUnauthenticated
-	}
-	return u, nil
 }
 
 func invitationsToResponse(invs []*record.Invitation) []*api_pb.Invitation {

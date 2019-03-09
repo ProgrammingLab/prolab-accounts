@@ -32,6 +32,14 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateRoleRequest"
+            }
           }
         ],
         "tags": [
@@ -315,6 +323,18 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "prolab_accountsUpdateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_name": {
+          "type": "string"
+        },
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

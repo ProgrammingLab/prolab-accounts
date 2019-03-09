@@ -116,6 +116,51 @@ func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUser
 	return userToResponse(u, false, s.cfg), nil
 }
 
+func (s *userServiceServerImpl) UpdateUserRole(ctx context.Context, req *api_pb.UpdateRoleRequest) (*api_pb.User, error) {
+	_, err := getAdmin(ctx, s)
+	if err != nil {
+		return nil, err
+	}
+
+	name := req.GetUserName()
+
+	us := s.UserStore(ctx)
+	u, err := us.GetUserByName(name)
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	var p *record.Profile
+	if r := u.R; r != nil {
+		p = r.Profile
+	}
+	if p == nil {
+		p = &record.Profile{}
+	}
+	roleID := int64(req.GetRoleId())
+	if roleID == 0 {
+		p.RoleID = null.Int64FromPtr(nil)
+	} else {
+		p.RoleID = null.Int64From(roleID)
+	}
+
+	ps := s.ProfileStore(ctx)
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err = us.GetUserWithPrivate(model.UserID(u.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return userToResponse(u, false, s.cfg), nil
+}
+
 func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.CreateUserRequest) (*api_pb.User, error) {
 	is := s.InvitationStore(ctx)
 	inv, err := is.GetInvitation(req.GetRegisterationToken())

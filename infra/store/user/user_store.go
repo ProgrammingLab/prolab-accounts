@@ -62,6 +62,8 @@ func (s *userStoreImpl) GetPublicUserByName(name string) (*record.User, error) {
 
 func (s *userStoreImpl) GetUserByName(name string) (*record.User, error) {
 	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
 		record.UserWhere.Name.EQ(name),
 	}
 	u, err := record.Users(mods...).One(s.ctx, s.db)
@@ -74,6 +76,8 @@ func (s *userStoreImpl) GetUserByName(name string) (*record.User, error) {
 
 func (s *userStoreImpl) GetUserByEmail(email string) (*record.User, error) {
 	mods := []qm.QueryMod{
+		qm.Load("Profile.Role"),
+		qm.Load("Profile.Department"),
 		record.UserWhere.Email.EQ(email),
 	}
 	u, err := record.Users(mods...).One(s.ctx, s.db)
