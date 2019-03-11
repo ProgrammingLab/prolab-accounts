@@ -5,6 +5,7 @@ create_table :email_confirmations, force: :cascade do |t|
   t.timestamps
 
   t.index [:token]
+  t.index [:email], unique: true
 end
 
 add_foreign_key :email_confirmations, :users
