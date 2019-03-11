@@ -12,6 +12,7 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	departmentstore "github.com/ProgrammingLab/prolab-accounts/infra/store/department"
+	emailconfirmationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/email_confirmation"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
 	githubstore "github.com/ProgrammingLab/prolab-accounts/infra/store/github"
@@ -38,6 +39,7 @@ type StoreComponent interface {
 	DepartmentStore(ctx context.Context) store.DepartmentStore
 	InvitationStore(ctx context.Context) store.InvitationStore
 	GitHubStore(ctx context.Context) store.GitHubStore
+	EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore
 }
 
 // NewStoreComponent returns new store component
@@ -181,4 +183,8 @@ func (s *storeComponentImpl) InvitationStore(ctx context.Context) store.Invitati
 
 func (s *storeComponentImpl) GitHubStore(ctx context.Context) store.GitHubStore {
 	return githubstore.NewGitHubStore(ctx, s.db, s.client)
+}
+
+func (s *storeComponentImpl) EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore {
+	return emailconfirmationstore.NewEmailConfirmationStore(ctx, s.db)
 }

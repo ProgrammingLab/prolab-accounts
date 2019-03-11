@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 	"github.com/ProgrammingLab/prolab-accounts/model"
 	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
-	"github.com/pkg/errors"
 )
 
 type emailConfirmationStoreImpl struct {
@@ -52,7 +52,17 @@ func (s *emailConfirmationStoreImpl) CreateConfirmation(userID model.UserID, ema
 			return store.ErrEmailAlreadyInUse
 		}
 
+		_, err = record.EmailConfirmations(record.EmailConfirmationWhere.Email.EQ(email)).DeleteAll(ctx, tx)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
 		err = c.Insert(ctx, tx, boil.Infer())
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		err = c.L.LoadUser(s.ctx, tx, true, c, nil)
 		return errors.WithStack(err)
 	})
 	if err != nil {

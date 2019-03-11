@@ -9,15 +9,15 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service EmailConfirmationService {
-  rpc ConfirmEmail (ConfirmEmailRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/user/emails/confirmations/{token}"
-    };
-  }
   rpc CreateEmailConfirmation (CreateEmailConfirmationRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/user/emails/confirmations"
       body: "*"
+    };
+  }
+  rpc ConfirmEmail (ConfirmEmailRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/user/emails/confirmations/{token}"
     };
   }
 }

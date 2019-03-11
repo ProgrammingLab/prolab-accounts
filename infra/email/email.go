@@ -15,6 +15,7 @@ import (
 // Sender represents interface of email sender
 type Sender interface {
 	SendInvitationEmail(req *record.Invitation) error
+	SendEmailConfirmation(conf *record.EmailConfirmation) error
 }
 
 // NewSender creates new sender
@@ -32,13 +33,13 @@ type senderImpl struct {
 	asset *static.EmailAsset
 }
 
-type invitationEmailData struct {
-	RegistrationURL string
-}
-
 const (
 	subjectPrefix = "[プロラボアカウント]"
 )
+
+type invitationEmailData struct {
+	RegistrationURL string
+}
 
 // SendInvitationEmail sends invitation email
 func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
@@ -66,4 +67,37 @@ func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
 		return errors.WithStack(err)
 	}
 	return nil
+}
+
+type emailConfirmationData struct {
+	Name            string
+	Email           string
+	ConfirmationURL string
+}
+
+// SendEmailConfirmation sends email confirmation
+func (s *senderImpl) SendEmailConfirmation(conf *record.EmailConfirmation) error {
+	tmpl, err := s.asset.GetTemplate("email_confirmation.tmpl")
+	if err != nil {
+		return err
+	}
+
+	d := emailConfirmationData{
+		Name:            conf.R.User.Name,
+		Email:           conf.Email,
+		ConfirmationURL: s.cfg.ClientConfirmationURL + "/" + conf.Token,
+	}
+	buf := &bytes.Buffer{}
+	err = tmpl.Execute(buf, d)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	e := email.NewEmail()
+	e.From = s.cfg.EmailFrom
+	e.To = []string{conf.Email}
+	e.Subject = subjectPrefix + "メールアドレスの確認"
+	e.Text = buf.Bytes()
+	err = e.Send(s.cfg.SMTPAddr, nil)
+	return errors.WithStack(err)
 }
