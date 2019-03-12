@@ -14,6 +14,7 @@ import "testing"
 func TestParent(t *testing.T) {
 	t.Run("Blogs", testBlogs)
 	t.Run("Departments", testDepartments)
+	t.Run("EmailConfirmations", testEmailConfirmations)
 	t.Run("Entries", testEntries)
 	t.Run("GithubContributionDays", testGithubContributionDays)
 	t.Run("Invitations", testInvitations)
@@ -25,6 +26,7 @@ func TestParent(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("Blogs", testBlogsDelete)
 	t.Run("Departments", testDepartmentsDelete)
+	t.Run("EmailConfirmations", testEmailConfirmationsDelete)
 	t.Run("Entries", testEntriesDelete)
 	t.Run("GithubContributionDays", testGithubContributionDaysDelete)
 	t.Run("Invitations", testInvitationsDelete)
@@ -36,6 +38,7 @@ func TestDelete(t *testing.T) {
 func TestQueryDeleteAll(t *testing.T) {
 	t.Run("Blogs", testBlogsQueryDeleteAll)
 	t.Run("Departments", testDepartmentsQueryDeleteAll)
+	t.Run("EmailConfirmations", testEmailConfirmationsQueryDeleteAll)
 	t.Run("Entries", testEntriesQueryDeleteAll)
 	t.Run("GithubContributionDays", testGithubContributionDaysQueryDeleteAll)
 	t.Run("Invitations", testInvitationsQueryDeleteAll)
@@ -47,6 +50,7 @@ func TestQueryDeleteAll(t *testing.T) {
 func TestSliceDeleteAll(t *testing.T) {
 	t.Run("Blogs", testBlogsSliceDeleteAll)
 	t.Run("Departments", testDepartmentsSliceDeleteAll)
+	t.Run("EmailConfirmations", testEmailConfirmationsSliceDeleteAll)
 	t.Run("Entries", testEntriesSliceDeleteAll)
 	t.Run("GithubContributionDays", testGithubContributionDaysSliceDeleteAll)
 	t.Run("Invitations", testInvitationsSliceDeleteAll)
@@ -58,6 +62,7 @@ func TestSliceDeleteAll(t *testing.T) {
 func TestExists(t *testing.T) {
 	t.Run("Blogs", testBlogsExists)
 	t.Run("Departments", testDepartmentsExists)
+	t.Run("EmailConfirmations", testEmailConfirmationsExists)
 	t.Run("Entries", testEntriesExists)
 	t.Run("GithubContributionDays", testGithubContributionDaysExists)
 	t.Run("Invitations", testInvitationsExists)
@@ -69,6 +74,7 @@ func TestExists(t *testing.T) {
 func TestFind(t *testing.T) {
 	t.Run("Blogs", testBlogsFind)
 	t.Run("Departments", testDepartmentsFind)
+	t.Run("EmailConfirmations", testEmailConfirmationsFind)
 	t.Run("Entries", testEntriesFind)
 	t.Run("GithubContributionDays", testGithubContributionDaysFind)
 	t.Run("Invitations", testInvitationsFind)
@@ -80,6 +86,7 @@ func TestFind(t *testing.T) {
 func TestBind(t *testing.T) {
 	t.Run("Blogs", testBlogsBind)
 	t.Run("Departments", testDepartmentsBind)
+	t.Run("EmailConfirmations", testEmailConfirmationsBind)
 	t.Run("Entries", testEntriesBind)
 	t.Run("GithubContributionDays", testGithubContributionDaysBind)
 	t.Run("Invitations", testInvitationsBind)
@@ -91,6 +98,7 @@ func TestBind(t *testing.T) {
 func TestOne(t *testing.T) {
 	t.Run("Blogs", testBlogsOne)
 	t.Run("Departments", testDepartmentsOne)
+	t.Run("EmailConfirmations", testEmailConfirmationsOne)
 	t.Run("Entries", testEntriesOne)
 	t.Run("GithubContributionDays", testGithubContributionDaysOne)
 	t.Run("Invitations", testInvitationsOne)
@@ -102,6 +110,7 @@ func TestOne(t *testing.T) {
 func TestAll(t *testing.T) {
 	t.Run("Blogs", testBlogsAll)
 	t.Run("Departments", testDepartmentsAll)
+	t.Run("EmailConfirmations", testEmailConfirmationsAll)
 	t.Run("Entries", testEntriesAll)
 	t.Run("GithubContributionDays", testGithubContributionDaysAll)
 	t.Run("Invitations", testInvitationsAll)
@@ -113,6 +122,7 @@ func TestAll(t *testing.T) {
 func TestCount(t *testing.T) {
 	t.Run("Blogs", testBlogsCount)
 	t.Run("Departments", testDepartmentsCount)
+	t.Run("EmailConfirmations", testEmailConfirmationsCount)
 	t.Run("Entries", testEntriesCount)
 	t.Run("GithubContributionDays", testGithubContributionDaysCount)
 	t.Run("Invitations", testInvitationsCount)
@@ -124,6 +134,7 @@ func TestCount(t *testing.T) {
 func TestHooks(t *testing.T) {
 	t.Run("Blogs", testBlogsHooks)
 	t.Run("Departments", testDepartmentsHooks)
+	t.Run("EmailConfirmations", testEmailConfirmationsHooks)
 	t.Run("Entries", testEntriesHooks)
 	t.Run("GithubContributionDays", testGithubContributionDaysHooks)
 	t.Run("Invitations", testInvitationsHooks)
@@ -137,6 +148,8 @@ func TestInsert(t *testing.T) {
 	t.Run("Blogs", testBlogsInsertWhitelist)
 	t.Run("Departments", testDepartmentsInsert)
 	t.Run("Departments", testDepartmentsInsertWhitelist)
+	t.Run("EmailConfirmations", testEmailConfirmationsInsert)
+	t.Run("EmailConfirmations", testEmailConfirmationsInsertWhitelist)
 	t.Run("Entries", testEntriesInsert)
 	t.Run("Entries", testEntriesInsertWhitelist)
 	t.Run("GithubContributionDays", testGithubContributionDaysInsert)
@@ -155,6 +168,7 @@ func TestInsert(t *testing.T) {
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
 	t.Run("BlogToUserUsingUser", testBlogToOneUserUsingUser)
+	t.Run("EmailConfirmationToUserUsingUser", testEmailConfirmationToOneUserUsingUser)
 	t.Run("EntryToUserUsingAuthor", testEntryToOneUserUsingAuthor)
 	t.Run("EntryToBlogUsingBlog", testEntryToOneBlogUsingBlog)
 	t.Run("GithubContributionDayToUserUsingUser", testGithubContributionDayToOneUserUsingUser)
@@ -176,6 +190,7 @@ func TestToMany(t *testing.T) {
 	t.Run("ProfileToUsers", testProfileToManyUsers)
 	t.Run("RoleToProfiles", testRoleToManyProfiles)
 	t.Run("UserToBlogs", testUserToManyBlogs)
+	t.Run("UserToEmailConfirmations", testUserToManyEmailConfirmations)
 	t.Run("UserToAuthorEntries", testUserToManyAuthorEntries)
 	t.Run("UserToGithubContributionDays", testUserToManyGithubContributionDays)
 	t.Run("UserToInviterInvitations", testUserToManyInviterInvitations)
@@ -185,6 +200,7 @@ func TestToMany(t *testing.T) {
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
 	t.Run("BlogToUserUsingBlogs", testBlogToOneSetOpUserUsingUser)
+	t.Run("EmailConfirmationToUserUsingEmailConfirmations", testEmailConfirmationToOneSetOpUserUsingUser)
 	t.Run("EntryToUserUsingAuthorEntries", testEntryToOneSetOpUserUsingAuthor)
 	t.Run("EntryToBlogUsingEntries", testEntryToOneSetOpBlogUsingBlog)
 	t.Run("GithubContributionDayToUserUsingGithubContributionDays", testGithubContributionDayToOneSetOpUserUsingUser)
@@ -218,6 +234,7 @@ func TestToManyAdd(t *testing.T) {
 	t.Run("ProfileToUsers", testProfileToManyAddOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyAddOpProfiles)
 	t.Run("UserToBlogs", testUserToManyAddOpBlogs)
+	t.Run("UserToEmailConfirmations", testUserToManyAddOpEmailConfirmations)
 	t.Run("UserToAuthorEntries", testUserToManyAddOpAuthorEntries)
 	t.Run("UserToGithubContributionDays", testUserToManyAddOpGithubContributionDays)
 	t.Run("UserToInviterInvitations", testUserToManyAddOpInviterInvitations)
@@ -242,6 +259,7 @@ func TestToManyRemove(t *testing.T) {
 func TestReload(t *testing.T) {
 	t.Run("Blogs", testBlogsReload)
 	t.Run("Departments", testDepartmentsReload)
+	t.Run("EmailConfirmations", testEmailConfirmationsReload)
 	t.Run("Entries", testEntriesReload)
 	t.Run("GithubContributionDays", testGithubContributionDaysReload)
 	t.Run("Invitations", testInvitationsReload)
@@ -253,6 +271,7 @@ func TestReload(t *testing.T) {
 func TestReloadAll(t *testing.T) {
 	t.Run("Blogs", testBlogsReloadAll)
 	t.Run("Departments", testDepartmentsReloadAll)
+	t.Run("EmailConfirmations", testEmailConfirmationsReloadAll)
 	t.Run("Entries", testEntriesReloadAll)
 	t.Run("GithubContributionDays", testGithubContributionDaysReloadAll)
 	t.Run("Invitations", testInvitationsReloadAll)
@@ -264,6 +283,7 @@ func TestReloadAll(t *testing.T) {
 func TestSelect(t *testing.T) {
 	t.Run("Blogs", testBlogsSelect)
 	t.Run("Departments", testDepartmentsSelect)
+	t.Run("EmailConfirmations", testEmailConfirmationsSelect)
 	t.Run("Entries", testEntriesSelect)
 	t.Run("GithubContributionDays", testGithubContributionDaysSelect)
 	t.Run("Invitations", testInvitationsSelect)
@@ -275,6 +295,7 @@ func TestSelect(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	t.Run("Blogs", testBlogsUpdate)
 	t.Run("Departments", testDepartmentsUpdate)
+	t.Run("EmailConfirmations", testEmailConfirmationsUpdate)
 	t.Run("Entries", testEntriesUpdate)
 	t.Run("GithubContributionDays", testGithubContributionDaysUpdate)
 	t.Run("Invitations", testInvitationsUpdate)
@@ -286,6 +307,7 @@ func TestUpdate(t *testing.T) {
 func TestSliceUpdateAll(t *testing.T) {
 	t.Run("Blogs", testBlogsSliceUpdateAll)
 	t.Run("Departments", testDepartmentsSliceUpdateAll)
+	t.Run("EmailConfirmations", testEmailConfirmationsSliceUpdateAll)
 	t.Run("Entries", testEntriesSliceUpdateAll)
 	t.Run("GithubContributionDays", testGithubContributionDaysSliceUpdateAll)
 	t.Run("Invitations", testInvitationsSliceUpdateAll)

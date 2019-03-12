@@ -10,6 +10,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Departments", testDepartmentsUpsert)
 
+	t.Run("EmailConfirmations", testEmailConfirmationsUpsert)
+
 	t.Run("Entries", testEntriesUpsert)
 
 	t.Run("GithubContributionDays", testGithubContributionDaysUpsert)

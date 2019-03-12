@@ -15,6 +15,8 @@ import (
 // Sender represents interface of email sender
 type Sender interface {
 	SendInvitationEmail(req *record.Invitation) error
+	SendEmailConfirmation(conf *record.EmailConfirmation) error
+	SendEmailChanged(user *record.User, oldEmail string) error
 }
 
 // NewSender creates new sender
@@ -32,24 +34,57 @@ type senderImpl struct {
 	asset *static.EmailAsset
 }
 
-type invitationEmailData struct {
-	RegistrationURL string
-}
-
 const (
 	subjectPrefix = "[プロラボアカウント]"
 )
 
+type invitationEmailData struct {
+	RegistrationURL string
+}
+
 // SendInvitationEmail sends invitation email
 func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
-	tmpl, err := s.asset.GetTemplate("invitation.tmpl")
+	d := invitationEmailData{
+		RegistrationURL: s.cfg.ClientRegistrationURL + "/" + inv.Code,
+	}
+	return s.send(inv.Email, "ユーザー登録", "invitation.tmpl", d)
+}
+
+type emailConfirmationData struct {
+	Name            string
+	Email           string
+	ConfirmationURL string
+}
+
+// SendEmailConfirmation sends email confirmation
+func (s *senderImpl) SendEmailConfirmation(conf *record.EmailConfirmation) error {
+	d := emailConfirmationData{
+		Name:            conf.R.User.Name,
+		Email:           conf.Email,
+		ConfirmationURL: s.cfg.ClientConfirmationURL + "/" + conf.Token,
+	}
+	return s.send(conf.Email, "メールアドレスの確認", "email_confirmation.tmpl", d)
+}
+
+type emailChangedData struct {
+	Name  string
+	Email string
+}
+
+func (s *senderImpl) SendEmailChanged(user *record.User, oldEmail string) error {
+	d := emailChangedData{
+		Name:  user.Name,
+		Email: user.Email,
+	}
+	return s.send(oldEmail, "メールアドレスが変更されました", "email_changed.tmpl", d)
+}
+
+func (s *senderImpl) send(to, subject, tmplName string, d interface{}) error {
+	tmpl, err := s.asset.GetTemplate(tmplName)
 	if err != nil {
 		return err
 	}
 
-	d := invitationEmailData{
-		RegistrationURL: s.cfg.ClientRegistrationURL + "/" + inv.Code,
-	}
 	buf := &bytes.Buffer{}
 	err = tmpl.Execute(buf, d)
 	if err != nil {
@@ -58,12 +93,9 @@ func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
 
 	e := email.NewEmail()
 	e.From = s.cfg.EmailFrom
-	e.To = []string{inv.Email}
-	e.Subject = subjectPrefix + "ユーザー登録"
+	e.To = []string{to}
+	e.Subject = subjectPrefix + subject
 	e.Text = buf.Bytes()
 	err = e.Send(s.cfg.SMTPAddr, nil)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
+	return errors.WithStack(err)
 }

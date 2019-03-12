@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service EmailConfirmationService {
+  rpc CreateEmailConfirmation (CreateEmailConfirmationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/user/emails/confirmations"
+      body: "*"
+    };
+  }
+  rpc ConfirmEmail (ConfirmEmailRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/user/emails/confirmations/{token}"
+    };
+  }
+}
+
+message ConfirmEmailRequest {
+  string token = 1;
+}
+
+message CreateEmailConfirmationRequest {
+  string new_email = 1;
+  string password = 2;
+}

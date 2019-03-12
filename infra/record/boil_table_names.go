@@ -6,6 +6,7 @@ package record
 var TableNames = struct {
 	Blogs                  string
 	Departments            string
+	EmailConfirmations     string
 	Entries                string
 	GithubContributionDays string
 	Invitations            string
@@ -15,6 +16,7 @@ var TableNames = struct {
 }{
 	Blogs:                  "blogs",
 	Departments:            "departments",
+	EmailConfirmations:     "email_confirmations",
 	Entries:                "entries",
 	GithubContributionDays: "github_contribution_days",
 	Invitations:            "invitations",
