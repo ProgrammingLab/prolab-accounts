@@ -14,8 +14,11 @@ import_dirs = [
 ]
 
   [[protoc.plugins]]
-  name = "go"
-  args = { plugins = "grpc", paths = "source_relative" }
+  name = "gogofast"
+    [[protoc.plugins.args]]
+    plugins = "grpc"
+    paths = "source_relative"
+    "Mgoogle/protobuf/timestamp.proto" = "github.com/gogo/protobuf/types"
 
   [[protoc.plugins]]
   name = "grpc-gateway"

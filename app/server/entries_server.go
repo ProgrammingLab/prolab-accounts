@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/gogo/protobuf/types"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
 
@@ -91,9 +91,9 @@ func entryToResponse(entry *record.Entry, includePrivate bool, cfg *config.Confi
 	return e
 }
 
-func timeToResponse(t time.Time) *timestamp.Timestamp {
+func timeToResponse(t time.Time) *types.Timestamp {
 	t = t.UTC()
-	return &timestamp.Timestamp{
+	return &types.Timestamp{
 		Seconds: t.Unix(),
 		Nanos:   int32(t.Nanosecond()),
 	}
