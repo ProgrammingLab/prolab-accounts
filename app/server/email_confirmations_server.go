@@ -2,13 +2,12 @@ package server
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -40,8 +39,27 @@ type emailConfirmationServiceServerImpl struct {
 }
 
 func (s *emailConfirmationServiceServerImpl) ConfirmEmail(ctx context.Context, req *api_pb.ConfirmEmailRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	cs := s.EmailConfirmationStore(ctx)
+	c, err := cs.GetConfirmation(req.GetToken())
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	u, err := cs.ConfirmEmail(c)
+	if err != nil {
+		return nil, err
+	}
+
+	sender := s.EmailSender(ctx)
+	err = sender.SendEmailChanged(u, c.R.User.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (s *emailConfirmationServiceServerImpl) CreateEmailConfirmation(ctx context.Context, req *api_pb.CreateEmailConfirmationRequest) (*empty.Empty, error) {

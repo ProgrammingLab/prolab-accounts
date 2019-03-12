@@ -3,9 +3,11 @@ package emailconfirmationstore
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
@@ -28,6 +30,7 @@ func NewEmailConfirmationStore(ctx context.Context, db *sqlutil.DB) store.EmailC
 
 const (
 	tokenLength = 32
+	lifeTime    = 24 * time.Hour
 )
 
 func (s *emailConfirmationStoreImpl) CreateConfirmation(userID model.UserID, email string) (*record.EmailConfirmation, error) {
@@ -72,19 +75,45 @@ func (s *emailConfirmationStoreImpl) CreateConfirmation(userID model.UserID, ema
 	return c, nil
 }
 
-func (s *emailConfirmationStoreImpl) ConfirmEmail(token string) error {
+func (s *emailConfirmationStoreImpl) GetConfirmation(token string) (*record.EmailConfirmation, error) {
+	mods := []qm.QueryMod{
+		qm.Load(record.EmailConfirmationRels.User),
+		record.EmailConfirmationWhere.Token.EQ(token),
+	}
+	c, err := record.EmailConfirmations(mods...).One(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if lifeTime < time.Now().Sub(c.CreatedAt) {
+		return nil, errors.WithStack(sql.ErrNoRows)
+	}
+
+	return c, nil
+}
+
+func (s *emailConfirmationStoreImpl) ConfirmEmail(c *record.EmailConfirmation) (*record.User, error) {
+	var u *record.User
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
-		c, err := record.EmailConfirmations(record.EmailConfirmationWhere.Token.EQ(token)).One(ctx, tx)
+		u = &record.User{
+			ID:    int64(c.UserID),
+			Email: c.Email,
+		}
+		_, err := u.Update(ctx, tx, boil.Whitelist("email", "updated_at"))
 		if err != nil {
 			return errors.WithStack(err)
 		}
 
-		u := &record.User{
-			ID:    int64(c.UserID),
-			Email: c.Email,
+		err = u.Reload(ctx, tx)
+		if err != nil {
+			return errors.WithStack(err)
 		}
-		_, err = u.Update(ctx, tx, boil.Whitelist("email", "updated_at"))
+
+		_, err = c.Delete(ctx, tx)
 		return errors.WithStack(err)
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }

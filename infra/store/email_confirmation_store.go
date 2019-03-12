@@ -15,5 +15,6 @@ var (
 // EmailConfirmationStore provides email confirmations
 type EmailConfirmationStore interface {
 	CreateConfirmation(userID model.UserID, email string) (*record.EmailConfirmation, error)
-	ConfirmEmail(token string) error
+	GetConfirmation(token string) (*record.EmailConfirmation, error)
+	ConfirmEmail(c *record.EmailConfirmation) (*record.User, error)
 }

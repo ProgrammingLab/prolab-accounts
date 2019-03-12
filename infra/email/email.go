@@ -3,6 +3,7 @@ package email
 import (
 	"bytes"
 	"context"
+	"text/template"
 
 	"github.com/jordan-wright/email"
 	"github.com/pkg/errors"
@@ -16,6 +17,7 @@ import (
 type Sender interface {
 	SendInvitationEmail(req *record.Invitation) error
 	SendEmailConfirmation(conf *record.EmailConfirmation) error
+	SendEmailChanged(user *record.User, oldEmail string) error
 }
 
 // NewSender creates new sender
@@ -51,22 +53,7 @@ func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
 	d := invitationEmailData{
 		RegistrationURL: s.cfg.ClientRegistrationURL + "/" + inv.Code,
 	}
-	buf := &bytes.Buffer{}
-	err = tmpl.Execute(buf, d)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	e := email.NewEmail()
-	e.From = s.cfg.EmailFrom
-	e.To = []string{inv.Email}
-	e.Subject = subjectPrefix + "ユーザー登録"
-	e.Text = buf.Bytes()
-	err = e.Send(s.cfg.SMTPAddr, nil)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	return nil
+	return s.send(inv.Email, "ユーザー登録", tmpl, d)
 }
 
 type emailConfirmationData struct {
@@ -87,16 +74,38 @@ func (s *senderImpl) SendEmailConfirmation(conf *record.EmailConfirmation) error
 		Email:           conf.Email,
 		ConfirmationURL: s.cfg.ClientConfirmationURL + "/" + conf.Token,
 	}
+	return s.send(conf.Email, "メールアドレスの確認", tmpl, d)
+}
+
+type emailChangedData struct {
+	Name  string
+	Email string
+}
+
+func (s *senderImpl) SendEmailChanged(user *record.User, oldEmail string) error {
+	tmpl, err := s.asset.GetTemplate("email_changed.tmpl")
+	if err != nil {
+		return err
+	}
+
+	d := emailChangedData{
+		Name:  user.Name,
+		Email: user.Email,
+	}
+	return s.send(oldEmail, "メールアドレスが変更されました", tmpl, d)
+}
+
+func (s *senderImpl) send(to, subject string, tmpl *template.Template, d interface{}) error {
 	buf := &bytes.Buffer{}
-	err = tmpl.Execute(buf, d)
+	err := tmpl.Execute(buf, d)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	e := email.NewEmail()
 	e.From = s.cfg.EmailFrom
-	e.To = []string{conf.Email}
-	e.Subject = subjectPrefix + "メールアドレスの確認"
+	e.To = []string{to}
+	e.Subject = subjectPrefix + subject
 	e.Text = buf.Bytes()
 	err = e.Send(s.cfg.SMTPAddr, nil)
 	return errors.WithStack(err)
