@@ -6,6 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -46,6 +47,16 @@ func (s *emailConfirmationServiceServerImpl) ConfirmEmail(ctx context.Context, r
 func (s *emailConfirmationServiceServerImpl) CreateEmailConfirmation(ctx context.Context, req *api_pb.CreateEmailConfirmationRequest) (*empty.Empty, error) {
 	userID, ok := interceptor.GetCurrentUserID(ctx)
 	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	us := s.UserStore(ctx)
+	u, err := us.GetUserWithPrivate(userID)
+	if err != nil {
+		return nil, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(u.PasswordDigest), []byte(req.GetPassword()))
+	if err != nil {
 		return nil, util.ErrUnauthenticated
 	}
 

@@ -72,6 +72,9 @@
       "properties": {
         "new_email": {
           "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     },

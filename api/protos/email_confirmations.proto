@@ -28,4 +28,5 @@ message ConfirmEmailRequest {
 
 message CreateEmailConfirmationRequest {
   string new_email = 1;
+  string password = 2;
 }
