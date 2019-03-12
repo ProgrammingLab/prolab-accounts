@@ -85,7 +85,7 @@ func (s *emailConfirmationStoreImpl) GetConfirmation(token string) (*record.Emai
 		return nil, errors.WithStack(err)
 	}
 
-	if lifeTime < time.Now().Sub(c.CreatedAt) {
+	if lifeTime < time.Since(c.CreatedAt) {
 		return nil, errors.WithStack(sql.ErrNoRows)
 	}
 
