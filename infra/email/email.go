@@ -3,7 +3,6 @@ package email
 import (
 	"bytes"
 	"context"
-	"text/template"
 
 	"github.com/jordan-wright/email"
 	"github.com/pkg/errors"
@@ -45,15 +44,10 @@ type invitationEmailData struct {
 
 // SendInvitationEmail sends invitation email
 func (s *senderImpl) SendInvitationEmail(inv *record.Invitation) error {
-	tmpl, err := s.asset.GetTemplate("invitation.tmpl")
-	if err != nil {
-		return err
-	}
-
 	d := invitationEmailData{
 		RegistrationURL: s.cfg.ClientRegistrationURL + "/" + inv.Code,
 	}
-	return s.send(inv.Email, "ユーザー登録", tmpl, d)
+	return s.send(inv.Email, "ユーザー登録", "invitation.tmpl", d)
 }
 
 type emailConfirmationData struct {
@@ -64,17 +58,12 @@ type emailConfirmationData struct {
 
 // SendEmailConfirmation sends email confirmation
 func (s *senderImpl) SendEmailConfirmation(conf *record.EmailConfirmation) error {
-	tmpl, err := s.asset.GetTemplate("email_confirmation.tmpl")
-	if err != nil {
-		return err
-	}
-
 	d := emailConfirmationData{
 		Name:            conf.R.User.Name,
 		Email:           conf.Email,
 		ConfirmationURL: s.cfg.ClientConfirmationURL + "/" + conf.Token,
 	}
-	return s.send(conf.Email, "メールアドレスの確認", tmpl, d)
+	return s.send(conf.Email, "メールアドレスの確認", "email_confirmation.tmpl", d)
 }
 
 type emailChangedData struct {
@@ -83,21 +72,21 @@ type emailChangedData struct {
 }
 
 func (s *senderImpl) SendEmailChanged(user *record.User, oldEmail string) error {
-	tmpl, err := s.asset.GetTemplate("email_changed.tmpl")
-	if err != nil {
-		return err
-	}
-
 	d := emailChangedData{
 		Name:  user.Name,
 		Email: user.Email,
 	}
-	return s.send(oldEmail, "メールアドレスが変更されました", tmpl, d)
+	return s.send(oldEmail, "メールアドレスが変更されました", "email_changed.tmpl", d)
 }
 
-func (s *senderImpl) send(to, subject string, tmpl *template.Template, d interface{}) error {
+func (s *senderImpl) send(to, subject, tmplName string, d interface{}) error {
+	tmpl, err := s.asset.GetTemplate(tmplName)
+	if err != nil {
+		return err
+	}
+
 	buf := &bytes.Buffer{}
-	err := tmpl.Execute(buf, d)
+	err = tmpl.Execute(buf, d)
 	if err != nil {
 		return errors.WithStack(err)
 	}
