@@ -13,3 +13,7 @@
 [[constraint]]
   name = "github.com/gobuffalo/packr"
   version = "2.0.3"
+
+[[constraint]]
+  name = "github.com/gogo/protobuf"
+  version = "1.2.1"
