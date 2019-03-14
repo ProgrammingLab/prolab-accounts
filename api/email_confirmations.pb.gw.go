@@ -135,7 +135,7 @@ func RegisterEmailConfirmationServiceHandlerClient(ctx context.Context, mux *run
 
 	})
 
-	mux.Handle("PUT", pattern_EmailConfirmationService_ConfirmEmail_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_EmailConfirmationService_ConfirmEmail_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
