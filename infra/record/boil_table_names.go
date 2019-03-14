@@ -10,6 +10,7 @@ var TableNames = struct {
 	Entries                string
 	GithubContributionDays string
 	Invitations            string
+	PasswordResets         string
 	Profiles               string
 	Roles                  string
 	Users                  string
@@ -20,6 +21,7 @@ var TableNames = struct {
 	Entries:                "entries",
 	GithubContributionDays: "github_contribution_days",
 	Invitations:            "invitations",
+	PasswordResets:         "password_resets",
 	Profiles:               "profiles",
 	Roles:                  "roles",
 	Users:                  "users",

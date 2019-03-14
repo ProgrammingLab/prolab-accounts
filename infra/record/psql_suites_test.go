@@ -18,6 +18,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Invitations", testInvitationsUpsert)
 
+	t.Run("PasswordResets", testPasswordResetsUpsert)
+
 	t.Run("Profiles", testProfilesUpsert)
 
 	t.Run("Roles", testRolesUpsert)
