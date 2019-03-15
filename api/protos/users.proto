@@ -57,11 +57,6 @@ service UserService {
       body: "*"
     };
   }
-  rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "/user/password"
-    };
-  }
 }
 
 message User {
@@ -132,10 +127,4 @@ message UpdateUserProfileRequest {
 
 message UpdateUserIconRequest {
   bytes image = 1;
-}
-
-message UpdatePasswordRequest {
-  string password = 1;
-  string new_password = 2;
-  string new_password_repeat = 3;
 }

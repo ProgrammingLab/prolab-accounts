@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
+	"github.com/ProgrammingLab/prolab-accounts/app/config"
+	"github.com/ProgrammingLab/prolab-accounts/app/di"
 )
 
 // PasswordResetServiceServer is a composite interface of api_pb.PasswordResetServiceServer and grapiserver.Server.
@@ -18,16 +20,16 @@ type PasswordResetServiceServer interface {
 }
 
 // NewPasswordResetServiceServer creates a new PasswordResetServiceServer instance.
-func NewPasswordResetServiceServer() PasswordResetServiceServer {
-	return &passwordResetServiceServerImpl{}
+func NewPasswordResetServiceServer(store di.StoreComponent, cfg *config.Config) PasswordResetServiceServer {
+	return &passwordResetServiceServerImpl{
+		StoreComponent: store,
+		cfg:            cfg,
+	}
 }
 
 type passwordResetServiceServerImpl struct {
-}
-
-func (s *passwordResetServiceServerImpl) ListPasswordResets(ctx context.Context, req *api_pb.ListPasswordResetsRequest) (*api_pb.ListPasswordResetsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	di.StoreComponent
+	cfg *config.Config
 }
 
 func (s *passwordResetServiceServerImpl) GetPasswordReset(ctx context.Context, req *api_pb.GetPasswordResetRequest) (*api_pb.PasswordReset, error) {
@@ -40,12 +42,7 @@ func (s *passwordResetServiceServerImpl) CreatePasswordReset(ctx context.Context
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *passwordResetServiceServerImpl) UpdatePasswordReset(ctx context.Context, req *api_pb.UpdatePasswordResetRequest) (*api_pb.PasswordReset, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *passwordResetServiceServerImpl) DeletePasswordReset(ctx context.Context, req *api_pb.DeletePasswordResetRequest) (*empty.Empty, error) {
+func (s *passwordResetServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*empty.Empty, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }

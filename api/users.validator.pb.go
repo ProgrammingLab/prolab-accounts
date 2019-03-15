@@ -110,6 +110,3 @@ func (this *UpdateUserProfileRequest) Validate() error {
 func (this *UpdateUserIconRequest) Validate() error {
 	return nil
 }
-func (this *UpdatePasswordRequest) Validate() error {
-	return nil
-}
