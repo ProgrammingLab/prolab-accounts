@@ -17,7 +17,7 @@ service EmailConfirmationService {
   }
   rpc ConfirmEmail (ConfirmEmailRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      put: "/user/emails/confirmations/{token}"
+      patch: "/user/emails/confirmations/{token}"
     };
   }
 }

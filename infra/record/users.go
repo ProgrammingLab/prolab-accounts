@@ -97,6 +97,7 @@ var UserRels = struct {
 	AuthorEntries          string
 	GithubContributionDays string
 	InviterInvitations     string
+	PasswordResets         string
 }{
 	Profile:                "Profile",
 	Blogs:                  "Blogs",
@@ -104,6 +105,7 @@ var UserRels = struct {
 	AuthorEntries:          "AuthorEntries",
 	GithubContributionDays: "GithubContributionDays",
 	InviterInvitations:     "InviterInvitations",
+	PasswordResets:         "PasswordResets",
 }
 
 // userR is where relationships are stored.
@@ -114,6 +116,7 @@ type userR struct {
 	AuthorEntries          EntrySlice
 	GithubContributionDays GithubContributionDaySlice
 	InviterInvitations     InvitationSlice
+	PasswordResets         PasswordResetSlice
 }
 
 // NewStruct creates a new relationship struct
@@ -520,6 +523,27 @@ func (o *User) InviterInvitations(mods ...qm.QueryMod) invitationQuery {
 
 	if len(queries.GetSelect(query.Query)) == 0 {
 		queries.SetSelect(query.Query, []string{"\"invitations\".*"})
+	}
+
+	return query
+}
+
+// PasswordResets retrieves all the password_reset's PasswordResets with an executor.
+func (o *User) PasswordResets(mods ...qm.QueryMod) passwordResetQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"password_resets\".\"user_id\"=?", o.ID),
+	)
+
+	query := PasswordResets(queryMods...)
+	queries.SetFrom(query.Query, "\"password_resets\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"password_resets\".*"})
 	}
 
 	return query
@@ -1105,6 +1129,101 @@ func (userL) LoadInviterInvitations(ctx context.Context, e boil.ContextExecutor,
 	return nil
 }
 
+// LoadPasswordResets allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadPasswordResets(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`password_resets`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load password_resets")
+	}
+
+	var resultSlice []*PasswordReset
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice password_resets")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on password_resets")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for password_resets")
+	}
+
+	if len(passwordResetAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.PasswordResets = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &passwordResetR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.PasswordResets = append(local.R.PasswordResets, foreign)
+				if foreign.R == nil {
+					foreign.R = &passwordResetR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetProfile of the user to the related item.
 // Sets o.R.Profile to related.
 // Adds o to related.R.Users.
@@ -1443,6 +1562,59 @@ func (o *User) AddInviterInvitations(ctx context.Context, exec boil.ContextExecu
 			}
 		} else {
 			rel.R.Inviter = o
+		}
+	}
+	return nil
+}
+
+// AddPasswordResets adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.PasswordResets.
+// Sets related.R.User appropriately.
+func (o *User) AddPasswordResets(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PasswordReset) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"password_resets\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+				strmangle.WhereClause("\"", "\"", 2, passwordResetPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			PasswordResets: related,
+		}
+	} else {
+		o.R.PasswordResets = append(o.R.PasswordResets, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &passwordResetR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
 		}
 	}
 	return nil

@@ -30,7 +30,7 @@ func NewEmailConfirmationStore(ctx context.Context, db *sqlutil.DB) store.EmailC
 
 const (
 	tokenLength = 32
-	lifeTime    = 24 * time.Hour
+	lifeTime    = 30 * time.Minute
 )
 
 func (s *emailConfirmationStoreImpl) CreateConfirmation(userID model.UserID, email string) (*record.EmailConfirmation, error) {

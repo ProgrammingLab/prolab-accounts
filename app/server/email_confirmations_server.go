@@ -39,6 +39,11 @@ type emailConfirmationServiceServerImpl struct {
 }
 
 func (s *emailConfirmationServiceServerImpl) ConfirmEmail(ctx context.Context, req *api_pb.ConfirmEmailRequest) (*empty.Empty, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
 	cs := s.EmailConfirmationStore(ctx)
 	c, err := cs.GetConfirmation(req.GetToken())
 	if err != nil {

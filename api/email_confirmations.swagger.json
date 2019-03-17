@@ -42,7 +42,7 @@
       }
     },
     "/user/emails/confirmations/{token}": {
-      "put": {
+      "patch": {
         "operationId": "ConfirmEmail",
         "responses": {
           "200": {

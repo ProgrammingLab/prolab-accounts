@@ -63,6 +63,7 @@ func Run() error {
 			server.NewInvitationServiceServer(store, cli),
 			server.NewContributionConllectionServiceServer(store, cfg),
 			server.NewEmailConfirmationServiceServer(store, cli, cfg),
+			server.NewPasswordResetServiceServer(store, cli, cfg),
 		),
 	)
 

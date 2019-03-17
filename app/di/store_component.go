@@ -18,6 +18,7 @@ import (
 	githubstore "github.com/ProgrammingLab/prolab-accounts/infra/store/github"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
 	invitationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/invitation"
+	resetstore "github.com/ProgrammingLab/prolab-accounts/infra/store/password_reset"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
 	rolestore "github.com/ProgrammingLab/prolab-accounts/infra/store/role"
 	sessionstore "github.com/ProgrammingLab/prolab-accounts/infra/store/session"
@@ -40,6 +41,7 @@ type StoreComponent interface {
 	InvitationStore(ctx context.Context) store.InvitationStore
 	GitHubStore(ctx context.Context) store.GitHubStore
 	EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore
+	PasswordResetStore(ctx context.Context) store.PasswordResetStore
 }
 
 // NewStoreComponent returns new store component
@@ -187,4 +189,8 @@ func (s *storeComponentImpl) GitHubStore(ctx context.Context) store.GitHubStore 
 
 func (s *storeComponentImpl) EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore {
 	return emailconfirmationstore.NewEmailConfirmationStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) PasswordResetStore(ctx context.Context) store.PasswordResetStore {
+	return resetstore.NewPasswordResetStore(ctx, s.db)
 }

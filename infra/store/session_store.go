@@ -6,4 +6,5 @@ import "github.com/ProgrammingLab/prolab-accounts/model"
 type SessionStore interface {
 	CreateSession(nameOrEmail, password string) (*model.Session, error)
 	GetSession(sessionID string) (*model.Session, error)
+	ResetSession(userID model.UserID) (*model.Session, error)
 }
