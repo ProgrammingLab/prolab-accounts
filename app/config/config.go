@@ -21,6 +21,7 @@ type Config struct {
 	MinioBucketName       string `envconfig:"minio_bucket_name" required:"true"`
 	ClientRegistrationURL string `envconfig:"client_registration_url" required:"true"`
 	ClientConfirmationURL string `envconfig:"client_confirmation_url" required:"true"`
+	ClientPasswordResetURL string `envconfig:"client_password_reset_url" required:"true"`
 	SMTPAddr              string `envconfig:"smtp_addr" required:"true"`
 	EmailFrom             string `envconfig:"email_from" required:"true"`
 	GitHubAccessToken     string `envconfig:"github_access_token" required:"true"`

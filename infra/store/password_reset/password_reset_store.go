@@ -33,18 +33,18 @@ const (
 	lifeTime    = 30 * time.Minute
 )
 
-func (s *passwordResetStoreImpl) CreateConfirmation(userID model.UserID, email string) (*record.PasswordReset, error) {
-	token, err := model.GenerateSecureToken(tokenLength)
+func (s *passwordResetStoreImpl) CreateConfirmation(userID model.UserID, email string) (r *record.PasswordReset, token string, err error) {
+	token, err = model.GenerateSecureToken(tokenLength)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	d, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, "", errors.WithStack(err)
 	}
 
-	p := &record.PasswordReset{
+	r = &record.PasswordReset{
 		TokenDigest: string(d),
 		Email:       email,
 		UserID:      int64(userID),
@@ -55,37 +55,42 @@ func (s *passwordResetStoreImpl) CreateConfirmation(userID model.UserID, email s
 			return errors.WithStack(err)
 		}
 
-		err = p.Insert(ctx, tx, boil.Infer())
+		err = r.Insert(ctx, tx, boil.Infer())
 		if err != nil {
 			return errors.WithStack(err)
 		}
 
-		err = p.L.LoadUser(ctx, tx, true, p, nil)
+		err = r.L.LoadUser(ctx, tx, true, r, nil)
 		return errors.WithStack(err)
 	})
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return p, nil
+	return r, token, nil
 }
 
 func (s *passwordResetStoreImpl) GetConfirmation(email, token string) (*record.PasswordReset, error) {
-	p, err := record.PasswordResets(record.PasswordResetWhere.Email.EQ(email)).One(s.ctx, s.db)
+	r, err := record.PasswordResets(record.PasswordResetWhere.Email.EQ(email)).One(s.ctx, s.db)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if lifeTime < time.Since(p.CreatedAt) {
+	if lifeTime < time.Since(r.CreatedAt) {
 		return nil, sql.ErrNoRows
 	}
 
-	err = p.L.LoadUser(s.ctx, s.db, true, p, nil)
+	err = bcrypt.CompareHashAndPassword([]byte(r.TokenDigest), []byte(token))
+	if err != nil {
+		return nil, sql.ErrNoRows
+	}
+
+	err = r.L.LoadUser(s.ctx, s.db, true, r, nil)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return p, nil
+	return r, nil
 }
 
 func (s *passwordResetStoreImpl) UpdatePassword(reset *record.PasswordReset, password string) error {

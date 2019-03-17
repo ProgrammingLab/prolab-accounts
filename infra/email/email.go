@@ -3,6 +3,7 @@ package email
 import (
 	"bytes"
 	"context"
+	"net/url"
 
 	"github.com/jordan-wright/email"
 	"github.com/pkg/errors"
@@ -17,6 +18,7 @@ type Sender interface {
 	SendInvitationEmail(req *record.Invitation) error
 	SendEmailConfirmation(conf *record.EmailConfirmation) error
 	SendEmailChanged(user *record.User, oldEmail string) error
+	SendPasswordReset(reset *record.PasswordReset, token string) error
 }
 
 // NewSender creates new sender
@@ -77,6 +79,22 @@ func (s *senderImpl) SendEmailChanged(user *record.User, oldEmail string) error 
 		Email: user.Email,
 	}
 	return s.send(oldEmail, "メールアドレスが変更されました", "email_changed.tmpl", d)
+}
+
+type passwordResetData struct {
+	Name            string
+	ConfirmationURL string
+}
+
+func (s *senderImpl) SendPasswordReset(reset *record.PasswordReset, token string) error {
+	u := reset.R.User
+	v := url.Values{}
+	v.Add("email", reset.Email)
+	d := passwordResetData{
+		Name:            u.Name,
+		ConfirmationURL: s.cfg.ClientPasswordResetURL + "/" + token + "?" + v.Encode(),
+	}
+	return s.send(reset.Email, "パスワードのリセット", "password_reset.tmpl", d)
 }
 
 func (s *senderImpl) send(to, subject, tmplName string, d interface{}) error {
