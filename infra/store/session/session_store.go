@@ -27,6 +27,12 @@ type sessionStoreImpl struct {
 const (
 	// SessionExpiration is sessions expiration
 	SessionExpiration = time.Hour * 24 * 7
+
+	keyPrefix = "session"
+)
+
+var (
+	errSessionNotFound = fmt.Errorf("session not found")
 )
 
 // NewSessionStore returns new session store
@@ -52,22 +58,25 @@ func (s *sessionStoreImpl) CreateSession(nameOrEmail, password string) (*model.S
 		return nil, errors.WithStack(err)
 	}
 
-	session, err := model.NewSession(model.UserID(u.ID))
+	session, err := s.setSession(model.UserID(u.ID))
 	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	key := redisKey(session.ID)
-	err = s.client.Set(key, strconv.FormatInt(u.ID, 10), SessionExpiration).Err()
-	if err != nil {
-		return nil, errors.Wrap(err, "")
+		return nil, err
 	}
 
 	return session, nil
 }
 
 func (s *sessionStoreImpl) GetSession(sessionID string) (*model.Session, error) {
-	v, err := s.client.Get(redisKey(sessionID)).Result()
+	keys, err := s.client.Keys(redisKey(sessionID) + ":*").Result()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if len(keys) == 0 {
+		return nil, errors.WithStack(errSessionNotFound)
+	}
+
+	v, err := s.client.Get(keys[0]).Result()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -83,6 +92,40 @@ func (s *sessionStoreImpl) GetSession(sessionID string) (*model.Session, error) 
 	}, nil
 }
 
+func (s *sessionStoreImpl) ResetSession(userID model.UserID) (*model.Session, error) {
+	keys, err := s.client.Keys(fmt.Sprintf("%s:*:%v", keyPrefix, userID)).Result()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	_, err = s.client.Del(keys...).Result()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	session, err := s.setSession(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return session, nil
+}
+
+func (s *sessionStoreImpl) setSession(userID model.UserID) (*model.Session, error) {
+	session, err := model.NewSession(userID)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	id := strconv.FormatInt(int64(userID), 10)
+	key := redisKey(session.ID) + ":" + id
+	err = s.client.Set(key, id, SessionExpiration).Err()
+	if err != nil {
+		return nil, errors.Wrap(err, "")
+	}
+
+	return session, nil
+}
+
 func redisKey(sessionID string) string {
-	return fmt.Sprintf("session:%s", sessionID)
+	return fmt.Sprintf("%s:%s", keyPrefix, sessionID)
 }

@@ -19,6 +19,7 @@ type Sender interface {
 	SendEmailConfirmation(conf *record.EmailConfirmation) error
 	SendEmailChanged(user *record.User, oldEmail string) error
 	SendPasswordReset(reset *record.PasswordReset, token string) error
+	SendPasswordChanged(user *record.User) error
 }
 
 // NewSender creates new sender
@@ -95,6 +96,17 @@ func (s *senderImpl) SendPasswordReset(reset *record.PasswordReset, token string
 		ConfirmationURL: s.cfg.ClientPasswordResetURL + "/" + token + "?" + v.Encode(),
 	}
 	return s.send(reset.Email, "パスワードのリセット", "password_reset.tmpl", d)
+}
+
+type passwordChangedData struct {
+	Name string
+}
+
+func (s *senderImpl) SendPasswordChanged(user *record.User) error {
+	d := passwordChangedData{
+		Name: user.Name,
+	}
+	return s.send(user.Email, "パスワードが変更されました", "password_changed.tmpl", d)
 }
 
 func (s *senderImpl) send(to, subject, tmplName string, d interface{}) error {

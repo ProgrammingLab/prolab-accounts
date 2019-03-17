@@ -44,6 +44,8 @@ const (
 	MaxIconSize = 1024 * 1024 // 1MiB
 	// MaxPasswordLength represents max length of password
 	MaxPasswordLength = 72
+	// MinPasswordLength represents min length of password
+	MinPasswordLength = 6
 )
 
 var (
@@ -55,8 +57,8 @@ var (
 	ErrInvalidImageFormat = status.Error(codes.InvalidArgument, "invalid iamge format")
 	// ErrNameAlreadyInUse is returned when name is already in use
 	ErrNameAlreadyInUse = status.Error(codes.AlreadyExists, "name is already in use")
-	// ErrTooLongPassword will be returned when password is too long
-	ErrTooLongPassword = status.Error(codes.InvalidArgument, fmt.Sprintf("length of password must be less than %v", MaxPasswordLength+1))
+	// ErrOutOfRangePasswordLength will be returned when password length is out of range
+	ErrOutOfRangePasswordLength = status.Error(codes.InvalidArgument, fmt.Sprintf("length of password must be less than %v and more than %v", MaxPasswordLength+1, MinPasswordLength-1))
 )
 
 func (s *userServiceServerImpl) ListPublicUsers(ctx context.Context, req *api_pb.ListUsersRequest) (*api_pb.ListUsersResponse, error) {
@@ -172,8 +174,8 @@ func (s *userServiceServerImpl) CreateUser(ctx context.Context, req *api_pb.Crea
 	}
 
 	password := req.GetPassword()
-	if MaxPasswordLength < len(password) {
-		return nil, ErrTooLongPassword
+	if len(password) < MinPasswordLength || MaxPasswordLength < len(password) {
+		return nil, ErrOutOfRangePasswordLength
 	}
 
 	d, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

@@ -7,8 +7,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -64,13 +62,13 @@ func (s *passwordResetServiceServerImpl) CreatePasswordReset(ctx context.Context
 	}
 
 	ps := s.PasswordResetStore(ctx)
-	p, token, err := ps.CreateConfirmation(model.UserID(u.ID), email)
+	r, token, err := ps.CreateConfirmation(model.UserID(u.ID), email)
 	if err != nil {
 		return nil, err
 	}
 
 	sender := s.EmailSender(ctx)
-	err = sender.SendPasswordReset(p, token)
+	err = sender.SendPasswordReset(r, token)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +77,38 @@ func (s *passwordResetServiceServerImpl) CreatePasswordReset(ctx context.Context
 }
 
 func (s *passwordResetServiceServerImpl) UpdatePassword(ctx context.Context, req *api_pb.UpdatePasswordRequest) (*api_pb.Session, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	password := req.GetNewPassword()
+	if len(password) < MinPasswordLength || MaxPasswordLength < len(password) {
+		return nil, ErrOutOfRangePasswordLength
+	}
+
+	ps := s.PasswordResetStore(ctx)
+	r, err := ps.GetConfirmation(req.GetEmail(), req.GetToken())
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	err = ps.UpdatePassword(r, password)
+	if err != nil {
+		return nil, err
+	}
+
+	ss := s.SessionStore(ctx)
+	session, err := ss.ResetSession(model.UserID(r.R.User.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	sender := s.EmailSender(ctx)
+	err = sender.SendPasswordChanged(r.R.User)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api_pb.Session{
+		SessionId: session.ID,
+	}, nil
 }
