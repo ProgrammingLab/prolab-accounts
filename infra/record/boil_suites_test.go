@@ -12,6 +12,8 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsers)
+	t.Run("Achievements", testAchievements)
 	t.Run("Blogs", testBlogs)
 	t.Run("Departments", testDepartments)
 	t.Run("EmailConfirmations", testEmailConfirmations)
@@ -25,6 +27,8 @@ func TestParent(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersDelete)
+	t.Run("Achievements", testAchievementsDelete)
 	t.Run("Blogs", testBlogsDelete)
 	t.Run("Departments", testDepartmentsDelete)
 	t.Run("EmailConfirmations", testEmailConfirmationsDelete)
@@ -38,6 +42,8 @@ func TestDelete(t *testing.T) {
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersQueryDeleteAll)
+	t.Run("Achievements", testAchievementsQueryDeleteAll)
 	t.Run("Blogs", testBlogsQueryDeleteAll)
 	t.Run("Departments", testDepartmentsQueryDeleteAll)
 	t.Run("EmailConfirmations", testEmailConfirmationsQueryDeleteAll)
@@ -51,6 +57,8 @@ func TestQueryDeleteAll(t *testing.T) {
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersSliceDeleteAll)
+	t.Run("Achievements", testAchievementsSliceDeleteAll)
 	t.Run("Blogs", testBlogsSliceDeleteAll)
 	t.Run("Departments", testDepartmentsSliceDeleteAll)
 	t.Run("EmailConfirmations", testEmailConfirmationsSliceDeleteAll)
@@ -64,6 +72,8 @@ func TestSliceDeleteAll(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersExists)
+	t.Run("Achievements", testAchievementsExists)
 	t.Run("Blogs", testBlogsExists)
 	t.Run("Departments", testDepartmentsExists)
 	t.Run("EmailConfirmations", testEmailConfirmationsExists)
@@ -77,6 +87,8 @@ func TestExists(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersFind)
+	t.Run("Achievements", testAchievementsFind)
 	t.Run("Blogs", testBlogsFind)
 	t.Run("Departments", testDepartmentsFind)
 	t.Run("EmailConfirmations", testEmailConfirmationsFind)
@@ -90,6 +102,8 @@ func TestFind(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersBind)
+	t.Run("Achievements", testAchievementsBind)
 	t.Run("Blogs", testBlogsBind)
 	t.Run("Departments", testDepartmentsBind)
 	t.Run("EmailConfirmations", testEmailConfirmationsBind)
@@ -103,6 +117,8 @@ func TestBind(t *testing.T) {
 }
 
 func TestOne(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersOne)
+	t.Run("Achievements", testAchievementsOne)
 	t.Run("Blogs", testBlogsOne)
 	t.Run("Departments", testDepartmentsOne)
 	t.Run("EmailConfirmations", testEmailConfirmationsOne)
@@ -116,6 +132,8 @@ func TestOne(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersAll)
+	t.Run("Achievements", testAchievementsAll)
 	t.Run("Blogs", testBlogsAll)
 	t.Run("Departments", testDepartmentsAll)
 	t.Run("EmailConfirmations", testEmailConfirmationsAll)
@@ -129,6 +147,8 @@ func TestAll(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersCount)
+	t.Run("Achievements", testAchievementsCount)
 	t.Run("Blogs", testBlogsCount)
 	t.Run("Departments", testDepartmentsCount)
 	t.Run("EmailConfirmations", testEmailConfirmationsCount)
@@ -142,6 +162,8 @@ func TestCount(t *testing.T) {
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersHooks)
+	t.Run("Achievements", testAchievementsHooks)
 	t.Run("Blogs", testBlogsHooks)
 	t.Run("Departments", testDepartmentsHooks)
 	t.Run("EmailConfirmations", testEmailConfirmationsHooks)
@@ -155,6 +177,10 @@ func TestHooks(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersInsert)
+	t.Run("AchievementUsers", testAchievementUsersInsertWhitelist)
+	t.Run("Achievements", testAchievementsInsert)
+	t.Run("Achievements", testAchievementsInsertWhitelist)
 	t.Run("Blogs", testBlogsInsert)
 	t.Run("Blogs", testBlogsInsertWhitelist)
 	t.Run("Departments", testDepartmentsInsert)
@@ -180,6 +206,8 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("AchievementUserToAchievementUsingAchievement", testAchievementUserToOneAchievementUsingAchievement)
+	t.Run("AchievementUserToUserUsingUser", testAchievementUserToOneUserUsingUser)
 	t.Run("BlogToUserUsingUser", testBlogToOneUserUsingUser)
 	t.Run("EmailConfirmationToUserUsingUser", testEmailConfirmationToOneUserUsingUser)
 	t.Run("EntryToUserUsingAuthor", testEntryToOneUserUsingAuthor)
@@ -199,10 +227,12 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
+	t.Run("AchievementToAchievementUsers", testAchievementToManyAchievementUsers)
 	t.Run("BlogToEntries", testBlogToManyEntries)
 	t.Run("DepartmentToProfiles", testDepartmentToManyProfiles)
 	t.Run("ProfileToUsers", testProfileToManyUsers)
 	t.Run("RoleToProfiles", testRoleToManyProfiles)
+	t.Run("UserToAchievementUsers", testUserToManyAchievementUsers)
 	t.Run("UserToBlogs", testUserToManyBlogs)
 	t.Run("UserToEmailConfirmations", testUserToManyEmailConfirmations)
 	t.Run("UserToAuthorEntries", testUserToManyAuthorEntries)
@@ -214,6 +244,8 @@ func TestToMany(t *testing.T) {
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("AchievementUserToAchievementUsingAchievementUsers", testAchievementUserToOneSetOpAchievementUsingAchievement)
+	t.Run("AchievementUserToUserUsingAchievementUsers", testAchievementUserToOneSetOpUserUsingUser)
 	t.Run("BlogToUserUsingBlogs", testBlogToOneSetOpUserUsingUser)
 	t.Run("EmailConfirmationToUserUsingEmailConfirmations", testEmailConfirmationToOneSetOpUserUsingUser)
 	t.Run("EntryToUserUsingAuthorEntries", testEntryToOneSetOpUserUsingAuthor)
@@ -245,10 +277,12 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
+	t.Run("AchievementToAchievementUsers", testAchievementToManyAddOpAchievementUsers)
 	t.Run("BlogToEntries", testBlogToManyAddOpEntries)
 	t.Run("DepartmentToProfiles", testDepartmentToManyAddOpProfiles)
 	t.Run("ProfileToUsers", testProfileToManyAddOpUsers)
 	t.Run("RoleToProfiles", testRoleToManyAddOpProfiles)
+	t.Run("UserToAchievementUsers", testUserToManyAddOpAchievementUsers)
 	t.Run("UserToBlogs", testUserToManyAddOpBlogs)
 	t.Run("UserToEmailConfirmations", testUserToManyAddOpEmailConfirmations)
 	t.Run("UserToAuthorEntries", testUserToManyAddOpAuthorEntries)
@@ -274,6 +308,8 @@ func TestToManyRemove(t *testing.T) {
 }
 
 func TestReload(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersReload)
+	t.Run("Achievements", testAchievementsReload)
 	t.Run("Blogs", testBlogsReload)
 	t.Run("Departments", testDepartmentsReload)
 	t.Run("EmailConfirmations", testEmailConfirmationsReload)
@@ -287,6 +323,8 @@ func TestReload(t *testing.T) {
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersReloadAll)
+	t.Run("Achievements", testAchievementsReloadAll)
 	t.Run("Blogs", testBlogsReloadAll)
 	t.Run("Departments", testDepartmentsReloadAll)
 	t.Run("EmailConfirmations", testEmailConfirmationsReloadAll)
@@ -300,6 +338,8 @@ func TestReloadAll(t *testing.T) {
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersSelect)
+	t.Run("Achievements", testAchievementsSelect)
 	t.Run("Blogs", testBlogsSelect)
 	t.Run("Departments", testDepartmentsSelect)
 	t.Run("EmailConfirmations", testEmailConfirmationsSelect)
@@ -313,6 +353,8 @@ func TestSelect(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersUpdate)
+	t.Run("Achievements", testAchievementsUpdate)
 	t.Run("Blogs", testBlogsUpdate)
 	t.Run("Departments", testDepartmentsUpdate)
 	t.Run("EmailConfirmations", testEmailConfirmationsUpdate)
@@ -326,6 +368,8 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("AchievementUsers", testAchievementUsersSliceUpdateAll)
+	t.Run("Achievements", testAchievementsSliceUpdateAll)
 	t.Run("Blogs", testBlogsSliceUpdateAll)
 	t.Run("Departments", testDepartmentsSliceUpdateAll)
 	t.Run("EmailConfirmations", testEmailConfirmationsSliceUpdateAll)

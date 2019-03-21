@@ -1,0 +1,10 @@
+create_table :achievement_users, force: :cascade do |t|
+  t.references :achievement, foreign_key: true, null: false
+  t.references :user, foreign_key: true, null: false
+  t.integer :priority, null: false
+
+  t.index [:priority]
+end
+
+add_foreign_key :achievement_users, :achievements
+add_foreign_key :achievement_users, :users
