@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "users.proto";
+
+service AchievementService {
+  rpc ListAchievements (ListAchievementsRequest) returns (ListAchievementsResponse) {
+    option (google.api.http) = {
+      get: "/achievements"
+    };
+  }
+  rpc GetAchievement (GetAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      get: "/achievements/{achievement_id}"
+    };
+  }
+  rpc CreateAchievement (CreateAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      post: "/achievements"
+      body: "achievement"
+    };
+  }
+  rpc UpdateAchievement (UpdateAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      patch: "/achievements/{achievement.achievement_id}"
+      body: "achievement"
+    };
+  }
+  rpc DeleteAchievement (DeleteAchievementRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/achievements/{achievement_id}"
+    };
+  }
+}
+
+message Achievement {
+  uint32 achievement_id = 1;
+  string title = 2;
+  // 賞の名前
+  string award = 3;
+  string url = 4;
+  string description = 5;
+  // レスポンスのみ
+  string image_url = 6;
+  // 受賞した日付or作品を発表した日付
+  google.protobuf.Timestamp happened_at = 7;
+  // 作品・チームに参加したメンバー
+  repeated User members = 8;
+}
+
+message ListAchievementsRequest {
+  uint32 page_token = 1;
+  int32 page_size = 2;
+}
+
+message ListAchievementsResponse {
+  repeated Achievement achievements = 1;
+  uint32 next_page_token = 2;
+}
+
+message GetAchievementRequest {
+  uint32 achievement_id = 1;
+}
+
+message CreateAchievementRequest {
+  Achievement achievement = 1;
+}
+
+message UpdateAchievementRequest {
+  Achievement achievement = 1;
+}
+
+message DeleteAchievementRequest {
+  uint32 achievement_id = 1;
+}

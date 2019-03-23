@@ -128,7 +128,8 @@ func (m *CreatePasswordResetRequest) GetEmail() string {
 }
 
 type UpdatePasswordRequest struct {
-	Token                string   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// updateの時はemailはquery parameterじゃなくてrequest bodyに入れて欲しい
 	Email                string   `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	NewPassword          string   `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
