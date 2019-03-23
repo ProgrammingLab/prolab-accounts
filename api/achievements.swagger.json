@@ -189,6 +189,11 @@
             "$ref": "#/definitions/prolab_accountsUser"
           },
           "title": "作品・チームに参加したメンバー"
+        },
+        "hidden_members_count": {
+          "type": "integer",
+          "format": "int32",
+          "title": "レスポンスのみ。プロフィールを非公開にしているメンバーの数"
         }
       }
     },

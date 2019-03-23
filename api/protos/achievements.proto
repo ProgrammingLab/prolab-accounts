@@ -55,6 +55,8 @@ message Achievement {
   google.protobuf.Timestamp happened_at = 7;
   // 作品・チームに参加したメンバー
   repeated User members = 8;
+  // レスポンスのみ。プロフィールを非公開にしているメンバーの数
+  int32 hidden_members_count = 9;
 }
 
 message ListAchievementsRequest {
