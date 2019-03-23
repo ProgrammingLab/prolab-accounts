@@ -31,8 +31,7 @@
             "name": "page_token",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           },
           {
             "name": "page_size",
@@ -255,8 +254,7 @@
           }
         },
         "next_page_token": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string"
         }
       }
     },
