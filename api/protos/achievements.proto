@@ -35,6 +35,12 @@ service AchievementService {
       body: "achievement"
     };
   }
+  rpc UpdateAchievementImage (UpdateAchievementImageRequest) returns (Achievement) {
+    option (google.api.http) = {
+      post: "/achievements/{achievement_id}/image"
+      body: "*"
+    };
+  }
   rpc DeleteAchievement (DeleteAchievementRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/achievements/{achievement_id}"
@@ -44,11 +50,11 @@ service AchievementService {
 
 message Achievement {
   uint32 achievement_id = 1;
-  string title = 2;
+  string title = 2 [(validator.field) = {length_lt: 128}];
   // 賞の名前
-  string award = 3;
-  string url = 4;
-  string description = 5;
+  string award = 3 [(validator.field) = {length_lt: 128}];
+  string url = 4 [(validator.field) = {length_lt: 128}];
+  string description = 5 [(validator.field) = {length_lt: 1024}];
   // レスポンスのみ
   string image_url = 6;
   // 受賞した日付or作品を発表した日付
@@ -79,6 +85,11 @@ message CreateAchievementRequest {
 
 message UpdateAchievementRequest {
   Achievement achievement = 1;
+}
+
+message UpdateAchievementImageRequest {
+  uint32 achievement_id = 1;
+  bytes image = 2;
 }
 
 message DeleteAchievementRequest {

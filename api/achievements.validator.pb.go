@@ -7,10 +7,10 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/mwitkow/go-proto-validators"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "github.com/golang/protobuf/ptypes/empty"
-	_ "github.com/golang/protobuf/ptypes/timestamp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -20,6 +20,18 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Achievement) Validate() error {
+	if !(len(this.Title) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Title", fmt.Errorf(`value '%v' must length be less than '128'`, this.Title))
+	}
+	if !(len(this.Award) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Award", fmt.Errorf(`value '%v' must length be less than '128'`, this.Award))
+	}
+	if !(len(this.Url) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Url", fmt.Errorf(`value '%v' must length be less than '128'`, this.Url))
+	}
+	if !(len(this.Description) < 1024) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Description", fmt.Errorf(`value '%v' must length be less than '1024'`, this.Description))
+	}
 	if this.HappenedAt != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.HappenedAt); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("HappenedAt", err)
@@ -64,6 +76,9 @@ func (this *UpdateAchievementRequest) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Achievement", err)
 		}
 	}
+	return nil
+}
+func (this *UpdateAchievementImageRequest) Validate() error {
 	return nil
 }
 func (this *DeleteAchievementRequest) Validate() error {
