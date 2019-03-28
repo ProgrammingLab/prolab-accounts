@@ -3,6 +3,7 @@ package email
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"net/url"
 
 	"github.com/jordan-wright/email"
@@ -126,6 +127,13 @@ func (s *senderImpl) send(to, subject, tmplName string, d interface{}) error {
 	e.To = []string{to}
 	e.Subject = subjectPrefix + subject
 	e.Text = buf.Bytes()
+	if s.cfg.SMTPInsecureSkipVerify {
+		t := &tls.Config{
+			InsecureSkipVerify: true,
+		}
+		err = e.SendWithTLS(s.cfg.SMTPAddr, nil, t)
+		return errors.WithStack(err)
+	}
 	err = e.Send(s.cfg.SMTPAddr, nil)
 	return errors.WithStack(err)
 }
