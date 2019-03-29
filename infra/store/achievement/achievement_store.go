@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/volatiletech/sqlboiler/queries/qm"
-
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
@@ -52,9 +51,15 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error) {
 	mods := []qm.QueryMod{
 		qm.Load(record.AchievementRels.AchievementUsers, qm.OrderBy(record.AchievementUserColumns.Priority)),
-		record.AchievementWhere.HappenedAt.
+		record.AchievementWhere.HappenedAt.LT(before),
+		qm.OrderBy(record.AchievementColumns.HappenedAt),
 	}
-	panic("not implemented")
+	aches, err = record.Achievements(mods...).All(s.ctx, s.db)
+	if err != nil {
+		return nil, time.Time{}, errors.WithStack(err)
+	}
+
+	return aches, aches[len(aches)-1].HappenedAt, nil
 }
 
 func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, memberIDs []int64) error {
