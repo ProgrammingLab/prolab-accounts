@@ -67,7 +67,7 @@ message Achievement {
 
 message ListAchievementsRequest {
   string page_token = 1;
-  int32 page_size = 2;
+  int32 page_size = 2 [(validator.field) = {int_gt: -1, int_lt: 101}];
 }
 
 message ListAchievementsResponse {

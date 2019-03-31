@@ -40,9 +40,46 @@ type achievementServiceServerImpl struct {
 	cfg *config.Config
 }
 
-func (s *achievementServiceServerImpl) ListAchievements(context.Context, *api_pb.ListAchievementsRequest) (*api_pb.ListAchievementsResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+const (
+	pageTokenTimeLayout = time.RFC3339
+)
+
+var (
+	// ErrInvalidPageToken is returned when page token is invalid
+	ErrInvalidPageToken = status.Error(codes.InvalidArgument, "invalid page token")
+)
+
+func (s *achievementServiceServerImpl) ListAchievements(ctx context.Context, req *api_pb.ListAchievementsRequest) (*api_pb.ListAchievementsResponse, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+
+	size := req.GetPageSize()
+	if size == 0 {
+		size = 50
+	}
+
+	var (
+		before time.Time
+		err    error
+	)
+	if token := req.GetPageToken(); token == "" {
+		before = time.Now()
+	} else {
+		before, err = time.Parse(pageTokenTimeLayout, req.GetPageToken())
+		if err != nil {
+			return nil, ErrInvalidPageToken
+		}
+	}
+
+	as := s.AchievementStore(ctx)
+	aches, next, err := as.ListAchievements(before, int(size))
+	if err != nil {
+		return nil, err
+	}
+
+	return &api_pb.ListAchievementsResponse{
+		Achievements:  achievementsToResponse(aches, ok, s.cfg),
+		NextPageToken: next.Format(pageTokenTimeLayout),
+	}, nil
 }
 
 func (s *achievementServiceServerImpl) GetAchievement(context.Context, *api_pb.GetAchievementRequest) (*api_pb.Achievement, error) {
@@ -70,7 +107,7 @@ func (s *achievementServiceServerImpl) CreateAchievement(ctx context.Context, re
 		return nil, err
 	}
 
-	return achievementToResponse(rec, s.cfg), nil
+	return achievementToResponse(rec, true, s.cfg), nil
 }
 
 func (s *achievementServiceServerImpl) UpdateAchievement(context.Context, *api_pb.UpdateAchievementRequest) (*api_pb.Achievement, error) {
@@ -100,7 +137,7 @@ func toTime(t *types.Timestamp) time.Time {
 	return time.Unix(t.GetSeconds(), int64(t.GetNanos()))
 }
 
-func achievementToResponse(ach *record.Achievement, cfg *config.Config) *api_pb.Achievement {
+func achievementToResponse(ach *record.Achievement, includePrivate bool, cfg *config.Config) *api_pb.Achievement {
 	resp := &api_pb.Achievement{
 		AchievementId: uint32(ach.ID),
 		Title:         ach.Title,
@@ -121,7 +158,7 @@ func achievementToResponse(ach *record.Achievement, cfg *config.Config) *api_pb.
 			}
 
 			u := au.R.User
-			if u.R == nil || u.R.Profile == nil || u.R.Profile.ProfileScope.Int != int(model.Public) {
+			if !includePrivate && (u.R == nil || u.R.Profile == nil || u.R.Profile.ProfileScope.Int != int(model.Public)) {
 				continue
 			}
 			members = append(members, u)
@@ -132,5 +169,13 @@ func achievementToResponse(ach *record.Achievement, cfg *config.Config) *api_pb.
 	resp.Members = usersToResponse(members, false, cfg)
 	resp.HiddenMembersCount = int32(hidden)
 
+	return resp
+}
+
+func achievementsToResponse(aches []*record.Achievement, includePrivate bool, cfg *config.Config) []*api_pb.Achievement {
+	resp := make([]*api_pb.Achievement, 0, len(aches))
+	for _, a := range aches {
+		resp = append(resp, achievementToResponse(a, includePrivate, cfg))
+	}
 	return resp
 }

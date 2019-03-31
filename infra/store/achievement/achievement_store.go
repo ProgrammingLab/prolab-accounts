@@ -51,7 +51,8 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 
 func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error) {
 	mods := []qm.QueryMod{
-		qm.Load(record.AchievementRels.AchievementUsers, qm.OrderBy(record.AchievementUserColumns.Priority)),
+		qm.Load("AchievementUsers", qm.OrderBy(record.AchievementUserColumns.Priority)),
+		qm.Load("AchievementUsers.User"),
 		record.AchievementWhere.HappenedAt.LT(before),
 		qm.OrderBy(record.AchievementColumns.HappenedAt),
 	}
