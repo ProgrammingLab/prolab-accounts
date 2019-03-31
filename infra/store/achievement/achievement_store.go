@@ -11,6 +11,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 	"github.com/ProgrammingLab/prolab-accounts/sqlutil"
 )
 
@@ -26,7 +27,7 @@ func NewAchievementStore(ctx context.Context, db *sqlutil.DB) store.AchievementS
 		db:  db,
 	}
 }
-func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, memberIDs []int64) error {
+func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) error {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
 		ach.ID = 0
 		err := ach.Insert(ctx, tx, boil.Infer())
@@ -37,7 +38,7 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 		members := make([]*record.AchievementUser, 0, len(memberIDs))
 		for i, id := range memberIDs {
 			members = append(members, &record.AchievementUser{
-				UserID:   id,
+				UserID:   int64(id),
 				Priority: i,
 			})
 		}
@@ -62,7 +63,7 @@ func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (ac
 	return aches, aches[len(aches)-1].HappenedAt, nil
 }
 
-func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, memberIDs []int64) error {
+func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) error {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
 		_, err := ach.Update(ctx, tx, boil.Infer())
 		if err != nil {
@@ -72,7 +73,7 @@ func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, member
 		members := make([]*record.AchievementUser, 0, len(memberIDs))
 		for i, id := range memberIDs {
 			members = append(members, &record.AchievementUser{
-				UserID:   id,
+				UserID:   int64(id),
 				Priority: i,
 			})
 		}

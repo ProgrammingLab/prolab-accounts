@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/record"
+	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
 // AchievementStore provides achievements
 type AchievementStore interface {
-	CreateAchievement(ach *record.Achievement, memberIDs []int64) error
+	CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) error
 	ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error)
-	UpdateAchievement(ach *record.Achievement, memberIDs []int64) error
+	UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) error
 	DeleteAchievement(id int64) error
 }
