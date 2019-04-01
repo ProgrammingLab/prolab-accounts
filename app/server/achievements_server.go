@@ -2,11 +2,13 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/gogo/protobuf/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -82,9 +84,18 @@ func (s *achievementServiceServerImpl) ListAchievements(ctx context.Context, req
 	}, nil
 }
 
-func (s *achievementServiceServerImpl) GetAchievement(context.Context, *api_pb.GetAchievementRequest) (*api_pb.Achievement, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *achievementServiceServerImpl) GetAchievement(ctx context.Context, req *api_pb.GetAchievementRequest) (*api_pb.Achievement, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	as := s.AchievementStore(ctx)
+	ach, err := as.GetAchievement(int64(req.GetAchievementId()))
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return achievementToResponse(ach, ok, s.cfg), nil
 }
 
 func (s *achievementServiceServerImpl) CreateAchievement(ctx context.Context, req *api_pb.CreateAchievementRequest) (*api_pb.Achievement, error) {

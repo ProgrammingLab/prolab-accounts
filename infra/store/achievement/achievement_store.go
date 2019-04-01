@@ -27,6 +27,7 @@ func NewAchievementStore(ctx context.Context, db *sqlutil.DB) store.AchievementS
 		db:  db,
 	}
 }
+
 func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) error {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
 		ach.ID = 0
@@ -49,13 +50,24 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 	return err
 }
 
+func (s *achievementStoreImpl) GetAchievement(id int64) (*record.Achievement, error) {
+	mods := []qm.QueryMod{
+		record.AchievementWhere.ID.EQ(id),
+	}
+	mods = append(mods, s.load()...)
+	ach, err := record.Achievements(mods...).One(s.ctx, s.db)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return ach, nil
+}
+
 func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error) {
 	mods := []qm.QueryMod{
-		qm.Load("AchievementUsers", qm.OrderBy(record.AchievementUserColumns.Priority)),
-		qm.Load("AchievementUsers.User"),
 		record.AchievementWhere.HappenedAt.LT(before),
-		qm.OrderBy(record.AchievementColumns.HappenedAt),
+		qm.OrderBy(record.AchievementColumns.HappenedAt + " desc"),
 	}
+	mods = append(mods, s.load()...)
 	aches, err = record.Achievements(mods...).All(s.ctx, s.db)
 	if err != nil {
 		return nil, time.Time{}, errors.WithStack(err)
@@ -93,4 +105,11 @@ func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, member
 func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
 	_, err := record.Achievements(record.AchievementWhere.ID.EQ(id)).DeleteAll(s.ctx, s.db)
 	return errors.WithStack(err)
+}
+
+func (s *achievementStoreImpl) load() []qm.QueryMod {
+	return []qm.QueryMod{
+		qm.Load("AchievementUsers", qm.OrderBy(record.AchievementUserColumns.Priority)),
+		qm.Load("AchievementUsers.User"),
+	}
 }
