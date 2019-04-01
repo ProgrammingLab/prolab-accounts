@@ -122,8 +122,17 @@ func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, member
 }
 
 func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
-	_, err := record.Achievements(record.AchievementWhere.ID.EQ(id)).DeleteAll(s.ctx, s.db)
-	return errors.WithStack(err)
+	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
+		_, err := record.AchievementUsers(record.AchievementUserWhere.AchievementID.EQ(id)).DeleteAll(s.ctx, tx)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		_, err = record.Achievements(record.AchievementWhere.ID.EQ(id)).DeleteAll(s.ctx, tx)
+		return errors.WithStack(err)
+
+	})
+	return err
 }
 
 func (s *achievementStoreImpl) load() []qm.QueryMod {

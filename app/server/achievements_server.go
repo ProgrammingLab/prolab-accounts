@@ -150,9 +150,22 @@ func (s *achievementServiceServerImpl) UpdateAchievementImage(context.Context, *
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *achievementServiceServerImpl) DeleteAchievement(context.Context, *api_pb.DeleteAchievementRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *achievementServiceServerImpl) DeleteAchievement(ctx context.Context, req *api_pb.DeleteAchievementRequest) (*empty.Empty, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	as := s.AchievementStore(ctx)
+	err := as.DeleteAchievement(int64(req.GetAchievementId()))
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func toUserIDs(users []*api_pb.User) []model.UserID {
