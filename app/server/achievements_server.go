@@ -139,6 +139,9 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 	as := s.AchievementStore(ctx)
 	rec, err := as.UpdateAchievement(rec, toUserIDs(ach.GetMembers()))
 	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
 		return nil, err
 	}
 
