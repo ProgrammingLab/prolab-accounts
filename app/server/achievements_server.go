@@ -190,7 +190,7 @@ func achievementToResponse(ach *record.Achievement, includePrivate bool, cfg *co
 		Award:         ach.Award,
 		Url:           ach.URL,
 		Description:   ach.Description,
-		ImageUrl:      "todo", // TODO
+		ImageUrl:      ach.ImageFilename.String, // TODO
 		HappenedAt:    timeToResponse(ach.HappenedAt),
 	}
 
