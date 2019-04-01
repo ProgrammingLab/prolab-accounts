@@ -28,7 +28,7 @@ func NewAchievementStore(ctx context.Context, db *sqlutil.DB) store.AchievementS
 	}
 }
 
-func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) error {
+func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) (*record.Achievement, error) {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
 		ach.ID = 0
 		err := ach.Insert(ctx, tx, boil.Infer())
@@ -45,9 +45,23 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 		}
 
 		err = ach.AddAchievementUsers(ctx, tx, true, members...)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		mods := []qm.QueryMod{
+			s.membersOrder(),
+			qm.Load("User"),
+		}
+		err = ach.L.LoadAchievementUsers(ctx, tx, true, ach, sqlutil.QueryMods(mods))
 		return errors.WithStack(err)
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	ach, err = s.GetAchievement(ach.ID)
+	return ach, err
 }
 
 func (s *achievementStoreImpl) GetAchievement(id int64) (*record.Achievement, error) {
@@ -76,9 +90,9 @@ func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (ac
 	return aches, aches[len(aches)-1].HappenedAt, nil
 }
 
-func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) error {
+func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) (*record.Achievement, error) {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
-		_, err := ach.Update(ctx, tx, boil.Infer())
+		_, err := ach.Update(ctx, tx, boil.Whitelist("title", "award", "url", "description", "happened_at", "updated_at"))
 		if err != nil {
 			return errors.WithStack(err)
 		}
@@ -99,7 +113,12 @@ func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, member
 		err = ach.AddAchievementUsers(ctx, tx, true, members...)
 		return errors.WithStack(err)
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	ach, err = s.GetAchievement(ach.ID)
+	return ach, err
 }
 
 func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
@@ -109,7 +128,11 @@ func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
 
 func (s *achievementStoreImpl) load() []qm.QueryMod {
 	return []qm.QueryMod{
-		qm.Load("AchievementUsers", qm.OrderBy(record.AchievementUserColumns.Priority)),
+		qm.Load("AchievementUsers", s.membersOrder()),
 		qm.Load("AchievementUsers.User"),
 	}
+}
+
+func (s *achievementStoreImpl) membersOrder() qm.QueryMod {
+	return qm.OrderBy(record.AchievementUserColumns.Priority)
 }

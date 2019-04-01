@@ -9,9 +9,9 @@ import (
 
 // AchievementStore provides achievements
 type AchievementStore interface {
-	CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) error
+	CreateAchievement(ach *record.Achievement, memberIDs []model.UserID) (*record.Achievement, error)
 	GetAchievement(id int64) (*record.Achievement, error)
 	ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error)
-	UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) error
+	UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) (*record.Achievement, error)
 	DeleteAchievement(id int64) error
 }

@@ -113,7 +113,7 @@ func (s *achievementServiceServerImpl) CreateAchievement(ctx context.Context, re
 		HappenedAt:  toTime(ach.HappenedAt),
 	}
 	as := s.AchievementStore(ctx)
-	err := as.CreateAchievement(rec, toUserIDs(ach.GetMembers()))
+	rec, err := as.CreateAchievement(rec, toUserIDs(ach.GetMembers()))
 	if err != nil {
 		return nil, err
 	}
@@ -121,9 +121,28 @@ func (s *achievementServiceServerImpl) CreateAchievement(ctx context.Context, re
 	return achievementToResponse(rec, true, s.cfg), nil
 }
 
-func (s *achievementServiceServerImpl) UpdateAchievement(context.Context, *api_pb.UpdateAchievementRequest) (*api_pb.Achievement, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, req *api_pb.UpdateAchievementRequest) (*api_pb.Achievement, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	ach := req.GetAchievement()
+	rec := &record.Achievement{
+		ID:          int64(ach.AchievementId),
+		Title:       ach.GetTitle(),
+		Award:       ach.GetAward(),
+		URL:         ach.GetUrl(),
+		Description: ach.GetDescription(),
+		HappenedAt:  toTime(ach.HappenedAt),
+	}
+	as := s.AchievementStore(ctx)
+	rec, err := as.UpdateAchievement(rec, toUserIDs(ach.GetMembers()))
+	if err != nil {
+		return nil, err
+	}
+
+	return achievementToResponse(rec, true, s.cfg), nil
 }
 
 func (s *achievementServiceServerImpl) UpdateAchievementImage(context.Context, *api_pb.UpdateAchievementImageRequest) (*api_pb.Achievement, error) {
