@@ -92,6 +92,7 @@ var UserWhere = struct {
 // UserRels is where relationship names are stored.
 var UserRels = struct {
 	Profile                string
+	AchievementUsers       string
 	Blogs                  string
 	EmailConfirmations     string
 	AuthorEntries          string
@@ -100,6 +101,7 @@ var UserRels = struct {
 	PasswordResets         string
 }{
 	Profile:                "Profile",
+	AchievementUsers:       "AchievementUsers",
 	Blogs:                  "Blogs",
 	EmailConfirmations:     "EmailConfirmations",
 	AuthorEntries:          "AuthorEntries",
@@ -111,6 +113,7 @@ var UserRels = struct {
 // userR is where relationships are stored.
 type userR struct {
 	Profile                *Profile
+	AchievementUsers       AchievementUserSlice
 	Blogs                  BlogSlice
 	EmailConfirmations     EmailConfirmationSlice
 	AuthorEntries          EntrySlice
@@ -423,6 +426,27 @@ func (o *User) Profile(mods ...qm.QueryMod) profileQuery {
 	return query
 }
 
+// AchievementUsers retrieves all the achievement_user's AchievementUsers with an executor.
+func (o *User) AchievementUsers(mods ...qm.QueryMod) achievementUserQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"achievement_users\".\"user_id\"=?", o.ID),
+	)
+
+	query := AchievementUsers(queryMods...)
+	queries.SetFrom(query.Query, "\"achievement_users\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"achievement_users\".*"})
+	}
+
+	return query
+}
+
 // Blogs retrieves all the blog's Blogs with an executor.
 func (o *User) Blogs(mods ...qm.QueryMod) blogQuery {
 	var queryMods []qm.QueryMod
@@ -646,6 +670,101 @@ func (userL) LoadProfile(ctx context.Context, e boil.ContextExecutor, singular b
 					foreign.R = &profileR{}
 				}
 				foreign.R.Users = append(foreign.R.Users, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadAchievementUsers allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadAchievementUsers(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(qm.From(`achievement_users`), qm.WhereIn(`user_id in ?`, args...))
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load achievement_users")
+	}
+
+	var resultSlice []*AchievementUser
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice achievement_users")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on achievement_users")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for achievement_users")
+	}
+
+	if len(achievementUserAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.AchievementUsers = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &achievementUserR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.AchievementUsers = append(local.R.AchievementUsers, foreign)
+				if foreign.R == nil {
+					foreign.R = &achievementUserR{}
+				}
+				foreign.R.User = local
 				break
 			}
 		}
@@ -1298,6 +1417,59 @@ func (o *User) RemoveProfile(ctx context.Context, exec boil.ContextExecutor, rel
 		}
 		related.R.Users = related.R.Users[:ln-1]
 		break
+	}
+	return nil
+}
+
+// AddAchievementUsers adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.AchievementUsers.
+// Sets related.R.User appropriately.
+func (o *User) AddAchievementUsers(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*AchievementUser) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"achievement_users\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+				strmangle.WhereClause("\"", "\"", 2, achievementUserPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			AchievementUsers: related,
+		}
+	} else {
+		o.R.AchievementUsers = append(o.R.AchievementUsers, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &achievementUserR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
 	}
 	return nil
 }

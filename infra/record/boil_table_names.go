@@ -4,6 +4,8 @@
 package record
 
 var TableNames = struct {
+	AchievementUsers       string
+	Achievements           string
 	Blogs                  string
 	Departments            string
 	EmailConfirmations     string
@@ -15,6 +17,8 @@ var TableNames = struct {
 	Roles                  string
 	Users                  string
 }{
+	AchievementUsers:       "achievement_users",
+	Achievements:           "achievements",
 	Blogs:                  "blogs",
 	Departments:            "departments",
 	EmailConfirmations:     "email_confirmations",

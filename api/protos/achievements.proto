@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package programming_lab.prolab_accounts;
+
+option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
+
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "users.proto";
+
+service AchievementService {
+  rpc ListAchievements (ListAchievementsRequest) returns (ListAchievementsResponse) {
+    option (google.api.http) = {
+      get: "/achievements"
+    };
+  }
+  rpc GetAchievement (GetAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      get: "/achievements/{achievement_id}"
+    };
+  }
+  rpc CreateAchievement (CreateAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      post: "/achievements"
+      body: "achievement"
+    };
+  }
+  rpc UpdateAchievement (UpdateAchievementRequest) returns (Achievement) {
+    option (google.api.http) = {
+      patch: "/achievements/{achievement.achievement_id}"
+      body: "achievement"
+    };
+  }
+  rpc UpdateAchievementImage (UpdateAchievementImageRequest) returns (Achievement) {
+    option (google.api.http) = {
+      post: "/achievements/{achievement_id}/image"
+      body: "*"
+    };
+  }
+  rpc DeleteAchievement (DeleteAchievementRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/achievements/{achievement_id}"
+    };
+  }
+}
+
+message Achievement {
+  uint32 achievement_id = 1;
+  string title = 2 [(validator.field) = {length_lt: 128}];
+  // 賞の名前
+  string award = 3 [(validator.field) = {length_lt: 128}];
+  string url = 4 [(validator.field) = {length_lt: 128}];
+  string description = 5 [(validator.field) = {length_lt: 1024}];
+  // レスポンスのみ
+  string image_url = 6;
+  // 受賞した日付or作品を発表した日付
+  google.protobuf.Timestamp happened_at = 7;
+  // 作品・チームに参加したメンバー
+  repeated User members = 8;
+  // レスポンスのみ。プロフィールを非公開にしているメンバーの数
+  int32 hidden_members_count = 9;
+}
+
+message ListAchievementsRequest {
+  string page_token = 1;
+  int32 page_size = 2 [(validator.field) = {int_gt: -1, int_lt: 101}];
+}
+
+message ListAchievementsResponse {
+  repeated Achievement achievements = 1;
+  string next_page_token = 2;
+}
+
+message GetAchievementRequest {
+  uint32 achievement_id = 1;
+}
+
+message CreateAchievementRequest {
+  Achievement achievement = 1;
+}
+
+message UpdateAchievementRequest {
+  Achievement achievement = 1;
+}
+
+message UpdateAchievementImageRequest {
+  uint32 achievement_id = 1;
+  bytes image = 2;
+}
+
+message DeleteAchievementRequest {
+  uint32 achievement_id = 1;
+}

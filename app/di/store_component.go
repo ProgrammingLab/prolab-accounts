@@ -11,6 +11,7 @@ import (
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
+	achievementstore "github.com/ProgrammingLab/prolab-accounts/infra/store/achievement"
 	departmentstore "github.com/ProgrammingLab/prolab-accounts/infra/store/department"
 	emailconfirmationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/email_confirmation"
 	entrystore "github.com/ProgrammingLab/prolab-accounts/infra/store/entry"
@@ -42,6 +43,7 @@ type StoreComponent interface {
 	GitHubStore(ctx context.Context) store.GitHubStore
 	EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore
 	PasswordResetStore(ctx context.Context) store.PasswordResetStore
+	AchievementStore(ctx context.Context) store.AchievementStore
 }
 
 // NewStoreComponent returns new store component
@@ -193,4 +195,8 @@ func (s *storeComponentImpl) EmailConfirmationStore(ctx context.Context) store.E
 
 func (s *storeComponentImpl) PasswordResetStore(ctx context.Context) store.PasswordResetStore {
 	return resetstore.NewPasswordResetStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) AchievementStore(ctx context.Context) store.AchievementStore {
+	return achievementstore.NewAchievementStore(ctx, s.db)
 }

@@ -1,0 +1,353 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "achievements.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/achievements": {
+      "get": {
+        "operationId": "ListAchievements",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsListAchievementsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateAchievement",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      }
+    },
+    "/achievements/{achievement.achievement_id}": {
+      "patch": {
+        "operationId": "UpdateAchievement",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "achievement.achievement_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      }
+    },
+    "/achievements/{achievement_id}": {
+      "get": {
+        "operationId": "GetAchievement",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "achievement_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteAchievement",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "achievement_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      }
+    },
+    "/achievements/{achievement_id}/image": {
+      "post": {
+        "operationId": "UpdateAchievementImage",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsAchievement"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "achievement_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prolab_accountsUpdateAchievementImageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AchievementService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "prolab_accountsAchievement": {
+      "type": "object",
+      "properties": {
+        "achievement_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "award": {
+          "type": "string",
+          "title": "賞の名前"
+        },
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image_url": {
+          "type": "string",
+          "title": "レスポンスのみ"
+        },
+        "happened_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "受賞した日付or作品を発表した日付"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsUser"
+          },
+          "title": "作品・チームに参加したメンバー"
+        },
+        "hidden_members_count": {
+          "type": "integer",
+          "format": "int32",
+          "title": "レスポンスのみ。プロフィールを非公開にしているメンバーの数"
+        }
+      }
+    },
+    "prolab_accountsDepartment": {
+      "type": "object",
+      "properties": {
+        "department_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsListAchievementsResponse": {
+      "type": "object",
+      "properties": {
+        "achievements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/prolab_accountsAchievement"
+          }
+        },
+        "next_page_token": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsProfileScope": {
+      "type": "string",
+      "enum": [
+        "MEMBERS_ONLY",
+        "PUBLIC"
+      ],
+      "default": "MEMBERS_ONLY"
+    },
+    "prolab_accountsRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "prolab_accountsUpdateAchievementImageRequest": {
+      "type": "object",
+      "properties": {
+        "achievement_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "prolab_accountsUser": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "icon_url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "role": {
+          "$ref": "#/definitions/prolab_accountsRole"
+        },
+        "twitter_screen_name": {
+          "type": "string"
+        },
+        "github_user_name": {
+          "type": "string"
+        },
+        "department": {
+          "$ref": "#/definitions/prolab_accountsDepartment"
+        },
+        "profile_scope": {
+          "$ref": "#/definitions/prolab_accountsProfileScope"
+        },
+        "atcoder_user_name": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    }
+  }
+}
