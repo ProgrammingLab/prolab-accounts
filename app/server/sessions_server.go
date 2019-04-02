@@ -13,6 +13,8 @@ import (
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
 	"github.com/ProgrammingLab/prolab-accounts/app/di"
+	"github.com/ProgrammingLab/prolab-accounts/app/interceptor"
+	"github.com/ProgrammingLab/prolab-accounts/app/util"
 )
 
 // NewSessionServiceServer creates a new SessionServiceServer instance.
@@ -52,6 +54,17 @@ func (s *sessionServiceServerImpl) CreateSession(ctx context.Context, req *api_p
 }
 
 func (s *sessionServiceServerImpl) DeleteSession(ctx context.Context, req *api_pb.DeleteSessionRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	session, _ := interceptor.GetSessionID(ctx)
+	ss := s.SessionStore(ctx)
+	err := ss.DeleteSession(session)
+	if err != nil {
+		return nil, err
+	}
+
+	return &empty.Empty{}, nil
 }
