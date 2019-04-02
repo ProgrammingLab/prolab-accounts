@@ -92,6 +92,20 @@ func (s *sessionStoreImpl) GetSession(sessionID string) (*model.Session, error) 
 	}, nil
 }
 
+func (s *sessionStoreImpl) DeleteSession(sessionID string) error {
+	keys, err := s.client.Keys(redisKey(sessionID) + ":*").Result()
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if len(keys) == 0 {
+		return errors.WithStack(errSessionNotFound)
+	}
+
+	_, err = s.client.Del(keys...).Result()
+	return errors.WithStack(err)
+}
+
 func (s *sessionStoreImpl) ResetSession(userID model.UserID) (*model.Session, error) {
 	keys, err := s.client.Keys(fmt.Sprintf("%s:*:%v", keyPrefix, userID)).Result()
 	if err != nil {

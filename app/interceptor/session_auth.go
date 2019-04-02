@@ -31,11 +31,19 @@ var (
 )
 
 type currentUserIDKey struct{}
+type sessionIDKey struct{}
 
 // GetCurrentUserID returns the current user's id from context
 func GetCurrentUserID(ctx context.Context) (id model.UserID, ok bool) {
 	v := ctx.Value(currentUserIDKey{})
 	id, ok = v.(model.UserID)
+	return
+}
+
+// GetSessionID returns the session id from context
+func GetSessionID(ctx context.Context) (id string, ok bool) {
+	v := ctx.Value(sessionIDKey{})
+	id, ok = v.(string)
 	return
 }
 
@@ -75,6 +83,7 @@ func (a *Authorizator) authorization(ctx context.Context, req interface{}, info 
 	}
 
 	newCtx := context.WithValue(ctx, currentUserIDKey{}, s.UserID)
+	newCtx = context.WithValue(newCtx, sessionIDKey{}, sessionID)
 	return handler(newCtx, req)
 }
 
