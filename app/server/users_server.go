@@ -12,6 +12,7 @@ import (
 	"github.com/volatiletech/null"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
@@ -288,14 +289,32 @@ func (s *userServiceServerImpl) UpdateUserIcon(ctx context.Context, req *api_pb.
 		return nil, ErrIconSizeTooLarge
 	}
 
+	is := s.ImageStore(ctx)
+	name, err := is.CreateImage(icon)
+	if err != nil {
+		return nil, err
+	}
+
 	us := s.UserStore(ctx)
-	u, err := us.UpdateIcon(id, icon)
+	u, old, err := us.UpdateIcon(id, name)
 	if err != nil {
 		if err := errors.Cause(err); err == image.ErrFormat {
 			return nil, ErrInvalidImageFormat
 		}
 		return nil, err
 	}
+
+	go func() {
+		if old == "" {
+			return
+		}
+
+		is := s.ImageStore(context.Background())
+		err := is.DeleteImage(old)
+		if err != nil {
+			grpclog.Errorf("failed to delete old user icon: %+v", err)
+		}
+	}()
 
 	return userToResponse(u, true, s.cfg), nil
 }
