@@ -1,17 +1,11 @@
 package userstore
 
 import (
-	"bytes"
 	"context"
 	"crypto/rand"
 	"database/sql"
 	"encoding/base64"
-	"image"
-	_ "image/gif" // for image
-	_ "image/jpeg"
-	_ "image/png"
 
-	minio "github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
@@ -24,19 +18,15 @@ import (
 )
 
 type userStoreImpl struct {
-	ctx        context.Context
-	db         *sqlutil.DB
-	cli        *minio.Client
-	bucketName string
+	ctx context.Context
+	db  *sqlutil.DB
 }
 
 // NewUserStore returns new user store
-func NewUserStore(ctx context.Context, db *sqlutil.DB, cli *minio.Client, bucket string) store.UserStore {
+func NewUserStore(ctx context.Context, db *sqlutil.DB) store.UserStore {
 	return &userStoreImpl{
-		ctx:        ctx,
-		db:         db,
-		cli:        cli,
-		bucketName: bucket,
+		ctx: ctx,
+		db:  db,
 	}
 }
 
@@ -167,17 +157,7 @@ func (s *userStoreImpl) UpdateFullName(userID model.UserID, fullName string) (*r
 	return u, nil
 }
 
-func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.User, error) {
-	r := bytes.NewReader(icon)
-	_, ext, err := image.DecodeConfig(r)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	name, err := generateFilename(ext)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
+func (s *userStoreImpl) UpdateIcon(userID model.UserID, filename string) (*record.User, string, error) {
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
 		qm.Load("Profile.Department"),
@@ -185,34 +165,17 @@ func (s *userStoreImpl) UpdateIcon(userID model.UserID, icon []byte) (*record.Us
 	}
 	u, err := record.Users(mods...).One(s.ctx, s.db)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, "", errors.WithStack(err)
 	}
 
-	opt := minio.PutObjectOptions{
-		ContentType: "image/" + ext,
-	}
-	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), opt)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	old := u.AvatarFilename
-	u.AvatarFilename = null.StringFrom(name)
+	old := u.AvatarFilename.String
+	u.AvatarFilename = null.StringFrom(filename)
 	_, err = u.Update(s.ctx, s.db, boil.Whitelist(record.UserColumns.AvatarFilename, record.UserColumns.UpdatedAt))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, "", errors.WithStack(err)
 	}
 
-	if !old.Valid {
-		return u, nil
-	}
-
-	err = s.cli.RemoveObject(s.bucketName, old.String)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	return u, nil
+	return u, old, nil
 }
 
 func generateFilename(ext string) (string, error) {

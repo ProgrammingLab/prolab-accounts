@@ -18,6 +18,7 @@ import (
 	feedstore "github.com/ProgrammingLab/prolab-accounts/infra/store/feed"
 	githubstore "github.com/ProgrammingLab/prolab-accounts/infra/store/github"
 	heartbeatstore "github.com/ProgrammingLab/prolab-accounts/infra/store/heartbeat"
+	imagestore "github.com/ProgrammingLab/prolab-accounts/infra/store/image"
 	invitationstore "github.com/ProgrammingLab/prolab-accounts/infra/store/invitation"
 	resetstore "github.com/ProgrammingLab/prolab-accounts/infra/store/password_reset"
 	profilestore "github.com/ProgrammingLab/prolab-accounts/infra/store/profile"
@@ -44,6 +45,7 @@ type StoreComponent interface {
 	EmailConfirmationStore(ctx context.Context) store.EmailConfirmationStore
 	PasswordResetStore(ctx context.Context) store.PasswordResetStore
 	AchievementStore(ctx context.Context) store.AchievementStore
+	ImageStore(ctx context.Context) store.ImageStore
 }
 
 // NewStoreComponent returns new store component
@@ -146,7 +148,7 @@ type storeComponentImpl struct {
 }
 
 func (s *storeComponentImpl) UserStore(ctx context.Context) store.UserStore {
-	return userstore.NewUserStore(ctx, s.db, s.minioCli, s.cfg.MinioBucketName)
+	return userstore.NewUserStore(ctx, s.db)
 }
 
 func (s *storeComponentImpl) SessionStore(ctx context.Context) store.SessionStore {
@@ -199,4 +201,8 @@ func (s *storeComponentImpl) PasswordResetStore(ctx context.Context) store.Passw
 
 func (s *storeComponentImpl) AchievementStore(ctx context.Context) store.AchievementStore {
 	return achievementstore.NewAchievementStore(ctx, s.db)
+}
+
+func (s *storeComponentImpl) ImageStore(ctx context.Context) store.ImageStore {
+	return imagestore.NewImageStore(ctx, s.minioCli, s.cfg.MinioBucketName)
 }
