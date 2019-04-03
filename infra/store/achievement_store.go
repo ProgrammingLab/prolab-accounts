@@ -13,5 +13,6 @@ type AchievementStore interface {
 	GetAchievement(id int64) (*record.Achievement, error)
 	ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error)
 	UpdateAchievement(ach *record.Achievement, memberIDs []model.UserID) (*record.Achievement, error)
+	UpdateAchievementImage(id int64, filename string) (ach *record.Achievement, old string, err error)
 	DeleteAchievement(id int64) error
 }

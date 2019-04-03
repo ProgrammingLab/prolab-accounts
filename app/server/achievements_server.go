@@ -10,6 +10,7 @@ import (
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/ProgrammingLab/prolab-accounts/api"
@@ -43,12 +44,16 @@ type achievementServiceServerImpl struct {
 }
 
 const (
+	// MaxImageSize represents max of image size
+	MaxImageSize        = 1024 * 1024 * 3
 	pageTokenTimeLayout = time.RFC3339
 )
 
 var (
 	// ErrInvalidPageToken is returned when page token is invalid
 	ErrInvalidPageToken = status.Error(codes.InvalidArgument, "invalid page token")
+	// ErrImageSizeTooLarge will be returned when the image is too large
+	ErrImageSizeTooLarge = status.Error(codes.InvalidArgument, "image must be smaller than 3MiB")
 )
 
 func (s *achievementServiceServerImpl) ListAchievements(ctx context.Context, req *api_pb.ListAchievementsRequest) (*api_pb.ListAchievementsResponse, error) {
@@ -148,9 +153,45 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 	return achievementToResponse(rec, true, s.cfg), nil
 }
 
-func (s *achievementServiceServerImpl) UpdateAchievementImage(context.Context, *api_pb.UpdateAchievementImageRequest) (*api_pb.Achievement, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+func (s *achievementServiceServerImpl) UpdateAchievementImage(ctx context.Context, req *api_pb.UpdateAchievementImageRequest) (*api_pb.Achievement, error) {
+	_, ok := interceptor.GetCurrentUserID(ctx)
+	if !ok {
+		return nil, util.ErrUnauthenticated
+	}
+
+	image := req.GetImage()
+	if MaxImageSize < len(image) {
+		return nil, ErrImageSizeTooLarge
+	}
+
+	is := s.ImageStore(ctx)
+	name, err := is.CreateImage(image)
+	if err != nil {
+		return nil, err
+	}
+
+	as := s.AchievementStore(ctx)
+	ach, old, err := as.UpdateAchievementImage(int64(req.GetAchievementId()), name)
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			return nil, util.ErrNotFound
+		}
+		return nil, err
+	}
+
+	go func() {
+		if old == "" {
+			return
+		}
+
+		is := s.ImageStore(context.Background())
+		err := is.DeleteImage(old)
+		if err != nil {
+			grpclog.Errorf("failed to delete old user icon: %+v", err)
+		}
+	}()
+
+	return achievementToResponse(ach, true, s.cfg), nil
 }
 
 func (s *achievementServiceServerImpl) DeleteAchievement(ctx context.Context, req *api_pb.DeleteAchievementRequest) (*empty.Empty, error) {
@@ -190,7 +231,7 @@ func achievementToResponse(ach *record.Achievement, includePrivate bool, cfg *co
 		Award:         ach.Award,
 		Url:           ach.URL,
 		Description:   ach.Description,
-		ImageUrl:      ach.ImageFilename.String, // TODO
+		ImageUrl:      cfg.MinioPublicURL + "/" + cfg.MinioBucketName + "/" + ach.ImageFilename.String,
 		HappenedAt:    timeToResponse(ach.HappenedAt),
 	}
 

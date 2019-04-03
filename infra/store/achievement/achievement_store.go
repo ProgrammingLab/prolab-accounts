@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 
@@ -119,6 +120,23 @@ func (s *achievementStoreImpl) UpdateAchievement(ach *record.Achievement, member
 
 	ach, err = s.GetAchievement(ach.ID)
 	return ach, err
+}
+
+func (s *achievementStoreImpl) UpdateAchievementImage(id int64, filename string) (ach *record.Achievement, old string, err error) {
+	err = s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
+		ach, err = record.Achievements(qm.Where("id = ?", id), qm.Load("AchievementUsers.User")).One(ctx, tx)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		old = ach.ImageFilename.String
+
+		ach.ImageFilename = null.StringFrom(filename)
+		_, err = ach.Update(ctx, tx, boil.Whitelist("image_filename", "updated_at"))
+		return errors.WithStack(err)
+	})
+
+	return ach, old, err
 }
 
 func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
