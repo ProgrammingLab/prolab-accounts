@@ -117,11 +117,11 @@ message UpdateUserProfileRequest {
   int32 grade = 3 [(validator.field) = {int_gt: 0, int_lt: 6}];
   bool left = 4;
   uint32 role_id = 5;
-  string twitter_screen_name = 6 [(validator.field) = {regex: "^[A-Za-z0-9_]{0,15}$"}];
-  string github_user_name = 7 [(validator.field) = {regex: "^([a-z\\d]+-)*[a-z\\d]+$", length_lt: 40}];
+  string twitter_screen_name = 6 [(validator.field) = {length_lt: 128}];
+  string github_user_name = 7 [(validator.field) = {length_lt: 128}];
   uint32 department_id = 8;
   ProfileScope profile_scope = 9 [(validator.field) = {is_in_enum : true}];
-  string atcoder_user_name = 10 [(validator.field) = {regex: "^[a-zA-Z][a-zA-Z0-9_]{2,15}$"}];
+  string atcoder_user_name = 10 [(validator.field) = {length_lt: 128}];
   string display_name = 11 [(validator.field) = {length_lt: 51}];
 }
 
