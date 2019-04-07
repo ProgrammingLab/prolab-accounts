@@ -11,7 +11,7 @@ RUN dep ensure -v -vendor-only
 RUN ./grapi build
 
 FROM gcr.io/distroless/base
-LABEL maintainer="gedorinku <gedorinku@yahoo.co.jp>"
+LABEL maintainer="Ryota Egusa <egusa.ryota@gmail.com>"
 
 COPY --from=builder /go/src/github.com/ProgrammingLab/prolab-accounts/bin/create-user /
 COPY --from=builder /go/src/github.com/ProgrammingLab/prolab-accounts/bin/server /
