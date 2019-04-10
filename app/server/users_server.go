@@ -338,8 +338,9 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 	}
 
 	u := &api_pb.User{
-		UserId: uint32(user.ID),
-		Name:   user.Name,
+		UserId:    uint32(user.ID),
+		Name:      user.Name,
+		Authority: authorityToResponse(model.Authority(user.Authority)),
 	}
 	if includePrivate {
 		u.Email = user.Email
@@ -370,6 +371,17 @@ func userToResponse(user *record.User, includePrivate bool, cfg *config.Config) 
 	}
 
 	return u
+}
+
+func authorityToResponse(a model.Authority) api_pb.Authority {
+	switch a {
+	case model.Member:
+		return api_pb.Authority_MEMBER
+	case model.Admin:
+		return api_pb.Authority_ADMIN
+	default:
+		return api_pb.Authority_MEMBER
+	}
 }
 
 func profileScopeToResponse(scope model.ProfileScope) api_pb.ProfileScope {
