@@ -75,11 +75,17 @@ message User {
   ProfileScope profile_scope = 15;
   string atcoder_user_name = 16;
   string display_name = 17;
+  Authority authority = 18;
 }
 
 enum ProfileScope {
   MEMBERS_ONLY = 0;
   PUBLIC = 1;
+}
+
+enum Authority {
+  MEMBER = 0;
+  ADMIN = 1;
 }
 
 message ListUsersRequest {

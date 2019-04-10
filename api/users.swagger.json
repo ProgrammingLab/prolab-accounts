@@ -243,6 +243,14 @@
     }
   },
   "definitions": {
+    "prolab_accountsAuthority": {
+      "type": "string",
+      "enum": [
+        "MEMBER",
+        "ADMIN"
+      ],
+      "default": "MEMBER"
+    },
     "prolab_accountsCreateUserRequest": {
       "type": "object",
       "properties": {
@@ -423,6 +431,9 @@
         },
         "display_name": {
           "type": "string"
+        },
+        "authority": {
+          "$ref": "#/definitions/prolab_accountsAuthority"
         }
       }
     }
