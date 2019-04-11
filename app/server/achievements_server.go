@@ -231,8 +231,11 @@ func achievementToResponse(ach *record.Achievement, includePrivate bool, cfg *co
 		Award:         ach.Award,
 		Url:           ach.URL,
 		Description:   ach.Description,
-		ImageUrl:      cfg.MinioPublicURL + "/" + cfg.MinioBucketName + "/" + ach.ImageFilename.String,
 		HappenedAt:    timeToResponse(ach.HappenedAt),
+	}
+
+	if ach.ImageFilename.Valid {
+		resp.ImageUrl = cfg.MinioPublicURL + "/" + cfg.MinioBucketName + "/" + ach.ImageFilename.String
 	}
 
 	members := make([]*record.User, 0)
