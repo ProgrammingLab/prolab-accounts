@@ -156,7 +156,7 @@ func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
 func (s *achievementStoreImpl) load() []qm.QueryMod {
 	return []qm.QueryMod{
 		qm.Load("AchievementUsers", s.membersOrder()),
-		qm.Load("AchievementUsers.User"),
+		qm.Load("AchievementUsers.User.Profile"),
 	}
 }
 
