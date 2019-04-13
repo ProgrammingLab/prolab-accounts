@@ -53,7 +53,7 @@ message Achievement {
   string title = 2 [(validator.field) = {length_lt: 128}];
   // 賞の名前
   string award = 3 [(validator.field) = {length_lt: 128}];
-  string url = 4 [(validator.field) = {length_lt: 128}];
+  string url = 4 [(validator.field) = {length_lt: 1024}];
   string description = 5 [(validator.field) = {length_lt: 1024}];
   // レスポンスのみ
   string image_url = 6;
