@@ -88,6 +88,9 @@ func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (ac
 		return nil, time.Time{}, errors.WithStack(err)
 	}
 
+	if len(aches) == 0 {
+		return aches, time.Time{}, nil
+	}
 	return aches, aches[len(aches)-1].HappenedAt, nil
 }
 
