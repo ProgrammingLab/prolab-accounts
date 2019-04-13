@@ -7,10 +7,10 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/mwitkow/go-proto-validators"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -26,8 +26,8 @@ func (this *Achievement) Validate() error {
 	if !(len(this.Award) < 128) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Award", fmt.Errorf(`value '%v' must length be less than '128'`, this.Award))
 	}
-	if !(len(this.Url) < 128) {
-		return github_com_mwitkow_go_proto_validators.FieldError("Url", fmt.Errorf(`value '%v' must length be less than '128'`, this.Url))
+	if !(len(this.Url) < 1024) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Url", fmt.Errorf(`value '%v' must length be less than '1024'`, this.Url))
 	}
 	if !(len(this.Description) < 1024) {
 		return github_com_mwitkow_go_proto_validators.FieldError("Description", fmt.Errorf(`value '%v' must length be less than '1024'`, this.Description))
