@@ -48,7 +48,7 @@ func githubJob(ctx context.Context, store di.StoreComponent, cfg *config.Config)
 	to := time.Now().UTC()
 	from := to.AddDate(0, 0, -contributionsFromDay).Round(time.Hour * 24)
 	for next != 0 {
-		users, nxt, err := us.ListPublicUsers(next, 100)
+		users, nxt, err := us.ListPublicUsers("", next, 100)
 		next = nxt
 		if err != nil {
 			return err

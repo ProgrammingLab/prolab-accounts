@@ -74,11 +74,10 @@
             "format": "int32"
           },
           {
-            "name": "include_private_users",
+            "name": "query",
             "in": "query",
             "required": false,
-            "type": "boolean",
-            "format": "boolean"
+            "type": "string"
           }
         ],
         "tags": [
@@ -181,11 +180,10 @@
             "format": "int32"
           },
           {
-            "name": "include_private_users",
+            "name": "query",
             "in": "query",
             "required": false,
-            "type": "boolean",
-            "format": "boolean"
+            "type": "string"
           }
         ],
         "tags": [
