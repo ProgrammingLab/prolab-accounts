@@ -151,7 +151,7 @@ func (s *userServiceServerImpl) UpdateUserRole(ctx context.Context, req *api_pb.
 	}
 
 	ps := s.ProfileStore(ctx)
-	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p, true)
 	if err != nil {
 		return nil, err
 	}
@@ -254,18 +254,13 @@ func (s *userServiceServerImpl) UpdateUserProfile(ctx context.Context, req *api_
 		AtcoderUserName:   null.StringFrom(req.GetAtcoderUserName()),
 		DisplayName:       null.StringFrom(req.GetDisplayName()),
 	}
-	if id := req.GetRoleId(); id == 0 {
-		p.RoleID = null.NewInt64(0, false)
-	} else {
-		p.RoleID = null.Int64From(int64(id))
-	}
 	if id := req.GetDepartmentId(); id == 0 {
 		p.DepartmentID = null.NewInt64(0, false)
 	} else {
 		p.DepartmentID = null.Int64From(int64(id))
 	}
 
-	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+	err = ps.CreateOrUpdateProfile(model.UserID(u.ID), p, false)
 	if err != nil {
 		return nil, err
 	}
