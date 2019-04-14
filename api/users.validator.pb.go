@@ -7,9 +7,9 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/mwitkow/go-proto-validators"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
-	_ "github.com/golang/protobuf/ptypes/empty"
 	regexp "regexp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
@@ -33,6 +33,9 @@ func (this *User) Validate() error {
 	return nil
 }
 func (this *ListUsersRequest) Validate() error {
+	if !(len(this.Query) < 128) {
+		return github_com_mwitkow_go_proto_validators.FieldError("Query", fmt.Errorf(`value '%v' must length be less than '128'`, this.Query))
+	}
 	return nil
 }
 func (this *ListUsersResponse) Validate() error {

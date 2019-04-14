@@ -92,7 +92,7 @@ message ListUsersRequest {
   uint32 page_token = 1;
   int32 page_size = 2;
   reserved 3;
-  string query = 4;
+  string query = 4 [(validator.field) = {length_lt: 128}];
 }
 
 message ListUsersResponse {
