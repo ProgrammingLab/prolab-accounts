@@ -41,7 +41,7 @@ func CreateTestUsers(ctx context.Context, s di.StoreComponent) ([]*record.User, 
 			ProfileScope: null.IntFrom(int(scope)),
 		}
 
-		err := ps.CreateOrUpdateProfile(model.UserID(u.ID), p)
+		err := ps.CreateOrUpdateProfile(model.UserID(u.ID), p, true)
 		if err != nil {
 			return nil, err
 		}

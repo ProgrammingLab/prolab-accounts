@@ -27,7 +27,7 @@ func NewProfileStore(ctx context.Context, db *sqlutil.DB) store.ProfileStore {
 	}
 }
 
-func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *record.Profile) error {
+func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *record.Profile, updateRole bool) error {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
 		if profile.ID == 0 {
 			err := profile.Insert(s.ctx, tx, boil.Infer())
@@ -43,7 +43,12 @@ func (s *profileStoreImpl) CreateOrUpdateProfile(userID model.UserID, profile *r
 				return errors.WithStack(err)
 			}
 		} else {
-			_, err := profile.Update(s.ctx, tx, boil.Infer())
+			cols := []string{"updated_at", "description", "grade", "left", "department_id", "twitter_screen_name", "github_user_name", "profile_scope", "display_name", "atcoder_user_name"}
+			if updateRole {
+				cols = append(cols, "role_id")
+			}
+			li := boil.Whitelist(cols...)
+			_, err := profile.Update(s.ctx, tx, li)
 			if err != nil {
 				return errors.WithStack(err)
 			}
