@@ -91,9 +91,9 @@ func (s *userServiceServerImpl) listUsers(ctx context.Context, req *api_pb.ListU
 		err  error
 	)
 	if includePrivateUsers {
-		u, next, err = us.ListPrivateUsers(model.UserID(req.GetPageToken()), int(size))
+		u, next, err = us.ListPrivateUsers(req.GetQuery(), model.UserID(req.GetPageToken()), int(size))
 	} else {
-		u, next, err = us.ListPublicUsers(model.UserID(req.GetPageToken()), int(size))
+		u, next, err = us.ListPublicUsers(req.GetQuery(), model.UserID(req.GetPageToken()), int(size))
 	}
 	if err != nil {
 		return nil, err

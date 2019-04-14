@@ -95,7 +95,7 @@ func (s *userStoreImpl) GetUserWithPrivate(userID model.UserID) (*record.User, e
 	return u, nil
 }
 
-func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
+func (s *userStoreImpl) ListPublicUsers(subName string, minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
 		qm.Load("Profile.Department"),
@@ -105,6 +105,7 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 		qm.Limit(limit + 1),
 		qm.OrderBy("users.id"),
 	}
+	mods = append(mods, s.subNameQuery(subName)...)
 
 	u, err := record.Users(mods...).All(s.ctx, s.db)
 	if err != nil {
@@ -117,7 +118,7 @@ func (s *userStoreImpl) ListPublicUsers(minUserID model.UserID, limit int) ([]*r
 	return u[:limit], model.UserID(u[limit].ID), nil
 }
 
-func (s *userStoreImpl) ListPrivateUsers(minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
+func (s *userStoreImpl) ListPrivateUsers(subName string, minUserID model.UserID, limit int) ([]*record.User, model.UserID, error) {
 	mods := []qm.QueryMod{
 		qm.Load("Profile.Role"),
 		qm.Load("Profile.Department"),
@@ -125,6 +126,7 @@ func (s *userStoreImpl) ListPrivateUsers(minUserID model.UserID, limit int) ([]*
 		qm.Limit(limit + 1),
 		qm.OrderBy("users.id"),
 	}
+	mods = append(mods, s.subNameQuery(subName)...)
 
 	u, err := record.Users(mods...).All(s.ctx, s.db)
 	if err != nil {
@@ -202,4 +204,13 @@ func (s *userStoreImpl) selectQuery(scope model.ProfileScope) string {
 		return selectQuery[model.Public]
 	}
 	return q
+}
+
+func (s *userStoreImpl) subNameQuery(subName string) []qm.QueryMod {
+	if len(subName) == 0 {
+		return nil
+	}
+	return []qm.QueryMod{
+		qm.Where("users.name LIKE ? || '%'", subName),
+	}
 }
