@@ -39,7 +39,11 @@ func Run() error {
 	authorizator := interceptor.NewAuthorizator(store)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"https://*.prolab.club", "https://prolab.club", "http://localhost:*"},
+		AllowedOrigins:   []string{"https://*.prolab.club", "https://prolab.club", "http://localhost:8080"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type", "Accept"},
+		AllowCredentials: true,
+		Debug:            cfg.DebugLog,
 	})
 
 	s := grapiserver.New(
