@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
+	"github.com/rs/cors"
 	"github.com/volatiletech/sqlboiler/boil"
 	"google.golang.org/grpc/grpclog"
 
@@ -37,10 +38,14 @@ func Run() error {
 
 	authorizator := interceptor.NewAuthorizator(store)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"https://*.prolab.club", "https://prolab.club", "http://localhost:*"},
+	})
+
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithGatewayServerMiddlewares(
-			interceptor.CORSMiddleware,
+			c.Handler,
 		),
 		grapiserver.WithGatewayMuxOptions(
 			runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
