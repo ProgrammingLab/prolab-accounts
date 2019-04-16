@@ -33,6 +33,7 @@ type Achievement struct {
 	HappenedAt    time.Time   `boil:"happened_at" json:"happened_at" toml:"happened_at" yaml:"happened_at"`
 	CreatedAt     time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt     time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	DeletedAt     null.Time   `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
 
 	R *achievementR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L achievementL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -48,6 +49,7 @@ var AchievementColumns = struct {
 	HappenedAt    string
 	CreatedAt     string
 	UpdatedAt     string
+	DeletedAt     string
 }{
 	ID:            "id",
 	Title:         "title",
@@ -58,6 +60,7 @@ var AchievementColumns = struct {
 	HappenedAt:    "happened_at",
 	CreatedAt:     "created_at",
 	UpdatedAt:     "updated_at",
+	DeletedAt:     "deleted_at",
 }
 
 // Generated where
@@ -115,6 +118,29 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
+type whereHelpernull_Time struct{ field string }
+
+func (w whereHelpernull_Time) EQ(x null.Time) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Time) NEQ(x null.Time) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Time) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Time) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_Time) LT(x null.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Time) LTE(x null.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Time) GT(x null.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Time) GTE(x null.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
 var AchievementWhere = struct {
 	ID            whereHelperint64
 	Title         whereHelperstring
@@ -125,6 +151,7 @@ var AchievementWhere = struct {
 	HappenedAt    whereHelpertime_Time
 	CreatedAt     whereHelpertime_Time
 	UpdatedAt     whereHelpertime_Time
+	DeletedAt     whereHelpernull_Time
 }{
 	ID:            whereHelperint64{field: `id`},
 	Title:         whereHelperstring{field: `title`},
@@ -135,6 +162,7 @@ var AchievementWhere = struct {
 	HappenedAt:    whereHelpertime_Time{field: `happened_at`},
 	CreatedAt:     whereHelpertime_Time{field: `created_at`},
 	UpdatedAt:     whereHelpertime_Time{field: `updated_at`},
+	DeletedAt:     whereHelpernull_Time{field: `deleted_at`},
 }
 
 // AchievementRels is where relationship names are stored.
@@ -158,8 +186,8 @@ func (*achievementR) NewStruct() *achievementR {
 type achievementL struct{}
 
 var (
-	achievementColumns               = []string{"id", "title", "award", "url", "description", "image_filename", "happened_at", "created_at", "updated_at"}
-	achievementColumnsWithoutDefault = []string{"title", "award", "url", "description", "image_filename", "happened_at", "created_at", "updated_at"}
+	achievementColumns               = []string{"id", "title", "award", "url", "description", "image_filename", "happened_at", "created_at", "updated_at", "deleted_at"}
+	achievementColumnsWithoutDefault = []string{"title", "award", "url", "description", "image_filename", "happened_at", "created_at", "updated_at", "deleted_at"}
 	achievementColumnsWithDefault    = []string{"id"}
 	achievementPrimaryKeyColumns     = []string{"id"}
 )
