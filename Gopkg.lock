@@ -670,6 +670,14 @@
   version = "v1.2.2"
 
 [[projects]]
+  digest = "1:5f47c69f85311c4dc292be6cc995a0a3fe8337a6ce38ef4f71e5b7efd5ad42e0"
+  name = "github.com/rs/cors"
+  packages = ["."]
+  pruneopts = ""
+  revision = "9a47f48565a795472d43519dd49aac781f3034fb"
+  version = "v1.6.0"
+
+[[projects]]
   branch = "master"
   digest = "1:2cca4fc02c8329dadfc6e831e6feb61845983b434fb3e8a034fe5753295a752d"
   name = "github.com/serenize/snaker"
@@ -1188,6 +1196,7 @@
     "github.com/ory/hydra/sdk/go/hydra",
     "github.com/ory/hydra/sdk/go/hydra/swagger",
     "github.com/pkg/errors",
+    "github.com/rs/cors",
     "github.com/shurcooL/githubv4",
     "github.com/spf13/viper",
     "github.com/volatiletech/null",
