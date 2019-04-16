@@ -115,6 +115,9 @@ func (s *userServiceServerImpl) GetUser(ctx context.Context, req *api_pb.GetUser
 		}
 		return nil, err
 	}
+	if u.R == nil || u.R.Profile == nil || u.R.Profile.ProfileScope.Int != int(model.Public) {
+		return nil, util.ErrNotFound
+	}
 
 	return userToResponse(u, false, s.cfg), nil
 }
