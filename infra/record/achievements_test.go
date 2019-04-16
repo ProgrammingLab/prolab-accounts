@@ -722,7 +722,7 @@ func testAchievementsSelect(t *testing.T) {
 }
 
 var (
-	achievementDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Award`: `character varying`, `URL`: `character varying`, `Description`: `text`, `ImageFilename`: `character varying`, `HappenedAt`: `timestamp without time zone`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`}
+	achievementDBTypes = map[string]string{`ID`: `bigint`, `Title`: `character varying`, `Award`: `character varying`, `URL`: `character varying`, `Description`: `text`, `ImageFilename`: `character varying`, `HappenedAt`: `timestamp without time zone`, `CreatedAt`: `timestamp without time zone`, `UpdatedAt`: `timestamp without time zone`, `DeletedAt`: `timestamp without time zone`}
 	_                  = bytes.MinRead
 )
 

@@ -68,6 +68,7 @@ func (s *achievementStoreImpl) CreateAchievement(ach *record.Achievement, member
 func (s *achievementStoreImpl) GetAchievement(id int64) (*record.Achievement, error) {
 	mods := []qm.QueryMod{
 		record.AchievementWhere.ID.EQ(id),
+		record.AchievementWhere.DeletedAt.IsNull(),
 	}
 	mods = append(mods, s.load()...)
 	ach, err := record.Achievements(mods...).One(s.ctx, s.db)
@@ -80,6 +81,7 @@ func (s *achievementStoreImpl) GetAchievement(id int64) (*record.Achievement, er
 func (s *achievementStoreImpl) ListAchievements(before time.Time, limit int) (aches []*record.Achievement, next time.Time, err error) {
 	mods := []qm.QueryMod{
 		record.AchievementWhere.HappenedAt.LT(before),
+		record.AchievementWhere.DeletedAt.IsNull(),
 		qm.OrderBy(record.AchievementColumns.HappenedAt + " desc"),
 	}
 	mods = append(mods, s.load()...)
@@ -144,14 +146,14 @@ func (s *achievementStoreImpl) UpdateAchievementImage(id int64, filename string)
 
 func (s *achievementStoreImpl) DeleteAchievement(id int64) error {
 	err := s.db.Watch(s.ctx, func(ctx context.Context, tx *sql.Tx) error {
-		_, err := record.AchievementUsers(record.AchievementUserWhere.AchievementID.EQ(id)).DeleteAll(s.ctx, tx)
+		ach, err := record.FindAchievement(ctx, tx, id)
 		if err != nil {
 			return errors.WithStack(err)
 		}
 
-		_, err = record.Achievements(record.AchievementWhere.ID.EQ(id)).DeleteAll(s.ctx, tx)
+		ach.DeletedAt = null.TimeFrom(time.Now().In(boil.GetLocation()))
+		_, err = ach.Update(ctx, tx, boil.Whitelist("deleted_at", "updated_at"))
 		return errors.WithStack(err)
-
 	})
 	return err
 }
