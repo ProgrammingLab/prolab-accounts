@@ -6,6 +6,9 @@ go:
 services:
   - docker
 
+env:
+  - GO111MODULE=on
+
 install:
   - sudo apt-get remove postgresql-* -y
   - sudo -E apt-get -yq --no-install-suggests --no-install-recommends $(travis_apt_get_options) install postgresql-client-11
@@ -18,8 +21,6 @@ before_script:
   - sleep 10
   - scripts/setup-db -y
   - scripts/setup-test-db -y
-  - go get -v -u github.com/golang/dep/cmd/dep
-  - dep ensure -v -vendor-only
 
 script:
   - go test -v -race ./...

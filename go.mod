@@ -1,0 +1,112 @@
+module github.com/ProgrammingLab/prolab-accounts
+
+go 1.12
+
+require (
+	github.com/BurntSushi/toml v0.3.1
+	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/andybalholm/cascadia v1.0.0
+	github.com/dustin/go-humanize v1.0.0
+	github.com/fatih/color v1.7.0
+	github.com/fsnotify/fsnotify v1.4.7
+	github.com/ghodss/yaml v1.0.0
+	github.com/go-redis/redis v6.14.1+incompatible
+	github.com/gobuffalo/buffalo-plugins v1.13.1
+	github.com/gobuffalo/envy v1.7.0
+	github.com/gobuffalo/events v1.2.0
+	github.com/gobuffalo/flect v0.1.1
+	github.com/gobuffalo/genny v0.0.0-20190403191548-3ca520ef0d9e
+	github.com/gobuffalo/gogen v0.0.0-20190315121717-8f38393713f5
+	github.com/gobuffalo/logger v0.0.0-20190315122211-86e12af44bc2
+	github.com/gobuffalo/mapi v1.0.2
+	github.com/gobuffalo/meta v0.0.0-20190207205153-50a99e08b8cf
+	github.com/gobuffalo/packd v0.0.0-20190315124812-a385830c7fc0
+	github.com/gobuffalo/packr v1.21.0
+	github.com/gobuffalo/packr/v2 v2.1.0
+	github.com/gobuffalo/syncx v0.0.0-20190224160051-33c29581e754
+	github.com/gobwas/glob v0.2.3
+	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/gogo/protobuf v1.2.1
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/golang/protobuf v1.2.0
+	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-querystring v1.0.0
+	github.com/google/wire v0.2.1
+	github.com/gorilla/sessions v1.1.3 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/grpc-ecosystem/grpc-gateway v1.8.5
+	github.com/hashicorp/hcl v1.0.0
+	github.com/haya14busa/errorformat v0.0.0-20180607161917-689b7d67b7a8
+	github.com/haya14busa/reviewdog v0.0.0-20180723114510-ffb00ef78fd3
+	github.com/inconshreveable/mousetrap v1.0.0
+	github.com/izumin5210/clig v0.2.0
+	github.com/izumin5210/gex v0.4.5
+	github.com/izumin5210/grapi v0.4.0
+	github.com/jessevdk/go-assets v0.0.0-20160921144138-4f4301a06e15
+	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a
+	github.com/joho/godotenv v1.3.0
+	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
+	github.com/karrick/godirwalk v1.8.0
+	github.com/kat-co/vala v0.0.0-20140812221447-bfe9b50e828a
+	github.com/kelseyhightower/envconfig v1.3.0
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2
+	github.com/lib/pq v1.0.0
+	github.com/magiconair/properties v1.8.0
+	github.com/markbates/oncer v0.0.0-20181203154359-bf2de49a0be2
+	github.com/markbates/safe v1.0.1
+	github.com/mattn/go-colorable v0.0.9
+	github.com/mattn/go-isatty v0.0.4
+	github.com/mattn/go-shellwords v1.0.3
+	github.com/minio/minio-go v0.0.0-20190207005939-34f2b94c43ca
+	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/mapstructure v1.1.2
+	github.com/mmcdole/gofeed v1.0.0-beta2
+	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf
+	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
+	github.com/ory/hydra v0.0.0-20181218121201-bdb6634e3d87
+	github.com/pelletier/go-toml v1.2.0
+	github.com/pkg/errors v0.8.1
+	github.com/rogpeppe/go-internal v1.3.0
+	github.com/rs/cors v1.6.0
+	github.com/serenize/snaker v0.0.0-20171204205717-a683aaf2d516
+	github.com/shurcooL/githubv4 v0.0.0-20190119021625-d9689b595017
+	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
+	github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414
+	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd
+	github.com/sirupsen/logrus v1.4.1
+	github.com/soheilhy/cmux v0.1.4
+	github.com/spf13/afero v1.2.0
+	github.com/spf13/cast v1.3.0
+	github.com/spf13/cobra v0.0.3
+	github.com/spf13/jwalterweatherman v1.0.0
+	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.3.1
+	github.com/srvc/wraperr v0.2.0
+	github.com/tcnksm/go-input v0.0.0-20180404061846-548a7d7a8ee8
+	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d
+	github.com/volatiletech/null v8.0.0+incompatible
+	github.com/volatiletech/sqlboiler v3.2.0+incompatible
+	github.com/xanzy/go-gitlab v0.13.0
+	go.uber.org/atomic v1.3.2
+	go.uber.org/multierr v1.1.0
+	go.uber.org/zap v1.9.1
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1
+	golang.org/x/net v0.0.0-20190311183353-d8887717615a
+	golang.org/x/oauth2 v0.0.0-20190111185915-36a7019397c4
+	golang.org/x/sync v0.0.0-20190412183630-56d357773e84
+	golang.org/x/sys v0.0.0-20190219092855-153ac476189d
+	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+	golang.org/x/tools v0.0.0-20190404132500-923d25813098
+	google.golang.org/appengine v1.4.0
+	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922
+	google.golang.org/grpc v1.19.0
+	gopkg.in/ini.v1 v1.42.0
+	gopkg.in/resty.v1 v1.12.0
+	gopkg.in/yaml.v2 v2.2.2
+	k8s.io/utils v0.0.0-20190131231213-4ae6e769426e
+)
+
+replace github.com/gofrs/uuid v0.0.0-20180830191909-370558f003bf => github.com/gofrs/uuid/v3 v3.1.1
+
+replace github.com/google/go-github v0.0.0-20181222022713-a5cb647b1fac => github.com/google/go-github/v21 v21.0.0
