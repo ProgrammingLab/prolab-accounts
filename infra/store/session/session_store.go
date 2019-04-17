@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/gobwas/glob"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/queries/qm"
 	"golang.org/x/crypto/bcrypt"
@@ -154,5 +155,5 @@ func (s *sessionStoreImpl) setSession(userID model.UserID) (*model.Session, erro
 }
 
 func redisKey(sessionID string) string {
-	return fmt.Sprintf("%s:%s", keyPrefix, sessionID)
+	return fmt.Sprintf("%s:%s", keyPrefix, glob.QuoteMeta(sessionID))
 }
