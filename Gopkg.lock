@@ -413,7 +413,7 @@
   version = "v0.4.4"
 
 [[projects]]
-  digest = "1:42ad1581799a0d403173752f8b9a3b05457d7def0a126cade52295e73a26a221"
+  digest = "1:74a5c3524d7fb8c5800beef0827205a51ad65b7379d85a90d5447bf1a00dbb64"
   name = "github.com/izumin5210/grapi"
   packages = [
     "cmd/grapi",
@@ -445,8 +445,8 @@
     "pkg/svcgen/template",
   ]
   pruneopts = ""
-  revision = "2518d77403918203a90541bf5edb02cf6f8c607a"
-  version = "v0.3.2"
+  revision = "7016e2ac9a148107feea2ddadf9e5b4cf4283f8e"
+  version = "v0.4.0"
 
 [[projects]]
   branch = "master"
@@ -503,17 +503,6 @@
   pruneopts = ""
   revision = "f611eb38b3875cc3bd991ca91c51d06446afa14c"
   version = "v1.3.0"
-
-[[projects]]
-  digest = "1:e6b65ec5a09e42738d13762852d50a13865d9fccfd29576926e8ef05469388d9"
-  name = "github.com/kisielk/errcheck"
-  packages = [
-    ".",
-    "internal/errcheck",
-  ]
-  pruneopts = ""
-  revision = "e14f8d59a22d460d56c5ee92507cd94c78fbf274"
-  version = "v1.2.0"
 
 [[projects]]
   digest = "1:6a874e3ddfb9db2b42bd8c85b6875407c702fa868eed20634ff489bc896ccfd3"
@@ -1023,15 +1012,11 @@
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
-    "go/buildutil",
     "go/gcexportdata",
     "go/internal/cgo",
     "go/internal/gcimporter",
     "go/internal/packagesdriver",
-    "go/loader",
     "go/packages",
-    "go/ssa",
-    "go/ssa/ssautil",
     "go/types/typeutil",
     "imports",
     "internal/fastwalk",
@@ -1129,52 +1114,12 @@
   version = "v2.2.1"
 
 [[projects]]
-  digest = "1:4bd751fab829d96d30258e6e8868584b94e2c3002b31db7f105ea42762a67b4a"
-  name = "honnef.co/go/tools"
-  packages = [
-    "arg",
-    "callgraph",
-    "callgraph/static",
-    "cmd/megacheck",
-    "config",
-    "deprecated",
-    "functions",
-    "internal/sharedcheck",
-    "lint",
-    "lint/lintdsl",
-    "lint/lintutil",
-    "lint/lintutil/format",
-    "simple",
-    "ssa",
-    "ssa/ssautil",
-    "ssautil",
-    "staticcheck",
-    "staticcheck/vrp",
-    "unused",
-    "version",
-  ]
-  pruneopts = ""
-  revision = "95959eaf5e3c41c66151dcfd91779616b84077a8"
-  version = "2019.1.1"
-
-[[projects]]
   branch = "master"
   digest = "1:8b4b9c29be72c176988b04d5acc665c093b1efac228835f0a4716531c1f7563e"
   name = "k8s.io/utils"
   packages = ["exec"]
   pruneopts = ""
   revision = "8a16e7dd8fb6d97d1331b0c79a16722f934b00b1"
-
-[[projects]]
-  branch = "master"
-  digest = "1:4af0788cd865cab3c8276462de56bad858e178199415241c2420e13e95d8594c"
-  name = "mvdan.cc/unparam"
-  packages = [
-    ".",
-    "check",
-  ]
-  pruneopts = ""
-  revision = "1b9ccfa71afe53433971717161c9666adfc4d8c5"
 
 [solve-meta]
   analyzer-name = "dep"
