@@ -2,6 +2,7 @@ package interceptor
 
 import (
 	"context"
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -28,6 +29,8 @@ var (
 	ErrMetadataNotFound = errors.New("metadata not found in context")
 	// ErrInvalidAuthorizationMetadata is returned when authorization metadata is invalid
 	ErrInvalidAuthorizationMetadata = status.Error(codes.InvalidArgument, "Invalid authorization metadata")
+
+	sessionRegexp = regexp.MustCompile(`^[a-z0-9]{64}$`)
 )
 
 type currentUserIDKey struct{}
@@ -76,6 +79,10 @@ func (a *Authorizator) authorization(ctx context.Context, req interface{}, info 
 	}
 
 	sessionID := strings.TrimSpace(d[len(SessionAuthorizationType):])
+	if !sessionRegexp.MatchString(sessionID) {
+		return nil, util.ErrUnauthenticated
+	}
+
 	s, err := a.SessionStore(ctx).GetSession(sessionID)
 	if err != nil {
 		grpclog.Error(err)
