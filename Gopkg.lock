@@ -164,7 +164,7 @@
   revision = "d04dd98aca5b9aa7ca7c36ee639a21bcc69de32a"
 
 [[projects]]
-  digest = "1:7867b787ba56636ff319b7316fcef2e99fe1ce46f7d1a773f0e469f2f20e86c9"
+  digest = "1:7ee163a3b148d4f080eedecda9177c6e98ede2ef2f5a2432791ae28e50e50c1e"
   name = "github.com/gobuffalo/packr"
   packages = [
     "v2",
@@ -180,8 +180,8 @@
     "v2/plog",
   ]
   pruneopts = ""
-  revision = "f2a347bdbc8f32540d5ceb3036a956d830465e23"
-  version = "v2.0.6"
+  revision = "cda4ac25577350dac682c8715dc6659327232596"
+  version = "v2.2.0"
 
 [[projects]]
   branch = "master"
