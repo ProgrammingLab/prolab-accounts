@@ -81,6 +81,10 @@ func (s *sessionStoreImpl) GetSession(sessionID string) (*model.Session, error) 
 		return nil, errors.WithStack(err)
 	}
 
+	if keys[0] != redisKey(sessionID)+":"+v {
+		return nil, errors.WithStack(errSessionNotFound)
+	}
+
 	id, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -102,7 +106,16 @@ func (s *sessionStoreImpl) DeleteSession(sessionID string) error {
 		return errors.WithStack(errSessionNotFound)
 	}
 
-	_, err = s.client.Del(keys...).Result()
+	v, err := s.client.Get(keys[0]).Result()
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if keys[0] != redisKey(sessionID)+":"+v {
+		return errors.WithStack(errSessionNotFound)
+	}
+
+	_, err = s.client.Del(keys[0]).Result()
 	return errors.WithStack(err)
 }
 
