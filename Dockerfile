@@ -1,13 +1,12 @@
-FROM golang:1.12-stretch as builder
+FROM golang:1.12.4-stretch as builder
 
+ENV GO111MODULE on
 WORKDIR /go/src/github.com/ProgrammingLab/prolab-accounts
 
-RUN curl -Lo grapi https://github.com/izumin5210/grapi/releases/download/v0.3.2/grapi_linux_amd64
+RUN curl -Lo grapi https://github.com/izumin5210/grapi/releases/download/v0.4.0/grapi_linux_amd64
 RUN chmod +x grapi
-RUN go get -v -u github.com/golang/dep/cmd/dep
 
 COPY . .
-RUN dep ensure -v -vendor-only
 RUN ./grapi build
 
 FROM gcr.io/distroless/base
