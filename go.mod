@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
+	github.com/dyatlov/go-opengraph v0.0.0-20180429202543-816b6608b3c8
 	github.com/go-redis/redis v6.14.1+incompatible
 	github.com/gobuffalo/envy v1.7.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.1.0

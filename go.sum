@@ -36,6 +36,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/docker/go-connections v0.4.0/go.mod h1:Gbd7IOopHjR8Iph03tsViu4nIes5XhDvyHbTtUxmeec=
 github.com/docker/go-units v0.3.3/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+github.com/dyatlov/go-opengraph v0.0.0-20180429202543-816b6608b3c8 h1:6muCmMJat6z7qptVrIf/+OWPxsjAfvhw5/6t+FwEkgg=
+github.com/dyatlov/go-opengraph v0.0.0-20180429202543-816b6608b3c8/go.mod h1:nYia/MIs9OyvXXYboPmNOj0gVWo97Wx0sde+ZuKkoM4=
 github.com/elazarl/goproxy v0.0.0-20181003060214-f58a169a71a5/go.mod h1:/Zj4wYkgs4iZTTu3o/KG3Itv/qCCa8VVMlb3i9OVuzc=
 github.com/fatih/color v1.6.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=

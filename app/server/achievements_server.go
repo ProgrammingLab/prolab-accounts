@@ -3,8 +3,13 @@ package server
 import (
 	"context"
 	"database/sql"
+	"io/ioutil"
+	"net/http"
+	"strings"
+	"sync"
 	"time"
 
+	"github.com/dyatlov/go-opengraph/opengraph"
 	"github.com/gogo/protobuf/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
@@ -133,6 +138,33 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 	}
 
 	ach := req.GetAchievement()
+
+	// 非同期待機用
+	var wg sync.WaitGroup
+
+	// ここの間かな
+	if ach.ImageUrl == "" {
+		// 非同期処理
+		wg.Add(1)
+		go func() {
+			resp, getErr := http.Get(ach.Url)
+			if getErr != nil {
+				return
+			}
+			byteArray, _ := ioutil.ReadAll(resp.Body)
+			// ここまでがHTMLの取得
+			html := string(byteArray)
+
+			og := opengraph.NewOpenGraph()
+			ogError := og.ProcessHTML(strings.NewReader(html))
+			if ogError != nil {
+				return
+			}
+			ach.ImageUrl = og.URL
+			wg.Done()
+		}()
+	}
+
 	rec := &record.Achievement{
 		ID:          int64(ach.AchievementId),
 		Title:       ach.GetTitle(),
@@ -149,6 +181,9 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 		}
 		return nil, err
 	}
+
+	// 非同期処理が終わるまで待機(念の為)
+	wg.Wait()
 
 	return achievementToResponse(rec, true, s.cfg), nil
 }
