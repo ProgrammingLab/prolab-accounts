@@ -12,50 +12,50 @@ import (
 	"github.com/ProgrammingLab/prolab-accounts/model"
 )
 
-// ContributionConllectionServiceServer is a composite interface of api_pb.ContributionConllectionServiceServer and grapiserver.Server.
-type ContributionConllectionServiceServer interface {
-	api_pb.ContributionConllectionServiceServer
+// ContributionCollectionServiceServer is a composite interface of api_pb.ContributionCollectionServiceServer and grapiserver.Server.
+type ContributionCollectionServiceServer interface {
+	api_pb.ContributionCollectionServiceServer
 	grapiserver.Server
 }
 
-// NewContributionConllectionServiceServer creates a new ContributionConllectionServiceServer instance.
-func NewContributionConllectionServiceServer(store di.StoreComponent, cfg *config.Config) ContributionConllectionServiceServer {
-	return &contributionConllectionServiceServerImpl{
+// NewContributionCollectionServiceServer creates a new ContributionCollectionServiceServer instance.
+func NewContributionCollectionServiceServer(store di.StoreComponent, cfg *config.Config) ContributionCollectionServiceServer {
+	return &contributionCollectionServiceServerImpl{
 		StoreComponent: store,
 		cfg:            cfg,
 	}
 }
 
-type contributionConllectionServiceServerImpl struct {
+type contributionCollectionServiceServerImpl struct {
 	di.StoreComponent
 	cfg *config.Config
 }
 
 const (
-	defaultContributionConllectionsLimit = 10
+	defaultContributionCollectionsLimit = 10
 )
 
-func (s *contributionConllectionServiceServerImpl) ListContributionConllections(ctx context.Context, req *api_pb.ListContributionConllectionsRequest) (*api_pb.ListContributionConllectionsResponse, error) {
+func (s *contributionCollectionServiceServerImpl) ListContributionCollections(ctx context.Context, req *api_pb.ListContributionCollectionsRequest) (*api_pb.ListContributionCollectionsResponse, error) {
 	gs := s.GitHubStore(ctx)
 	limit := req.GetUsersCount()
 	if limit == 0 {
-		limit = defaultContributionConllectionsLimit
+		limit = defaultContributionCollectionsLimit
 	}
 	cols, err := gs.ListContributionCollections(int(limit))
 	if err != nil {
 		return nil, err
 	}
 
-	resp := contributionConllectionsToResponse(cols, s.cfg)
-	return &api_pb.ListContributionConllectionsResponse{
-		ContributionConllections: resp,
+	resp := contributionCollectionsToResponse(cols, s.cfg)
+	return &api_pb.ListContributionCollectionsResponse{
+		ContributionCollections: resp,
 	}, nil
 }
 
-func contributionConllectionsToResponse(cols []*model.GitHubContributionCollection, cfg *config.Config) []*api_pb.ContributionConllection {
-	resp := make([]*api_pb.ContributionConllection, 0, len(cols))
+func contributionCollectionsToResponse(cols []*model.GitHubContributionCollection, cfg *config.Config) []*api_pb.ContributionCollection {
+	resp := make([]*api_pb.ContributionCollection, 0, len(cols))
 	for _, c := range cols {
-		rc := contributionConllectionToResponse(c, cfg)
+		rc := contributionCollectionToResponse(c, cfg)
 		if rc == nil {
 			continue
 		}
@@ -65,13 +65,13 @@ func contributionConllectionsToResponse(cols []*model.GitHubContributionCollecti
 	return resp
 }
 
-func contributionConllectionToResponse(col *model.GitHubContributionCollection, cfg *config.Config) *api_pb.ContributionConllection {
+func contributionCollectionToResponse(col *model.GitHubContributionCollection, cfg *config.Config) *api_pb.ContributionCollection {
 	if len(col.Days) == 0 {
 		return nil
 	}
 
 	u := col.Days[0].R.User
-	return &api_pb.ContributionConllection{
+	return &api_pb.ContributionCollection{
 		User:       userToResponse(u, false, cfg),
 		TotalCount: int32(col.TotalCount),
 		Days:       contributionDaysToResponse(col.Days),

@@ -70,7 +70,7 @@ func Run() error {
 			server.NewRoleServiceServer(store),
 			server.NewDepartmentServiceServer(store),
 			server.NewInvitationServiceServer(store, cli),
-			server.NewContributionConllectionServiceServer(store, cfg),
+			server.NewContributionCollectionServiceServer(store, cfg),
 			server.NewEmailConfirmationServiceServer(store, cli, cfg),
 			server.NewPasswordResetServiceServer(store, cli, cfg),
 			server.NewAchievementServiceServer(store, cli, cfg),
