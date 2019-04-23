@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "contribution_conllections.proto",
+    "title": "contribution_collections.proto",
     "version": "version not set"
   },
   "schemes": [
@@ -15,14 +15,14 @@
     "application/json"
   ],
   "paths": {
-    "/contribution_conllections": {
+    "/contribution_collections": {
       "get": {
-        "operationId": "ListContributionConllections",
+        "operationId": "ListContributionCollections",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/prolab_accountsListContributionConllectionsResponse"
+              "$ref": "#/definitions/prolab_accountsListContributionCollectionsResponse"
             }
           }
         },
@@ -36,7 +36,7 @@
           }
         ],
         "tags": [
-          "ContributionConllectionService"
+          "ContributionCollectionService"
         ]
       }
     }
@@ -50,7 +50,7 @@
       ],
       "default": "MEMBER"
     },
-    "prolab_accountsContributionConllection": {
+    "prolab_accountsContributionCollection": {
       "type": "object",
       "properties": {
         "user": {
@@ -96,13 +96,13 @@
         }
       }
     },
-    "prolab_accountsListContributionConllectionsResponse": {
+    "prolab_accountsListContributionCollectionsResponse": {
       "type": "object",
       "properties": {
-        "contribution_conllections": {
+        "contribution_collections": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/prolab_accountsContributionConllection"
+            "$ref": "#/definitions/prolab_accountsContributionCollection"
           }
         }
       }

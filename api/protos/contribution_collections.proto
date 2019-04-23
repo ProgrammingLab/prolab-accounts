@@ -12,15 +12,15 @@ import "google/protobuf/timestamp.proto";
 
 import "users.proto";
 
-service ContributionConllectionService {
-  rpc ListContributionConllections (ListContributionConllectionsRequest) returns (ListContributionConllectionsResponse) {
+service ContributionCollectionService {
+  rpc ListContributionCollections (ListContributionCollectionsRequest) returns (ListContributionCollectionsResponse) {
     option (google.api.http) = {
-      get: "/contribution_conllections"
+      get: "/contribution_collections"
     };
   }
 }
 
-message ContributionConllection {
+message ContributionCollection {
   User user = 1;
   int32 total_count = 2;
   repeated ContributionDay days = 3;
@@ -31,10 +31,10 @@ message ContributionDay {
   int32 count = 2;
 }
 
-message ListContributionConllectionsRequest {
+message ListContributionCollectionsRequest {
   int32 users_count = 1 [(validator.field) = {int_gt: -1, int_lt: 101}];
 }
 
-message ListContributionConllectionsResponse {
-  repeated ContributionConllection contribution_conllections = 1;
+message ListContributionCollectionsResponse {
+  repeated ContributionCollection contribution_collections = 1;
 }
