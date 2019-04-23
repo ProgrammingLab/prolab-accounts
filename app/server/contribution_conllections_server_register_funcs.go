@@ -12,11 +12,11 @@ import (
 )
 
 // RegisterWithServer implements grapiserver.Server.RegisterWithServer.
-func (s *contributionConllectionServiceServerImpl) RegisterWithServer(grpcSvr *grpc.Server) {
-	api_pb.RegisterContributionConllectionServiceServer(grpcSvr, s)
+func (s *contributionCollectionServiceServerImpl) RegisterWithServer(grpcSvr *grpc.Server) {
+	api_pb.RegisterContributionCollectionServiceServer(grpcSvr, s)
 }
 
 // RegisterWithHandler implements grapiserver.Server.RegisterWithHandler.
-func (s *contributionConllectionServiceServerImpl) RegisterWithHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return api_pb.RegisterContributionConllectionServiceHandler(ctx, mux, conn)
+func (s *contributionCollectionServiceServerImpl) RegisterWithHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return api_pb.RegisterContributionCollectionServiceHandler(ctx, mux, conn)
 }
