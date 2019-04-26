@@ -9,6 +9,7 @@ import (
 	_ "image/gif" // for image
 	_ "image/jpeg"
 	_ "image/png"
+	"io"
 
 	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
@@ -33,7 +34,18 @@ func NewImageStore(ctx context.Context, cli *minio.Client, bucket string) store.
 
 func (s *imageStoreImpl) CreateImage(img []byte) (filename string, err error) {
 	r := bytes.NewReader(img)
-	_, ext, err := image.DecodeConfig(r)
+	return s.createImage(r)
+}
+
+func (s *imageStoreImpl) DeleteImage(filename string) error {
+	err := s.cli.RemoveObject(s.bucketName, filename)
+	return errors.WithStack(err)
+}
+
+func (s *imageStoreImpl) createImage(img io.Reader) (filename string, err error) {
+	var buf bytes.Buffer
+	tee := io.TeeReader(img, &buf)
+	_, ext, err := image.DecodeConfig(tee)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
@@ -45,17 +57,12 @@ func (s *imageStoreImpl) CreateImage(img []byte) (filename string, err error) {
 	opt := minio.PutObjectOptions{
 		ContentType: "image/" + ext,
 	}
-	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, r, r.Size(), opt)
+	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, name, &buf, 0, opt)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
 
 	return name, nil
-}
-
-func (s *imageStoreImpl) DeleteImage(filename string) error {
-	err := s.cli.RemoveObject(s.bucketName, filename)
-	return errors.WithStack(err)
 }
 
 func generateFilename(ext string) (string, error) {
