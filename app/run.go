@@ -82,11 +82,12 @@ func Run() error {
 	job.Start(store, cfg)
 	defer job.Close()
 
-	err = store.ImageStore(context.TODO()).MigrateImages()
-	if err != nil {
-		grpclog.Errorf("%+v", err)
-		return err
-	}
+	go func() {
+		err := store.ImageStore(context.TODO()).MigrateImages()
+		if err != nil {
+			grpclog.Errorf("%+v", err)
+		}
+	}()
 
 	return s.Serve()
 }
