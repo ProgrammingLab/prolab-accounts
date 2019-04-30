@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/image/draw"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc/grpclog"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 )
@@ -122,7 +123,8 @@ func (s *imageStoreImpl) putImage(img image.Image, filename, ext string) error {
 	go func() {
 		var err error
 		defer func() {
-			w.CloseWithError(err)
+			e := w.CloseWithError(err)
+			grpclog.Error(e)
 		}()
 		switch ext {
 		case "gif":
