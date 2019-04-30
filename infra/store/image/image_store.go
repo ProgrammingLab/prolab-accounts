@@ -72,8 +72,6 @@ func (s *imageStoreImpl) MigrateImages() error {
 		keys[key] = struct{}{}
 	}
 
-	grpclog.Infof("found %v images", len(keys))
-
 	for key := range keys {
 		if strings.HasSuffix(key, "px") {
 			continue
@@ -88,7 +86,6 @@ func (s *imageStoreImpl) MigrateImages() error {
 			continue
 		}
 
-		grpclog.Infof("migrating %v", key)
 		err := s.migrateImage(key)
 		if err != nil {
 			return err
