@@ -37,11 +37,10 @@ require (
 	github.com/volatiletech/sqlboiler v3.2.0+incompatible
 	github.com/xanzy/go-gitlab v0.13.0 // indirect
 	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
-	golang.org/x/image v0.0.0-20190424155947-59b11bec70c7
 	golang.org/x/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
 	golang.org/x/net v0.0.0-20190311183353-d8887717615a
 	golang.org/x/oauth2 v0.0.0-20190111185915-36a7019397c4
-	golang.org/x/sync v0.0.0-20190412183630-56d357773e84
+	golang.org/x/sync v0.0.0-20190412183630-56d357773e84 // indirect
 	golang.org/x/sys v0.0.0-20190219092855-153ac476189d // indirect
 	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2 // indirect
 	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922
