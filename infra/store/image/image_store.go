@@ -15,6 +15,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"golang.org/x/image/draw"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/ProgrammingLab/prolab-accounts/infra/store"
 )
@@ -65,23 +66,30 @@ func (s *imageStoreImpl) createImage(img io.Reader) (filename string, err error)
 		return "", errors.WithStack(err)
 	}
 
-	opt := minio.PutObjectOptions{
-		ContentType: "image/" + ext,
-	}
+	eg := errgroup.Group{}
+
 	orgName := name + "." + ext
-	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, orgName, &buf, -1, opt)
-	if err != nil {
-		return "", errors.WithStack(err)
-	}
+	eg.Go(func() error {
+		opt := minio.PutObjectOptions{
+			ContentType: "image/" + ext,
+		}
+		_, err := s.cli.PutObjectWithContext(s.ctx, s.bucketName, orgName, &buf, -1, opt)
+		return errors.WithStack(err)
+	})
 
 	for _, size := range imageSizes {
-		img := s.resize(src, size)
-		err := s.putImage(img, fmt.Sprintf("%v.%v_%vpx", name, ext, size), ext)
-		if err != nil {
-			return "", errors.WithStack(err)
-		}
+		px := size
+		eg.Go(func() error {
+			img := s.resize(src, px)
+			err := s.putImage(img, fmt.Sprintf("%v.%v_%vpx", name, ext, px), ext)
+			return errors.WithStack(err)
+		})
 	}
 
+	err = eg.Wait()
+	if err != nil {
+		return "", err
+	}
 	return orgName, nil
 }
 
