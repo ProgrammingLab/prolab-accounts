@@ -132,8 +132,12 @@ func BenchmarkImageStoreImpl_DecodeImage(b *testing.B) {
 
 	b.Run("decode jpeg", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			jpg.Seek(0, 0)
-			_, _, err := image.Decode(jpg)
+			_, err := jpg.Seek(0, 0)
+			if err != nil {
+				b.Fatal(err)
+			}
+
+			_, _, err = image.Decode(jpg)
 			if err != nil {
 				b.Fatal(err)
 			}
@@ -148,8 +152,12 @@ func BenchmarkImageStoreImpl_DecodeImage(b *testing.B) {
 
 	b.Run("decode png", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			png.Seek(0, 0)
-			_, _, err := image.Decode(png)
+			_, err := png.Seek(0, 0)
+			if err != nil {
+				b.Fatal(err)
+			}
+
+			_, _, err = image.Decode(png)
 			if err != nil {
 				b.Fatal(err)
 			}
