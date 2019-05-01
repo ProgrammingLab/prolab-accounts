@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/rs/cors"
@@ -79,6 +81,13 @@ func Run() error {
 
 	job.Start(store, cfg)
 	defer job.Close()
+
+	go func() {
+		err := store.ImageStore(context.TODO()).MigrateImages()
+		if err != nil {
+			grpclog.Errorf("%+v", err)
+		}
+	}()
 
 	return s.Serve()
 }
