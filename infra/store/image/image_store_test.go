@@ -52,3 +52,37 @@ func BenchmarkImageStoreImpl_Resize(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkImageStoreImpl_DecodeImage(b *testing.B) {
+	jpg, err := os.Open("./cases/ramen.jpg")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer jpg.Close()
+
+	b.Run("decode jpeg", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			jpg.Seek(0, 0)
+			_, _, err := image.Decode(jpg)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+
+	png, err := os.Open("./cases/ramen.png")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer png.Close()
+
+	b.Run("decode png", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			png.Seek(0, 0)
+			_, _, err := image.Decode(png)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
