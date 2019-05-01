@@ -4,7 +4,7 @@
 package api_pb
 
 import (
-	_ "."
+	
 	context "context"
 	fmt "fmt"
 	_type "github.com/ProgrammingLab/prolab-accounts/api/type"

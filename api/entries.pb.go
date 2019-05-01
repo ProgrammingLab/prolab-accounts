@@ -4,7 +4,7 @@
 package api_pb
 
 import (
-	_ "."
+	
 	context "context"
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
