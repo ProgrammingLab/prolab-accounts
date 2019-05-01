@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"image/png"
 	"os"
 	"testing"
 
@@ -158,6 +159,54 @@ func BenchmarkImageStoreImpl_DecodeImage(b *testing.B) {
 			}
 
 			_, _, err = image.Decode(png)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+type MockWriter struct{}
+
+func (w MockWriter) Write(p []byte) (n int, err error) {
+	return len(p), nil
+}
+
+func BenchmarkImageStoreImpl_EncodeImage(b *testing.B) {
+	jpgFile, err := os.Open("./cases/ramen.jpg")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer jpgFile.Close()
+
+	jpgImg, _, err := image.Decode(jpgFile)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.Run("encode jpeg", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			err := jpeg.Encode(MockWriter{}, jpgImg, nil)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+
+	pngFile, err := os.Open("./cases/ramen.png")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer pngFile.Close()
+
+	pngImg, _, err := image.Decode(pngFile)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.Run("encode png", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			err := png.Encode(MockWriter{}, pngImg)
 			if err != nil {
 				b.Fatal(err)
 			}
