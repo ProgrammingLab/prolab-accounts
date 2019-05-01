@@ -25,7 +25,7 @@ func BenchmarkImageStoreImpl_Resize(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer jpg.Close()
+	defer png.Close()
 
 	pngImg, _, err := image.Decode(png)
 	if err != nil {
