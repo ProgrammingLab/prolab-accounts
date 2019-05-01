@@ -5,7 +5,7 @@ package programming_lab.prolab_accounts;
 option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
