@@ -154,7 +154,7 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 
 			img := s.Resize(src, px)
 
-			dur := time.Now().Sub(start)
+			dur := time.Since(start)
 			grpclog.Infof("image resize %v: %v", px, dur)
 
 			imgCh <- &imageMessage{
@@ -179,7 +179,7 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 				return errors.WithStack(err)
 			}
 
-			dur := time.Now().Sub(start)
+			dur := time.Since(start)
 			grpclog.Infof("image put %v: %v", m.px, dur)
 		}
 
