@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"image"
-	_ "image/jpeg"
+	"image/jpeg"
 	"os"
 	"testing"
+
+	"golang.org/x/image/draw"
 )
 
 func BenchmarkImageStoreImpl_Resize(b *testing.B) {
@@ -50,6 +52,74 @@ func BenchmarkImageStoreImpl_Resize(b *testing.B) {
 				is.Resize(pngImg, size)
 			}
 		})
+	}
+}
+
+func TestResize(t *testing.T) {
+	cases := []struct {
+		Name string
+		draw.Interpolator
+	}{
+		{
+			Name:         "NearestNeighbor",
+			Interpolator: draw.NearestNeighbor,
+		},
+		{
+			Name:         "ApproxBiLinear",
+			Interpolator: draw.ApproxBiLinear,
+		},
+		{
+			Name:         "BiLinear",
+			Interpolator: draw.BiLinear,
+		},
+		{
+			Name:         "CatmullRom",
+			Interpolator: draw.CatmullRom,
+		},
+	}
+
+	src, err := os.Open("./cases/ramen.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+
+	srcImg, _, err := image.Decode(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_ = os.Mkdir("./out", 0700)
+
+	size := 512
+	for _, c := range cases {
+		srcW, srcH := srcImg.Bounds().Dx(), srcImg.Bounds().Dy()
+
+		var (
+			w int
+			h int
+		)
+		// 長辺がsizeになるように比を変えずに縮小する
+		if srcW < srcH {
+			h = size
+			w = srcW * size / srcH
+		} else {
+			w = size
+			h = srcH * size / srcW
+		}
+
+		dst := image.NewRGBA(image.Rect(0, 0, w, h))
+		c.Scale(dst, dst.Bounds(), srcImg, srcImg.Bounds(), draw.Over, nil)
+
+		f, err := os.Create(fmt.Sprintf("./out/ramen_%v.jpg", c.Name))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = jpeg.Encode(f, dst, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
