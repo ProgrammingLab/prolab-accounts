@@ -12,6 +12,7 @@ import (
 	"image/png"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
@@ -118,6 +119,13 @@ func (s *imageStoreImpl) migrateImage(key string) error {
 	return nil
 }
 
+type imageMessage struct {
+	img      image.Image
+	filename string
+	ext      string
+	px       int
+}
+
 func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename string, err error) {
 	var buf bytes.Buffer
 	tee := io.TeeReader(img, &buf)
@@ -137,14 +145,46 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 		return errors.WithStack(err)
 	})
 
+	imgCh := make(chan *imageMessage)
+
 	for _, size := range imageSizes {
 		px := size
 		eg.Go(func() error {
+			start := time.Now()
+
 			img := s.Resize(src, px)
-			err := s.putImage(img, filenameWithPx(name+"."+ext, px), ext)
-			return errors.WithStack(err)
+
+			dur := time.Now().Sub(start)
+			grpclog.Infof("image resize %v: %v", px, dur)
+
+			imgCh <- &imageMessage{
+				img:      img,
+				filename: filenameWithPx(name+"."+ext, px),
+				ext:      ext,
+				px:       px,
+			}
+
+			return nil
 		})
 	}
+
+	eg.Go(func() error {
+		for range imageSizes {
+			m := <-imgCh
+
+			start := time.Now()
+
+			err := s.putImage(m.img, m.filename, m.ext)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+
+			dur := time.Now().Sub(start)
+			grpclog.Infof("image put %v: %v", m.px, dur)
+		}
+
+		return nil
+	})
 
 	err = eg.Wait()
 	if err != nil {
