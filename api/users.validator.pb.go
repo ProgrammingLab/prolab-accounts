@@ -7,9 +7,9 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	_ "github.com/golang/protobuf/ptypes/empty"
-	_ "github.com/ProgrammingLab/prolab-accounts/api/type"
 	regexp "regexp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
@@ -28,11 +28,6 @@ func (this *User) Validate() error {
 	if this.Department != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Department); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Department", err)
-		}
-	}
-	if this.Icon != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Icon); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Icon", err)
 		}
 	}
 	return nil

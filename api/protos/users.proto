@@ -5,13 +5,12 @@ package programming_lab.prolab_accounts;
 option go_package = "github.com/ProgrammingLab/prolab-accounts/api;api_pb";
 
 
-import "validator.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 import "departments.proto";
 import "roles.proto";
-import "type/image.proto";
 
 service UserService {
   rpc ListPublicUsers (ListUsersRequest) returns (ListUsersResponse) {
@@ -65,7 +64,7 @@ message User {
   string name = 2;
   string email = 3;
   string full_name = 4;
-  string icon_url = 5 [deprecated=true];
+  string icon_url = 5;
   string description = 6;
   int32 grade = 7;
   bool left = 8;
@@ -77,8 +76,6 @@ message User {
   string atcoder_user_name = 16;
   string display_name = 17;
   Authority authority = 18;
-  // レスポンスのみ
-  type.Image icon = 19;
 }
 
 enum ProfileScope {

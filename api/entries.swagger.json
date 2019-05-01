@@ -213,44 +213,6 @@
         },
         "authority": {
           "$ref": "#/definitions/prolab_accountsAuthority"
-        },
-        "icon": {
-          "$ref": "#/definitions/typeImage",
-          "title": "レスポンスのみ"
-        }
-      }
-    },
-    "typeImage": {
-      "type": "object",
-      "properties": {
-        "url": {
-          "type": "string",
-          "title": "オリジナル画像のURL"
-        },
-        "optimized_images": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/typeOptimizedImage"
-          }
-        }
-      }
-    },
-    "typeOptimizedImage": {
-      "type": "object",
-      "properties": {
-        "width": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "mime_type": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
         }
       }
     }

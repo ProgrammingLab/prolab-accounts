@@ -226,10 +226,6 @@
           "type": "integer",
           "format": "int32",
           "title": "レスポンスのみ。プロフィールを非公開にしているメンバーの数"
-        },
-        "image": {
-          "$ref": "#/definitions/typeImage",
-          "title": "レスポンスのみ"
         }
       }
     },
@@ -356,10 +352,6 @@
         },
         "authority": {
           "$ref": "#/definitions/prolab_accountsAuthority"
-        },
-        "icon": {
-          "$ref": "#/definitions/typeImage",
-          "title": "レスポンスのみ"
         }
       }
     },
@@ -367,40 +359,6 @@
       "type": "object",
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    },
-    "typeImage": {
-      "type": "object",
-      "properties": {
-        "url": {
-          "type": "string",
-          "title": "オリジナル画像のURL"
-        },
-        "optimized_images": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/typeOptimizedImage"
-          }
-        }
-      }
-    },
-    "typeOptimizedImage": {
-      "type": "object",
-      "properties": {
-        "width": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "height": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "mime_type": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      }
     }
   }
 }
