@@ -182,7 +182,8 @@
           "$ref": "#/definitions/prolab_accountsAuthority"
         },
         "icon": {
-          "$ref": "#/definitions/typeImage"
+          "$ref": "#/definitions/typeImage",
+          "title": "レスポンスのみ"
         }
       }
     },

@@ -228,7 +228,8 @@
           "title": "レスポンスのみ。プロフィールを非公開にしているメンバーの数"
         },
         "image": {
-          "$ref": "#/definitions/typeImage"
+          "$ref": "#/definitions/typeImage",
+          "title": "レスポンスのみ"
         }
       }
     },
@@ -357,7 +358,8 @@
           "$ref": "#/definitions/prolab_accountsAuthority"
         },
         "icon": {
-          "$ref": "#/definitions/typeImage"
+          "$ref": "#/definitions/typeImage",
+          "title": "レスポンスのみ"
         }
       }
     },

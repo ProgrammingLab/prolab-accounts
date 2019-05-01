@@ -42,7 +42,8 @@ type Achievement struct {
 	// 作品・チームに参加したメンバー
 	Members []*User `protobuf:"bytes,8,rep,name=members,proto3" json:"members,omitempty"`
 	// レスポンスのみ。プロフィールを非公開にしているメンバーの数
-	HiddenMembersCount   int32        `protobuf:"varint,9,opt,name=hidden_members_count,json=hiddenMembersCount,proto3" json:"hidden_members_count,omitempty"`
+	HiddenMembersCount int32 `protobuf:"varint,9,opt,name=hidden_members_count,json=hiddenMembersCount,proto3" json:"hidden_members_count,omitempty"`
+	// レスポンスのみ
 	Image                *_type.Image `protobuf:"bytes,10,opt,name=image,proto3" json:"image,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`

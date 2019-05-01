@@ -64,6 +64,7 @@ message Achievement {
   repeated User members = 8;
   // レスポンスのみ。プロフィールを非公開にしているメンバーの数
   int32 hidden_members_count = 9;
+  // レスポンスのみ
   type.Image image = 10;
 }
 

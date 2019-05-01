@@ -78,22 +78,23 @@ func (Authority) EnumDescriptor() ([]byte, []int) {
 }
 
 type User struct {
-	UserId               uint32       `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Name                 string       `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Email                string       `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	FullName             string       `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
-	IconUrl              string       `protobuf:"bytes,5,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"` // Deprecated: Do not use.
-	Description          string       `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	Grade                int32        `protobuf:"varint,7,opt,name=grade,proto3" json:"grade,omitempty"`
-	Left                 bool         `protobuf:"varint,8,opt,name=left,proto3" json:"left,omitempty"`
-	Role                 *Role        `protobuf:"bytes,11,opt,name=role,proto3" json:"role,omitempty"`
-	TwitterScreenName    string       `protobuf:"bytes,12,opt,name=twitter_screen_name,json=twitterScreenName,proto3" json:"twitter_screen_name,omitempty"`
-	GithubUserName       string       `protobuf:"bytes,13,opt,name=github_user_name,json=githubUserName,proto3" json:"github_user_name,omitempty"`
-	Department           *Department  `protobuf:"bytes,14,opt,name=department,proto3" json:"department,omitempty"`
-	ProfileScope         ProfileScope `protobuf:"varint,15,opt,name=profile_scope,json=profileScope,proto3,enum=programming_lab.prolab_accounts.ProfileScope" json:"profile_scope,omitempty"`
-	AtcoderUserName      string       `protobuf:"bytes,16,opt,name=atcoder_user_name,json=atcoderUserName,proto3" json:"atcoder_user_name,omitempty"`
-	DisplayName          string       `protobuf:"bytes,17,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Authority            Authority    `protobuf:"varint,18,opt,name=authority,proto3,enum=programming_lab.prolab_accounts.Authority" json:"authority,omitempty"`
+	UserId            uint32       `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Name              string       `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Email             string       `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	FullName          string       `protobuf:"bytes,4,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	IconUrl           string       `protobuf:"bytes,5,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"` // Deprecated: Do not use.
+	Description       string       `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Grade             int32        `protobuf:"varint,7,opt,name=grade,proto3" json:"grade,omitempty"`
+	Left              bool         `protobuf:"varint,8,opt,name=left,proto3" json:"left,omitempty"`
+	Role              *Role        `protobuf:"bytes,11,opt,name=role,proto3" json:"role,omitempty"`
+	TwitterScreenName string       `protobuf:"bytes,12,opt,name=twitter_screen_name,json=twitterScreenName,proto3" json:"twitter_screen_name,omitempty"`
+	GithubUserName    string       `protobuf:"bytes,13,opt,name=github_user_name,json=githubUserName,proto3" json:"github_user_name,omitempty"`
+	Department        *Department  `protobuf:"bytes,14,opt,name=department,proto3" json:"department,omitempty"`
+	ProfileScope      ProfileScope `protobuf:"varint,15,opt,name=profile_scope,json=profileScope,proto3,enum=programming_lab.prolab_accounts.ProfileScope" json:"profile_scope,omitempty"`
+	AtcoderUserName   string       `protobuf:"bytes,16,opt,name=atcoder_user_name,json=atcoderUserName,proto3" json:"atcoder_user_name,omitempty"`
+	DisplayName       string       `protobuf:"bytes,17,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Authority         Authority    `protobuf:"varint,18,opt,name=authority,proto3,enum=programming_lab.prolab_accounts.Authority" json:"authority,omitempty"`
+	// レスポンスのみ
 	Icon                 *_type.Image `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
