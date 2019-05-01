@@ -140,7 +140,7 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 	for _, size := range imageSizes {
 		px := size
 		eg.Go(func() error {
-			img := s.resize(src, px)
+			img := s.Resize(src, px)
 			err := s.putImage(img, filenameWithPx(name+"."+ext, px), ext)
 			return errors.WithStack(err)
 		})
@@ -153,7 +153,7 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 	return orgName, nil
 }
 
-func (s *imageStoreImpl) resize(src image.Image, size int) image.Image {
+func (s *imageStoreImpl) Resize(src image.Image, size int) image.Image {
 	srcW, srcH := src.Bounds().Dx(), src.Bounds().Dy()
 	if srcW <= size && srcH <= size {
 		return src
