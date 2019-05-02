@@ -1,6 +1,7 @@
 package imagestore
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/rand"
@@ -227,13 +228,14 @@ func (s *imageStoreImpl) putImage(img image.Image, filename, ext string) error {
 				grpclog.Error(e)
 			}
 		}()
+		bw := bufio.NewWriter(w)
 		switch ext {
 		case "gif":
-			err = errors.WithStack(gif.Encode(w, img, nil))
+			err = errors.WithStack(gif.Encode(bw, img, nil))
 		case "jpeg":
-			err = errors.WithStack(jpeg.Encode(w, img, nil))
+			err = errors.WithStack(jpeg.Encode(bw, img, nil))
 		case "png":
-			err = errors.WithStack(png.Encode(w, img))
+			err = errors.WithStack(png.Encode(bw, img))
 		default:
 			err = errors.WithStack(image.ErrFormat)
 		}
