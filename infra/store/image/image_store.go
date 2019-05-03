@@ -134,7 +134,7 @@ func (s *imageStoreImpl) createImage(name string, img io.Reader) (filename strin
 		opt := minio.PutObjectOptions{
 			ContentType: "image/" + ext,
 		}
-		_, err := s.cli.PutObjectWithContext(s.ctx, s.bucketName, orgName, &buf, -1, opt)
+		_, err := s.cli.PutObjectWithContext(s.ctx, s.bucketName, orgName, &buf, int64(buf.Len()), opt)
 		return errors.WithStack(err)
 	})
 
