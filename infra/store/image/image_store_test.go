@@ -286,7 +286,7 @@ func BenchmarkImageStoreImpl_putImage(b *testing.B) {
 				var err error
 				for ; err == nil; _, err = r.Read(buf) {
 				}
-				if err != nil && err != io.EOF {
+				if err != io.EOF {
 					b.Fatal(err)
 				}
 			}
