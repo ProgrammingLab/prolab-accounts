@@ -220,6 +220,7 @@ func (s *imageStoreImpl) Resize(src image.Image, size int) image.Image {
 
 func (s *imageStoreImpl) putImage(img image.Image, filename, ext string) error {
 	r, w := io.Pipe()
+	defer r.Close()
 	go func() {
 		var err error
 		defer func() {

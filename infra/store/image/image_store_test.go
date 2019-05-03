@@ -1,16 +1,33 @@
 package imagestore
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"image"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"os"
 	"testing"
 
+	"github.com/pkg/errors"
 	"golang.org/x/image/draw"
+	"google.golang.org/grpc/grpclog"
 )
+
+var fileNames = []string{
+	"./cases/ramen.jpg",
+	"./cases/ramen.png",
+	"./cases/hanabi.jpg",
+}
+
+type Case struct {
+	Name  string
+	Ext   string
+	Image image.Image
+}
 
 func BenchmarkImageStoreImpl_Resize(b *testing.B) {
 	jpg, err := os.Open("./cases/ramen.jpg")
@@ -212,4 +229,67 @@ func BenchmarkImageStoreImpl_EncodeImage(b *testing.B) {
 			}
 		}
 	})
+}
+
+func BenchmarkImageStoreImpl_putImage(b *testing.B) {
+	cases := []Case{}
+	for _, n := range fileNames {
+		func() {
+			f, err := os.Open(n)
+			if err != nil {
+				b.Fatal(err)
+			}
+			defer func() {
+				_ = f.Close()
+			}()
+			img, ext, err := image.Decode(f)
+			if err != nil {
+				b.Fatal(err)
+			}
+
+			cases = append(cases, Case{
+				Name:  f.Name(),
+				Ext:   ext,
+				Image: img,
+			})
+		}()
+	}
+
+	for _, c := range cases {
+		cur := c
+		b.Run(fmt.Sprintf("put image %v", c.Name), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				r, w := io.Pipe()
+				defer r.Close()
+				go func() {
+					var err error
+					defer func() {
+						e := w.CloseWithError(err)
+						if e != nil {
+							grpclog.Error(e)
+						}
+					}()
+					bw := bufio.NewWriter(w)
+					switch cur.Ext {
+					case "gif":
+						err = errors.WithStack(gif.Encode(bw, cur.Image, nil))
+					case "jpeg":
+						err = errors.WithStack(jpeg.Encode(bw, cur.Image, nil))
+					case "png":
+						err = errors.WithStack(png.Encode(bw, cur.Image))
+					default:
+						err = errors.WithStack(image.ErrFormat)
+					}
+				}()
+
+				buf := make([]byte, 4096)
+				var err error
+				for ; err == nil; _, err = r.Read(buf) {
+				}
+				if err != nil && err != io.EOF {
+					b.Fatal(err)
+				}
+			}
+		})
+	}
 }
