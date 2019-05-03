@@ -1,7 +1,6 @@
 package imagestore
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"crypto/rand"
@@ -219,33 +218,27 @@ func (s *imageStoreImpl) Resize(src image.Image, size int) image.Image {
 }
 
 func (s *imageStoreImpl) putImage(img image.Image, filename, ext string) error {
-	r, w := io.Pipe()
-	defer r.Close()
-	go func() {
-		var err error
-		defer func() {
-			e := w.CloseWithError(err)
-			if e != nil {
-				grpclog.Error(e)
-			}
-		}()
-		bw := bufio.NewWriter(w)
-		switch ext {
-		case "gif":
-			err = errors.WithStack(gif.Encode(bw, img, nil))
-		case "jpeg":
-			err = errors.WithStack(jpeg.Encode(bw, img, nil))
-		case "png":
-			err = errors.WithStack(png.Encode(bw, img))
-		default:
-			err = errors.WithStack(image.ErrFormat)
-		}
-	}()
+	var buf bytes.Buffer
+
+	var err error
+	switch ext {
+	case "gif":
+		err = errors.WithStack(gif.Encode(&buf, img, nil))
+	case "jpeg":
+		err = errors.WithStack(jpeg.Encode(&buf, img, nil))
+	case "png":
+		err = errors.WithStack(png.Encode(&buf, img))
+	default:
+		err = errors.WithStack(image.ErrFormat)
+	}
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
 	opt := minio.PutObjectOptions{
 		ContentType: "image/" + ext,
 	}
-	_, err := s.cli.PutObjectWithContext(s.ctx, s.bucketName, filename, r, -1, opt)
+	_, err = s.cli.PutObjectWithContext(s.ctx, s.bucketName, filename, &buf, int64(buf.Len()), opt)
 	return errors.WithStack(err)
 }
 
