@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"io/ioutil"
 	"net/http"
-	"strings"
-	"sync"
 	"time"
 
 	"github.com/dyatlov/go-opengraph/opengraph"
@@ -139,29 +137,55 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 
 	ach := req.GetAchievement()
 
-	// 非同期待機用
-	var wg sync.WaitGroup
-
 	// ここの間かな
 	if ach.ImageUrl == "" {
 		// 非同期処理
-		wg.Add(1)
 		go func() {
-			resp, getErr := http.Get(ach.Url)
-			if getErr != nil {
+			resp, err := http.Get(ach.Url)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
 				return
 			}
-			byteArray, _ := ioutil.ReadAll(resp.Body)
-			// ここまでがHTMLの取得
-			html := string(byteArray)
+
+			defer func() { _ = resp.Body.Close() }()
 
 			og := opengraph.NewOpenGraph()
-			ogError := og.ProcessHTML(strings.NewReader(html))
-			if ogError != nil {
+			err = og.ProcessHTML(resp.Body)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
 				return
 			}
-			ach.ImageUrl = og.URL
-			wg.Done()
+
+			images := og.Images
+			if len(images) == 0 {
+				return
+			}
+
+			image := images[0]
+			imgResp, err := http.Get(image.SecureURL)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
+				return
+			}
+
+			imageByte, err := ioutil.ReadAll(imgResp.Body)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
+				return
+			}
+
+			is := s.ImageStore(context.Background())
+			name, err := is.CreateImage(imageByte)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
+				return
+			}
+
+			_, _, err = s.AchievementStore(context.Background()).UpdateAchievementImage(int64(req.Achievement.AchievementId), name)
+			if err != nil {
+				grpclog.Errorf("ogImage: %+v", err)
+				return
+			}
 		}()
 	}
 
@@ -181,9 +205,6 @@ func (s *achievementServiceServerImpl) UpdateAchievement(ctx context.Context, re
 		}
 		return nil, err
 	}
-
-	// 非同期処理が終わるまで待機(念の為)
-	wg.Wait()
 
 	return achievementToResponse(rec, true, s.cfg), nil
 }
