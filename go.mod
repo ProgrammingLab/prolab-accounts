@@ -11,7 +11,7 @@ require (
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/gogo/protobuf v1.2.1
 	github.com/golang/protobuf v1.3.1
-	github.com/grpc-ecosystem/grpc-gateway v1.8.5
+	github.com/grpc-ecosystem/grpc-gateway v1.8.6
 	github.com/izumin5210/grapi v0.4.0
 	github.com/joho/godotenv v1.3.0
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
