@@ -1,4 +1,4 @@
-FROM golang:1.12.4-stretch as builder
+FROM golang:1.12.5-stretch as builder
 
 ENV GO111MODULE on
 WORKDIR /go/src/github.com/ProgrammingLab/prolab-accounts
