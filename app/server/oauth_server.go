@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/izumin5210/grapi/pkg/grapiserver"
-	"github.com/ory/hydra/sdk/go/hydra/swagger"
+	"github.com/ory/hydra-legacy-sdk/swagger"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/status"

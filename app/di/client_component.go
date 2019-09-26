@@ -3,7 +3,7 @@ package di
 import (
 	"context"
 
-	"github.com/ory/hydra/sdk/go/hydra"
+	hydra "github.com/ory/hydra-legacy-sdk"
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
