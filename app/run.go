@@ -6,6 +6,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/rs/cors"
+	"github.com/srvc/appctx"
 	"github.com/volatiletech/sqlboiler/boil"
 	"google.golang.org/grpc/grpclog"
 
@@ -18,6 +19,8 @@ import (
 
 // Run starts the grapiserver.
 func Run() error {
+	ctx := appctx.Global()
+
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		grpclog.Errorf("%+v", err)
@@ -89,5 +92,5 @@ func Run() error {
 		}
 	}()
 
-	return s.Serve()
+	return s.Serve(ctx)
 }
