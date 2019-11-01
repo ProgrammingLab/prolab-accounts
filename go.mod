@@ -30,7 +30,7 @@ require (
 	github.com/mmcdole/gofeed v1.0.0-beta2
 	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf // indirect
 	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
-	github.com/ory/hydra v1.0.8 // indirect
+	github.com/ory/hydra v1.0.8
 	github.com/ory/hydra-legacy-sdk v0.0.0-20190409103449-1f564942be76
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0
