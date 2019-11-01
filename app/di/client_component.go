@@ -2,8 +2,9 @@ package di
 
 import (
 	"context"
+	"net/url"
 
-	hydra "github.com/ory/hydra-legacy-sdk"
+	"github.com/ory/hydra/sdk/go/hydra/client"
 	"github.com/pkg/errors"
 
 	"github.com/ProgrammingLab/prolab-accounts/app/config"
@@ -13,7 +14,7 @@ import (
 
 // ClientComponent is an interface of api clients
 type ClientComponent interface {
-	HydraClient(ctx context.Context) *hydra.CodeGenSDK
+	HydraClient(ctx context.Context) *client.OryHydra
 	EmailSender(ctx context.Context) email.Sender
 }
 
@@ -36,24 +37,28 @@ func NewClientComponent(cfg *config.Config) (ClientComponent, error) {
 	}, nil
 }
 
-func newHydraClient(cfg *config.Config) (*hydra.CodeGenSDK, error) {
-	hc := &hydra.Configuration{
-		AdminURL: cfg.HydraAdminURL,
-	}
-	cli, err := hydra.NewSDK(hc)
+func newHydraClient(cfg *config.Config) (*client.OryHydra, error) {
+	adminURL, err := url.Parse(cfg.HydraAdminURL)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+
+	cliCfg := &client.TransportConfig{
+		Schemes:  []string{adminURL.Scheme},
+		Host:     adminURL.Host,
+		BasePath: adminURL.Path,
+	}
+	cli := client.NewHTTPClientWithConfig(nil, cliCfg)
 	return cli, nil
 }
 
 type clientComponentImpl struct {
 	cfg      *config.Config
-	hydraCli *hydra.CodeGenSDK
+	hydraCli *client.OryHydra
 	emails   *static.EmailAsset
 }
 
-func (c *clientComponentImpl) HydraClient(ctx context.Context) *hydra.CodeGenSDK {
+func (c *clientComponentImpl) HydraClient(ctx context.Context) *client.OryHydra {
 	return c.hydraCli
 }
 
