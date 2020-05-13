@@ -37,7 +37,7 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/shurcooL/githubv4 v0.0.0-20190119021625-d9689b595017
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
-	github.com/spf13/viper v1.4.0
+	github.com/spf13/viper v1.7.0
 	github.com/srvc/appctx v0.1.0
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
@@ -49,10 +49,9 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c // indirect
-	google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c
+	google.golang.org/genproto v0.0.0-20191108220845-16a3f7862a1a
 	google.golang.org/grpc v1.29.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
-	gopkg.in/ini.v1 v1.42.0 // indirect
 	k8s.io/utils v0.0.0-20191010214722-8d271d903fe4 // indirect
 )
 
