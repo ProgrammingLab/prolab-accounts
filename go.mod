@@ -11,7 +11,7 @@ require (
 	github.com/go-openapi/runtime v0.19.7 // indirect
 	github.com/go-openapi/spec v0.19.4 // indirect
 	github.com/go-openapi/validate v0.19.4 // indirect
-	github.com/go-redis/redis v6.14.1+incompatible
+	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/gobuffalo/envy v1.7.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.0
 	github.com/gobwas/glob v0.2.3
