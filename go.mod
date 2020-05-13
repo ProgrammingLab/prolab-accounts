@@ -14,7 +14,7 @@ require (
 	github.com/gobuffalo/envy v1.7.0 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.0
 	github.com/gobwas/glob v0.2.3
-	github.com/gogo/protobuf v1.2.1
+	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/google/wire v0.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.14.5
