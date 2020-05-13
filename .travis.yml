@@ -16,7 +16,7 @@ install:
 before_script:
   - cp sqlboiler.toml.ci sqlboiler.toml
   - cp .env.ci .env
-  - docker-compose up -d pg
+  - docker-compose up pg
 #   - timeout 30 docker-compose exec pg bash -c "until psql -c '\q' -U postgres; do sleep 0.5; done"
   - sleep 10
   - scripts/setup-db -y
