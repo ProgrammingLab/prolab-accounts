@@ -34,7 +34,7 @@ require (
 	github.com/ory/hydra v1.0.8
 	github.com/ory/hydra-legacy-sdk v0.0.0-20190409103449-1f564942be76
 	github.com/pkg/errors v0.8.1
-	github.com/rs/cors v1.6.0
+	github.com/rs/cors v1.7.0
 	github.com/shurcooL/githubv4 v0.0.0-20190119021625-d9689b595017
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
 	github.com/spf13/viper v1.4.0
