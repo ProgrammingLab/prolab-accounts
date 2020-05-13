@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
+	github.com/friendsofgo/errors v0.9.2 // indirect
 	github.com/go-openapi/analysis v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/loads v0.19.4 // indirect
@@ -40,7 +41,7 @@ require (
 	github.com/srvc/appctx v0.1.0
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
-	github.com/volatiletech/sqlboiler v3.2.0+incompatible
+	github.com/volatiletech/sqlboiler v3.7.1+incompatible
 	go.mongodb.org/mongo-driver v1.1.2 // indirect
 	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
