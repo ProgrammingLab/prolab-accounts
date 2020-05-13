@@ -12,7 +12,7 @@ require (
 	github.com/go-openapi/validate v0.19.4 // indirect
 	github.com/go-redis/redis v6.14.1+incompatible
 	github.com/gobuffalo/envy v1.7.0 // indirect
-	github.com/gobuffalo/packr/v2 v2.1.0
+	github.com/gobuffalo/packr/v2 v2.8.0
 	github.com/gobwas/glob v0.2.3
 	github.com/gogo/protobuf v1.2.1
 	github.com/golang/protobuf v1.3.2
@@ -42,13 +42,12 @@ require (
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.2.0+incompatible
 	go.mongodb.org/mongo-driver v1.1.2 // indirect
-	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
+	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
-	golang.org/x/net v0.0.0-20191028085509-fe3aa8a45271
+	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/sync v0.0.0-20190423024810-112230192c58
+	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/sys v0.0.0-20191029155521-f43be2a4598c // indirect
-	golang.org/x/tools v0.0.0-20191030062658-86caa796c7ab // indirect
 	google.golang.org/genproto v0.0.0-20190927181202-20e1ac93f88c
 	google.golang.org/grpc v1.24.0
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
