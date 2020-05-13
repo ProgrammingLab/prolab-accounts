@@ -67,7 +67,8 @@ services:
     hostname: pg
     environment:
       - POSTGRES_DB="accounts"
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} 
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD}
     restart: always
     volumes:
       - pg-data:/var/lib/postgresql/data
