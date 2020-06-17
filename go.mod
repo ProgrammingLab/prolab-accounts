@@ -21,7 +21,7 @@ require (
 	github.com/minio/minio-go v0.0.0-20190207005939-34f2b94c43ca
 	github.com/mmcdole/gofeed v1.0.0
 	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
-	github.com/ory/hydra v1.4.10
+	github.com/ory/hydra v1.5.1
 	github.com/ory/hydra-legacy-sdk v0.0.0-20190409103449-1f564942be76
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
@@ -32,7 +32,7 @@ require (
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.7.1+incompatible
-	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
+	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
