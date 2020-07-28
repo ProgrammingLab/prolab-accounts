@@ -17,7 +17,7 @@ require (
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
 	github.com/kat-co/vala v0.0.0-20140812221447-bfe9b50e828a
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/lib/pq v1.7.1
+	github.com/lib/pq v1.8.0
 	github.com/minio/minio-go v0.0.0-20190207005939-34f2b94c43ca
 	github.com/mmcdole/gofeed v1.0.0
 	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
