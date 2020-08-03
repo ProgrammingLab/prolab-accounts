@@ -27,7 +27,7 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/shurcooL/githubv4 v0.0.0-20190119021625-d9689b595017
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
-	github.com/spf13/viper v1.7.0
+	github.com/spf13/viper v1.7.1
 	github.com/srvc/appctx v0.1.0
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
