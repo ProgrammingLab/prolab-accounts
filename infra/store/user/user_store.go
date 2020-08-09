@@ -103,7 +103,7 @@ func (s *userStoreImpl) ListPublicUsers(subName string, minUserID model.UserID, 
 		qm.Where("? <= users.id", minUserID),
 		qm.Where("profiles.profile_scope = ?", model.Public),
 		qm.Limit(limit + 1),
-		qm.OrderBy("users.id"),
+		qm.OrderBy("profiles.left, users.id"),
 	}
 	mods = append(mods, s.subNameQuery(subName)...)
 
