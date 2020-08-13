@@ -10,7 +10,7 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/google/wire v0.3.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway v1.14.6
+	github.com/grpc-ecosystem/grpc-gateway v1.14.7
 	github.com/izumin5210/gex v0.6.0 // indirect
 	github.com/izumin5210/grapi v0.5.0
 	github.com/joho/godotenv v1.3.0
