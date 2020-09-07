@@ -19,7 +19,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.8.0
 	github.com/minio/minio-go v0.0.0-20190207005939-34f2b94c43ca
-	github.com/mmcdole/gofeed v1.0.0
+	github.com/mmcdole/gofeed v1.1.0
 	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
 	github.com/ory/hydra v1.7.4
 	github.com/ory/hydra-legacy-sdk v0.0.0-20190409103449-1f564942be76
