@@ -21,7 +21,7 @@ require (
 	github.com/minio/minio-go v0.0.0-20190207005939-34f2b94c43ca
 	github.com/mmcdole/gofeed v1.1.0
 	github.com/mwitkow/go-proto-validators v0.0.0-20190212092829-1f388280e944
-	github.com/ory/hydra v1.7.4
+	github.com/ory/hydra v1.8.1
 	github.com/ory/hydra-legacy-sdk v0.0.0-20190409103449-1f564942be76
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
@@ -32,11 +32,11 @@ require (
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.7.1+incompatible
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884
 	google.golang.org/grpc v1.32.0
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
